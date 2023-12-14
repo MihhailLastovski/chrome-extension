@@ -1,3 +1,4 @@
+const counterElem = document.getElementById('highlightedCount');
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('highlightBtn').addEventListener('click', function() {
     let searchText = document.getElementById('searchText').value.trim();
@@ -12,11 +13,32 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-
 function highlightText(searchText) {
-  let searchRegex = new RegExp(searchText, 'gi');
+  const searchRegex = new RegExp(searchText, "gi");
 
-  // Удаление существующих выделений
+  function highlightTextNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      let text = node.nodeValue;
+      if (searchRegex.test(text)) {
+        const replacedText = text.replace(
+          searchRegex,
+          `<span class="highlighted" style="background-color: yellow;">$&</span>`
+        );
+        const newNode = document.createElement("span");
+        newNode.innerHTML = replacedText;
+        node.parentNode.insertBefore(newNode, node);
+        node.parentNode.removeChild(node);
+      }
+    } else if (
+      node.nodeType === Node.ELEMENT_NODE &&
+      node.childNodes &&
+      node.childNodes.length > 0
+    ) {
+      node.childNodes.forEach((childNode) => {
+        highlightTextNode(childNode);
+      });
+    }
+  }
   document.querySelectorAll('span.highlighted').forEach(element => {
     const parent = element.parentNode;
     while (element.firstChild) {
@@ -25,21 +47,10 @@ function highlightText(searchText) {
     parent.removeChild(element);
   });
 
-  function highlightTextNode(node) {
-    if (node.nodeType === Node.TEXT_NODE) {
-      let text = node.nodeValue;
-      if (searchRegex.test(text)) {
-        let replacedText = text.replace(searchRegex, '<span class="highlighted" style="background-color: yellow;">$&</span>');
-        let span = document.createElement('span');
-        span.innerHTML = replacedText;
-        node.parentNode.replaceChild(span, node);
-      }
-    } else if (node.nodeType === Node.ELEMENT_NODE && node.childNodes && node.childNodes.length > 0) {
-      node.childNodes.forEach(childNode => { highlightTextNode(childNode); });
-    }
-  }
-
-  let elementsToHighlight = document.querySelectorAll('body *');
-  elementsToHighlight.forEach(element => { highlightTextNode(element); });
+  const body = document.body;
+  highlightTextNode(body);
+  let highlightedCount = document.querySelectorAll('span.highlighted').length;
+  sessionStorage.setItem('highlightedCountStr', highlightedCount);
+  console.log('Highlighted count:', highlightedCount);
+  counterElem.innerHTML = `Word counter: ${highlightedCount}`;
 }
-
