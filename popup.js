@@ -1,4 +1,4 @@
-const counterElem = document.getElementById('highlightedCount');
+const counterElem = document.getElementById('highlightedCount'); //////////////ERROR HERE/////////////
 document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('highlightBtn').addEventListener('click', function() {
     let searchText = document.getElementById('searchText').value.trim();
@@ -50,7 +50,6 @@ function highlightText(searchText) {
   const body = document.body;
   highlightTextNode(body);
   let highlightedCount = document.querySelectorAll('span.highlighted').length;
-  sessionStorage.setItem('highlightedCountStr', highlightedCount);
   console.log('Highlighted count:', highlightedCount);
-  counterElem.innerHTML = `Word counter: ${highlightedCount}`;
+  counterElem.innerHTML = `Word counter: ${highlightedCount}`; //////////////ERROR HERE/////////////
 }
