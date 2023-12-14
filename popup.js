@@ -49,7 +49,9 @@ function highlightText(searchText) {
 
   const body = document.body;
   highlightTextNode(body);
+
   let highlightedCount = document.querySelectorAll('span.highlighted').length;
   console.log('Highlighted count:', highlightedCount);
-  counterElem.innerHTML = `Word counter: ${highlightedCount}`; //////////////ERROR HERE/////////////
+
+  //counterElem.innerHTML = `Word counter: ${highlightedCount}`; //////////////ERROR HERE/////////////
 }
