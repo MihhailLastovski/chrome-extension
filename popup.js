@@ -53,7 +53,4 @@ function highlightText(searchText) {
   let highlightedCount = document.querySelectorAll('span.highlighted').length;
   console.log('Highlighted count:', highlightedCount);
   chrome.storage.local.set({count: highlightedCount});
-
-  //counterElem.innerHTML = `Word counter: ${highlightedCount}`; //////////////ERROR HERE/////////////
-  
 }
