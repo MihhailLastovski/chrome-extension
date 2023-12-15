@@ -36,7 +36,7 @@
 // function clickHandler() {
 //   active = !active;
 //   btn.classList.add('animating');
-  
+
 //   btn.addEventListener('animationend', toggleAnimation);
 // }
 
@@ -90,42 +90,41 @@
 //   elementsToHighlight.forEach(element => { highlightTextNode(element); });
 // }
 
-document.addEventListener('DOMContentLoaded', function() {
-  let searchText = document.getElementById('searchText').value.trim();
+document.addEventListener("DOMContentLoaded", function () {
+  let searchText = document.getElementById("searchText").value.trim();
 
-
-  const btn = document.querySelector('.btn');
-  const heading = document.querySelector('.heading');
+  const btn = document.querySelector(".btn");
+  const heading = document.querySelector(".heading");
   let active = false;
 
-  btn.addEventListener('click', clickHandler);
+  btn.addEventListener("click", clickHandler);
 
   function clickHandler() {
     active = !active;
-    btn.classList.add('animating');
-    btn.addEventListener('animationend', toggleAnimation);
+    btn.classList.add("animating");
+    btn.addEventListener("animationend", toggleAnimation);
   }
 
   function toggleAnimation() {
-    btn.classList.remove('animating');
+    btn.classList.remove("animating");
     active ? turnOn() : turnOff();
   }
 
   function turnOn() {
-    btn.classList.add('active');
-    heading.classList.add('active'); 
+    btn.classList.add("active");
+    heading.classList.add("active");
   }
 
   function turnOff() {
-    btn.classList.remove('active');
-    heading.classList.remove('active');
+    btn.classList.remove("active");
+    heading.classList.remove("active");
   }
 
   function highlightText(searchText) {
     const searchRegex = new RegExp(searchText, "gi");
 
     // Удаление существующих выделений
-    document.querySelectorAll('span.highlighted').forEach(element => {
+    document.querySelectorAll("span.highlighted").forEach((element) => {
       const parent = element.parentNode;
       while (element.firstChild) {
         parent.insertBefore(element.firstChild, element);
