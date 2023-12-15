@@ -2,26 +2,32 @@
 <html>
 <head>
   <title>Highlight Text Extension</title>
-  <style>
-    body {
-      width: 200px;
-      padding: 10px;
-      font-family: Arial, sans-serif;
-    }
-    button {
-      margin-top: 10px;
-      padding: 8px 12px;
-      cursor: pointer;
-    }
-  </style>
-  
   <meta charset="UTF-8">
+  <link rel="stylesheet" type="text/css" href="style/styles.css">
 </head>
 <body>
+  <div class="inlineOnOff">
+    <h1 class="heading">Highlight
+      <span class="on"><span>off</span></span>
+      <span class="off"><span>on</span></span>
+    </h1>
+    <button type="button" class="btn" id="onoffbtn">
+      <span>
+        <b></b>
+        <svg viewBox="-5.5 -5.5 71 71" id="circle">
+          <circle cx="30" cy="30" r="30" stroke="white" stroke-width="11" fill="transparent"></circle>
+        </svg>
+      </span>
+    </button>
+  </div>
+
   <input type="text" id="searchText" placeholder="Input text">
   <button id="highlightBtn">Highlight Text</button>
   <div id="highlightedCount">Word counter: 0</div>
 </body>
 </html>
-<script src="popup.js"></script>
-<script src="counter.js"></script>
+<script src="./script/popup.js"></script>
+<script src="./script/counter.js"></script>
+  <a href="list.html">List</a>
+</body>
+</html>

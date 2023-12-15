@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>List management</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    button {
+      margin-top: 5px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+  </style>
+  <meta charset="UTF-8">
+  <script src="./script/utilsList.js"></script>
+  <script src="./script/listScript.js"></script>
+  <script src="./script/contentScript.js"></script>
+</head>
+
+<body>
+  <h1>List management</h1>
+
+  <form id="addListForm">
+    <input type="text" id="listNameInput" placeholder="List name">
+    <input type="text" id="wordInput" placeholder="Words split by semicolon">
+    <button type="submit">Add list</button>
+  </form>
+
+  <ul id="wordLists"></ul>
+</body>
+
+</html>
