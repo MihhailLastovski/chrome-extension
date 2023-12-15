@@ -15,4 +15,42 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       });
     });
+  const btn = document.querySelector('.btn');
+  const heading = document.querySelector('.heading');
+  let active = false;
+
+  btn.addEventListener('click', clickHandler);
+
+  function clickHandler() {
+    active = !active;
+    chrome.storage.local.set({isActive: active}).then(() => {
+      console.log("Value is set");
+    });
+    btn.classList.add('animating');
+    btn.addEventListener('animationend', toggleAnimation);
+  }
+
+  function toggleAnimation() {
+    btn.classList.remove('animating');
+    active ? turnOn() : turnOff();
+  }
+
+  function turnOn() {
+    btn.classList.add('active');
+    heading.classList.add('active'); 
+  }
+
+  function turnOff() {
+    btn.classList.remove('active');
+    heading.classList.remove('active');
+  }
+
+ 
+
+  
+  // chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  //   if (request.action === "highlight") {
+  //     highlightText(request.searchText);
+  //   }
+  // });
 });
