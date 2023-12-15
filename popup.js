@@ -1,20 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
-  const counterElem = document.getElementById('highlightedCount'); //////////////ERROR HERE/////////////
-
   document.getElementById('highlightBtn').addEventListener('click', function() {
     let searchText = document.getElementById('searchText').value.trim();
     chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id },
         function: highlightText,
-        args: [searchText, counterElem]
+        args: [searchText]
       });
     });
   });
   
 });
 
-function highlightText(searchText, counterElem) {
+function highlightText(searchText) {
   const searchRegex = new RegExp(searchText, "gi");
 
   function highlightTextNode(node) {
@@ -51,9 +49,11 @@ function highlightText(searchText, counterElem) {
   const body = document.body;
   highlightTextNode(body);
 
+  
   let highlightedCount = document.querySelectorAll('span.highlighted').length;
- 
-
-  counterElem.innerHTML = `Word counter: ${highlightedCount}`; //////////////ERROR HERE/////////////
   console.log('Highlighted count:', highlightedCount);
+  chrome.storage.local.set({count: highlightedCount});
+
+  //counterElem.innerHTML = `Word counter: ${highlightedCount}`; //////////////ERROR HERE/////////////
+  
 }
