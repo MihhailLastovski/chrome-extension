@@ -11,13 +11,6 @@ async function highlightText(searchText) {
     const searchRegex = new RegExp(searchText, "gi");
 
     // Удаление существующих выделений
-    document.querySelectorAll("span.highlighted").forEach((element) => {
-      const parent = element.parentNode;
-      while (element.firstChild) {
-        parent.insertBefore(element.firstChild, element);
-      }
-      parent.removeChild(element);
-    });
 
     function highlightTextNode(node) {
       if (node.nodeType === Node.TEXT_NODE) {

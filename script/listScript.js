@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const listNameInput = document.getElementById("listNameInput");
   const wordInput = document.getElementById("wordInput");
   const wordLists = document.getElementById("wordLists");
-  let enabledLists = []; 
+  let enabledLists = [];
 
   // Функция для отображения списков слов
   function renderWordLists(lists) {
@@ -13,9 +13,7 @@ document.addEventListener("DOMContentLoaded", function () {
       listItem.textContent = list.name;
 
       const enableButton = document.createElement("button");
-      enableButton.textContent = enabledLists.includes(list.id)
-        ? "Off"
-        : "On";
+      enableButton.textContent = enabledLists.includes(list.id) ? "Off" : "On";
       enableButton.addEventListener("click", function () {
         const enable = !enabledLists.includes(list.id);
         toggleWordList(list.id, enable);
@@ -103,9 +101,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 function: highlightText,
                 args: [searchText],
               });
+              highlightText(searchText); // Вызов здесь
             }
           );
-          highlightText(searchText);
         });
       }
     });
@@ -125,11 +123,10 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     } else {
       enabledLists = enabledLists.filter((id) => id !== listId);
-      removeHighlight(); 
+      removeHighlight();
     }
 
-    chrome.storage.local.set({ enabledLists: enabledLists }, function () {
-    });
+    chrome.storage.local.set({ enabledLists: enabledLists }, function () {});
   }
 
   getAllWordLists(function (lists) {
