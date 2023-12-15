@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function clickHandler() {
     active = !active;
-    chrome.storage.session.set({ isActive: active }).then(() => {
+    chrome.storage.local.set({ isActive: active }).then(() => {
       console.log("Value is set");
     });
     btn.classList.add("animating");
