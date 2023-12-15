@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const listNameInput = document.getElementById("listNameInput");
   const wordInput = document.getElementById("wordInput");
   const wordLists = document.getElementById("wordLists");
-  let enabledLists = []; // Добавим переменную для хранения включенных списков
+  let enabledLists = []; 
 
   // Функция для отображения списков слов
   function renderWordLists(lists) {
@@ -14,8 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const enableButton = document.createElement("button");
       enableButton.textContent = enabledLists.includes(list.id)
-        ? "Отключить"
-        : "Включить";
+        ? "Off"
+        : "On";
       enableButton.addEventListener("click", function () {
         const enable = !enabledLists.includes(list.id);
         toggleWordList(list.id, enable);
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       const deleteButton = document.createElement("button");
-      deleteButton.textContent = "Удалить";
+      deleteButton.textContent = "Delete";
       deleteButton.addEventListener("click", function () {
         deleteWordList(list.id);
         renderWordLists(lists);
@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
       lists.push(wordList);
 
       chrome.storage.local.set({ wordLists: lists }, function () {
-        console.log("Список слов сохранен:", wordList);
         getAllWordLists(renderWordLists);
       });
     });
@@ -73,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       getAllWordLists(renderWordLists);
     } else {
-      alert("Введите название списка и слова");
+      alert("Enter list name");
     }
   });
 
@@ -83,7 +82,6 @@ document.addEventListener("DOMContentLoaded", function () {
       let updatedLists = lists.filter((list) => list.id !== listId);
 
       chrome.storage.local.set({ wordLists: updatedLists }, function () {
-        console.log("Список слов удален:", listId);
         getAllWordLists(renderWordLists);
       });
     });
@@ -114,15 +112,11 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function removeHighlight() {
-    document.querySelectorAll('span.highlighted').forEach(element => {
-      const parent = element.parentNode;
-      while (element.firstChild) {
-        parent.insertBefore(element.firstChild, element);
-      }
-      parent.removeChild(element);
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      chrome.tabs.sendMessage(tabs[0].id, { action: "removeHighlight" });
     });
   }
-  
+
   function toggleWordList(listId, enable) {
     if (enable) {
       if (!enabledLists.includes(listId)) {
@@ -130,12 +124,11 @@ document.addEventListener("DOMContentLoaded", function () {
         highlightWordsFromList(listId);
       }
     } else {
-      enabledLists = enabledLists.filter(id => id !== listId);
-      removeHighlight(); // Убираем выделение при отключении списка слов
+      enabledLists = enabledLists.filter((id) => id !== listId);
+      removeHighlight(); 
     }
-  
+
     chrome.storage.local.set({ enabledLists: enabledLists }, function () {
-      console.log("Список слов", listId, enable ? "включен" : "отключен");
     });
   }
 
@@ -145,5 +138,14 @@ document.addEventListener("DOMContentLoaded", function () {
       renderWordLists(lists);
       console.log(lists);
     });
+  });
+  chrome.runtime.onMessage.addListener(function (
+    request,
+    sender,
+    sendResponse
+  ) {
+    if (request.action === "removeHighlight") {
+      removeHighlight();
+    }
   });
 });

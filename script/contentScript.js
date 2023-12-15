@@ -32,5 +32,13 @@ function highlightText(searchText) {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "highlight") {
     highlightText(request.searchText);
+  } else if (request.action === "removeHighlight") {
+    document.querySelectorAll("span.highlighted").forEach((element) => {
+      const parent = element.parentNode;
+      while (element.firstChild) {
+        parent.insertBefore(element.firstChild, element);
+      }
+      parent.removeChild(element);
+    });
   }
 });
