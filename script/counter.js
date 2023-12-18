@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     async function countWords() {
         const result = await new Promise((resolve, reject) => {
-            chrome.storage.local.get("count", (result) => {
+            chrome.storage.session.get("count", (result) => {
                 resolve(result);
             });
         });
@@ -32,6 +32,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Добавляем обработчик события перед выгрузкой страницы
     chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
-        chrome.storage.local.set({count: 0});
+        chrome.storage.session.set({count: 0});
     });
 });
