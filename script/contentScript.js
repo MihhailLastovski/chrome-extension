@@ -1,4 +1,4 @@
-async function highlightText(searchText) {
+async function highlightText(searchText, listId = null) {
   const result = await new Promise((resolve, reject) => {
     chrome.storage.local.get("isActive", (result) => {
       resolve(result);
@@ -10,16 +10,15 @@ async function highlightText(searchText) {
   if (boolActive && searchText !== "") {
     const searchRegex = new RegExp(searchText, "gi");
 
-    // Удаление существующих выделений
-
     function highlightTextNode(node) {
       if (node.nodeType === Node.TEXT_NODE) {
         let text = node.nodeValue;
         if (searchRegex.test(text)) {
-          const replacedText = text.replace(
-            searchRegex,
-            `<span class="highlighted" style="background-color: yellow;">$&</span>`
-          );
+          let replacementText = `<span class="highlighted" style="background-color: yellow;">$&</span>`;
+          if (listId) {
+            replacementText = `<span class="highlighted" data-list-id="${listId}" style="background-color: yellow;">$&</span>`;
+          }
+          const replacedText = text.replace(searchRegex, replacementText);
           const newNode = document.createElement("span");
           newNode.innerHTML = replacedText;
           node.parentNode.replaceChild(newNode, node);
@@ -45,12 +44,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "highlight") {
     highlightText(request.searchText, request.isActive);
   } else if (request.action === "removeHighlight") {
-    document.querySelectorAll("span.highlighted").forEach((element) => {
-      const parent = element.parentNode;
-      while (element.firstChild) {
-        parent.insertBefore(element.firstChild, element);
-      }
-      parent.removeChild(element);
-    });
+    const listId = request.listId;
+    if (listId) {
+      document.querySelectorAll(`span[data-list-id="${listId}"].highlighted`).forEach((element) => {
+        const parent = element.parentNode;
+        while (element.firstChild) {
+          parent.insertBefore(element.firstChild, element);
+        }
+        parent.removeChild(element);
+      });
+    }
   }
 });
