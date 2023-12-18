@@ -27,6 +27,14 @@ async function highlightText(searchText) {
         node.childNodes &&
         node.childNodes.length > 0
       ) {
+        // Replace existing highlighted spans with updated content
+        node.querySelectorAll('span.highlighted').forEach((highlightedSpan) => {
+          const parent = highlightedSpan.parentNode;
+          const replacement = document.createElement("span");
+          replacement.innerHTML = highlightedSpan.innerHTML;
+          parent.replaceChild(replacement, highlightedSpan);
+        });
+    
         node.childNodes.forEach((childNode) => {
           highlightTextNode(childNode);
         });
