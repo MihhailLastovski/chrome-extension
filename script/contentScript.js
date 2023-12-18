@@ -10,8 +10,6 @@ async function highlightText(searchText) {
   if (boolActive && searchText !== "") {
     const searchRegex = new RegExp(searchText, "gi");
 
-    // Удаление существующих выделений
-
     function highlightTextNode(node) {
       if (node.nodeType === Node.TEXT_NODE) {
         let text = node.nodeValue;
@@ -45,6 +43,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "highlight") {
     highlightText(request.searchText, request.isActive);
   } else if (request.action === "removeHighlight") {
+    // Удаление существующих выделений
     document.querySelectorAll("span.highlighted").forEach((element) => {
       const parent = element.parentNode;
       while (element.firstChild) {
