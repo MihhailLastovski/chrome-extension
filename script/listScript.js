@@ -136,14 +136,4 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log(lists);
     });
   });
-  chrome.runtime.onMessage.addListener(function (
-    request,
-    sender,
-    sendResponse
-  ) {
-    if (request.action === "removeHighlight") {
-      console.log("lol")
-      removeHighlight();
-    }
-  });
 });
