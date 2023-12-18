@@ -8,16 +8,26 @@ document.addEventListener("DOMContentLoaded", function () {
   highlightBtn.addEventListener("click", function () {
     let searchText = searchTextInput.value.trim();
 
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id },
-        files: ["./script/contentScript.js"],
+    function removeHighlight() {
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: "removeHighlight" });
       });
-      chrome.tabs.sendMessage(tabs[0].id, {
-        action: "highlight",
-        searchText: searchText,
+    }
+
+    function highlight() {
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.scripting.executeScript({
+          target: { tabId: tabs[0].id },
+          files: ["./script/contentScript.js"],
+        });
+        chrome.tabs.sendMessage(tabs[0].id, {
+          action: "highlight",
+          searchText: searchText,
+        });
       });
-    });
+    }
+    removeHighlight();
+    highlight(); 
   });
   
 

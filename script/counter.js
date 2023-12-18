@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Вызываем функцию при загрузке страницы
     countWords();
 
-    // Добавляем обработчик события для изменений в chrome.storage.local
+    // Добавляем обработчик события для изменений в chrome.storage.session
     chrome.storage.onChanged.addListener(function (changes, namespace) {
         if ('count' in changes) {
             const newCount = changes['count'].newValue;

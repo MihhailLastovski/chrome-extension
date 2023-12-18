@@ -4,7 +4,6 @@ async function highlightText(searchText, listId = null) {
       resolve(result);
     });
   });
-
   const boolActive = result.isActive;
 
   if (boolActive && searchText !== "") {
@@ -23,11 +22,7 @@ async function highlightText(searchText, listId = null) {
           newNode.innerHTML = replacedText;
           node.parentNode.replaceChild(newNode, node);
         }
-      } else if (
-        node.nodeType === Node.ELEMENT_NODE &&
-        node.childNodes &&
-        node.childNodes.length > 0
-      ) {
+      } else if ( node.nodeType === Node.ELEMENT_NODE && node.childNodes && node.childNodes.length > 0) {
         node.childNodes.forEach((childNode) => {
           highlightTextNode(childNode);
         });
@@ -36,7 +31,6 @@ async function highlightText(searchText, listId = null) {
     highlightTextNode(document.body);
   }
   let highlightedCount = document.querySelectorAll('span.highlighted').length;
-  console.log('Highlighted count:', highlightedCount);
   chrome.storage.local.set({count: highlightedCount});
 }
 
@@ -47,6 +41,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     const listId = request.listId;
     if (listId) {
       document.querySelectorAll(`span[data-list-id="${listId}"].highlighted`).forEach((element) => {
+        const parent = element.parentNode;
+        while (element.firstChild) {
+          parent.insertBefore(element.firstChild, element);
+        }
+        parent.removeChild(element);
+      });
+    }
+    else{
+      document.querySelectorAll("span.highlighted").forEach((element) => {
         const parent = element.parentNode;
         while (element.firstChild) {
           parent.insertBefore(element.firstChild, element);
