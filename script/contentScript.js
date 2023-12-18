@@ -1,10 +1,10 @@
 async function highlightText(searchText) {
+  //Взятие значения состояния кнопки выключения подсветки
   const result = await new Promise((resolve, reject) => {
     chrome.storage.local.get("isActive", (result) => {
       resolve(result);
     });
   });
-
   const boolActive = result.isActive;
 
   if (boolActive && searchText !== "") {
@@ -22,12 +22,8 @@ async function highlightText(searchText) {
           newNode.innerHTML = replacedText;
           node.parentNode.replaceChild(newNode, node);
         }
-      } else if (
-        node.nodeType === Node.ELEMENT_NODE &&
-        node.childNodes &&
-        node.childNodes.length > 0
-      ) {
-        // Replace existing highlighted spans with updated content
+      } else if ( node.nodeType === Node.ELEMENT_NODE && node.childNodes && node.childNodes.length > 0) {
+        //Replace existing highlighted spans with updated content
         node.querySelectorAll('span.highlighted').forEach((highlightedSpan) => {
           const parent = highlightedSpan.parentNode;
           const replacement = document.createElement("span");
@@ -43,7 +39,6 @@ async function highlightText(searchText) {
     highlightTextNode(document.body);
   }
   let highlightedCount = document.querySelectorAll('span.highlighted').length;
-  console.log('Highlighted count:', highlightedCount);
   chrome.storage.local.set({count: highlightedCount});
 }
 
