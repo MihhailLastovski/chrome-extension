@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Highlight Text Extension</title>
   <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="style/styles.css">
 </head>
+
 <body>
   <div class="inlineOnOff">
     <h1 class="heading">Highlight
@@ -24,10 +26,18 @@
   <input type="text" id="searchText" placeholder="Input text" disabled>
   <button id="highlightBtn" disabled>Highlight Text</button>
   <div id="highlightedCount">Word counter: 0</div>
+  <a id="createListBtn" href="list.html">Create New List</a>
+
+  <div id="allListsContainer">
+    <ul id="wordLists"></ul>
+  </div>
+
+  <script src="./script/popup.js"></script>
+  <script src="./script/counter.js"></script>
+  <script src="./script/contentScript.js"></script>
 </body>
+
 </html>
-<script src="./script/popup.js"></script>
-<script src="./script/counter.js"></script>
-  <a href="list.html">List</a>
 </body>
+
 </html>

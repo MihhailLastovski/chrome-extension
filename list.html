@@ -4,8 +4,6 @@
 <head>
   <title>List management</title>
   <meta charset="UTF-8">
-  <script src="./script/listScript.js"></script>
-  <script src="./script/contentScript.js"></script>
   <link rel="stylesheet" type="text/css" href="style/styles.css">
 </head>
 
@@ -14,11 +12,14 @@
 
   <form id="addListForm">
     <input type="text" id="listNameInput" placeholder="List name">
-    <input type="text" id="wordInput" placeholder="Split by comma">
-    <button type="submit">Add list</button>
+    <div id="wordsContainer">
+    </div>
+    <input type="text" id="newWordInput" placeholder="Add new word">
+    <button type="button" id="addWordBtn">Add Word</button>
+    <button type="submit" id="saveListBtn">Save List</button>
   </form>
 
-  <ul id="wordLists"></ul>
+  <script src="./script/listScript.js"></script>
 </body>
 
 </html>

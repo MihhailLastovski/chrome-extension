@@ -1,4 +1,4 @@
-var locale_HTML = document.body.innerHTML;
+//var locale_HTML = document.body.innerHTML;
 
 async function highlightText(searchText, listId = null) {
   //document.body.innerHTML = locale_HTML;
@@ -34,8 +34,8 @@ async function highlightText(searchText, listId = null) {
         });
       }
     }
-    if (listId === null) {
-      document.body.innerHTML = locale_HTML;
+    if (listId !== null) {
+      //document.body.innerHTML = locale_HTML;
     }
     highlightTextNode(document.body);
   }
@@ -58,13 +58,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       });
     }
     else {
-      // document.querySelectorAll("span.highlighted").forEach((element) => {
-      //   const parent = element.parentNode;
-      //   while (element.firstChild) {
-      //     parent.insertBefore(element.firstChild, element);
-      //   }
-      //   parent.removeChild(element);
-      // });
+      document.querySelectorAll("span.highlighted").forEach((element) => {
+        const parent = element.parentNode;
+        while (element.firstChild) {
+          parent.insertBefore(element.firstChild, element);
+        }
+        parent.removeChild(element);
+      });
       document.body.innerHTML = locale_HTML;
     }
     
