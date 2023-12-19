@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
       });
     }
-    removeHighlight();
+    //removeHighlight();
     highlight(); 
   });
   
