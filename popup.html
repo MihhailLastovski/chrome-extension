@@ -4,30 +4,24 @@
   <title>Highlight Text Extension</title>
   <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="style/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="./script/popup.js"></script>
+  <script src="./script/counter.js"></script>
 </head>
 <body>
-  <div class="inlineOnOff">
-    <h1 class="heading">Highlight
-      <span class="on"><span>off</span></span>
-      <span class="off"><span>on</span></span>
-    </h1>
-    <button type="button" class="btn" id="onoffbtn">
-      <span>
-        <b></b>
-        <svg viewBox="-5.5 -5.5 71 71" id="circle">
-          <circle cx="30" cy="30" r="30" stroke="white" stroke-width="11" fill="transparent"></circle>
-        </svg>
-      </span>
-    </button>
+  <div class="header">
+    <h1 class="heading">Highlight Off</h1>
+    <label class="switch">
+      <input class="toggleSwitch" type="checkbox">
+      <span class="slider"></span>
+    </label>
   </div>
 
-  <input type="text" id="searchText" placeholder="Input text" disabled>
-  <button id="highlightBtn" disabled>Highlight Text</button>
-  <div id="highlightedCount">Word counter: 0</div>
+  <div class="content">
+    <input type="text" id="searchText" placeholder="Input text" disabled>
+    <button id="highlightBtn" disabled><i class="fa fa-search"></i></button>
+    <div id="highlightedCount">Word counter: 0</div>
+    <a href="list.html">List</a>
+  </div>
 </body>
-</html>
-<script src="./script/popup.js"></script>
-<script src="./script/counter.js"></script>
-  <a href="list.html">List</a>
-</body>
-</html>
+</html> 
