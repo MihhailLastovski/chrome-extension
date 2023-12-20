@@ -4,7 +4,7 @@
 <head>
   <title>Highlight Text Extension</title>
   <meta charset="UTF-8">
-  <link rel="stylesheet" type="text/css" href="style/styles.css">
+  <link id="styleLink" rel="stylesheet" type="text/css" href="style/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="./script/popup.js"></script>
   <script src="./script/counter.js"></script>
@@ -13,6 +13,7 @@
 
 <body>
   <div class="header">
+    <input class="toggleViewSwitch" type="checkbox" id="darkModeToggle">
     <h1 class="heading">Highlight Off</h1>
     <label class="switch">
       <input class="toggleSwitch" type="checkbox">
@@ -41,7 +42,6 @@
       </label>
     </div>
     
-    
     <hr>
     <div id="highlightedCount">Word counter: 0</div>
     <hr> 
@@ -52,4 +52,5 @@
     </div>
   </div>
 </body>
+<script src="./script/styleScript.js"></script>
 </html> 
