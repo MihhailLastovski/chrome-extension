@@ -1,7 +1,6 @@
-//var locale_HTML = document.body.innerHTML;
+var locale_HTML = document.body.innerHTML;
 
 async function highlightText(searchText, listId = null) {
-  //document.body.innerHTML = locale_HTML;
   const resultOld = await new Promise((resolve, reject) => {
     chrome.storage.local.get("isActive", (result) => {
       resolve(result);
@@ -10,8 +9,6 @@ async function highlightText(searchText, listId = null) {
   const boolActive = resultOld.isActive;
 
   if (boolActive && searchText !== "") {
-    
-
     const searchRegex = new RegExp(searchText, "gi");
 
     function highlightTextNode(node) {
@@ -34,13 +31,14 @@ async function highlightText(searchText, listId = null) {
         });
       }
     }
-    if (listId !== null) {
-      //document.body.innerHTML = locale_HTML;
+    if (listId === null) {
+      document.body.innerHTML = locale_HTML;
     }
     highlightTextNode(document.body);
   }
   let highlightedCount = document.querySelectorAll('span.highlighted').length;
   chrome.storage.local.set({count: highlightedCount});
+  chrome.runtime.sendMessage({ action: 'updateBadge', count: highlightedCount });
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -58,13 +56,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       });
     }
     else {
-      document.querySelectorAll("span.highlighted").forEach((element) => {
-        const parent = element.parentNode;
-        while (element.firstChild) {
-          parent.insertBefore(element.firstChild, element);
-        }
-        parent.removeChild(element);
-      });
+      // document.querySelectorAll("span.highlighted").forEach((element) => {
+      //   const parent = element.parentNode;
+      //   while (element.firstChild) {
+      //     parent.insertBefore(element.firstChild, element);
+      //   }
+      //   parent.removeChild(element);
+      // });
       document.body.innerHTML = locale_HTML;
     }
     

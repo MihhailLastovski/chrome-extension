@@ -1,32 +1,20 @@
 @import url('https://fonts.googleapis.com/css?family=Pacifico|Roboto:300,700');
 
 :root {
-  --timing: cubic-bezier(.645,.045,.355,1);
-  --primary: #f4f7f5;
-}
-
-.btn {
-  margin-top: 10px;
-  padding: 8px 12px;
-  cursor: pointer;
+  --main-light-green: #9eff00;
+  --main-medium-green:  #7ecc00;
+  --main-dark-green: #5e9900;
+  --main-white: white;
+  --main-black: #2f4d00;
+  --main-grey: #ccc;
 }
 
 body {
+  color: var(--main-black);
+  background-color: var(--main-white);
   font-family: 'Roboto', sans-serif;
-  color: #333;
-  padding: 10px;
-  width: 225px;
-}
-
-h1.heading {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
-input,
-#highlightBtn,
-#highlightedCount {
-  margin-bottom: 10px;
+  width: 400px;
+  height: 500px;
 }
 
 button {
@@ -34,13 +22,11 @@ button {
   cursor: pointer;
 }
 
-/* Стили для ссылки */
 a {
-  color: #007bff;
+  color: var(--main-light-green);
   text-decoration: none;
 }
 
-/* При наведении курсора на ссылку */
 a:hover {
   text-decoration: underline;
 }
@@ -49,204 +35,113 @@ input {
   padding: 8px;
   font-size: 14px;
   width: 100px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--main-grey);
   border-radius: 4px;
 }
 
 input::placeholder {
-  color: #999;
+  color: var(--main-grey);
 }
 
-/*html,
-body {
-  height: 100%;
-  background-color: var(--primary);
-}
-
-body {
+.header {
+  margin: -10px -10px 0 -10px;
   display: flex;
-  place-items: center;
-  background:
-    radial-gradient(#fff 30%, rgba(255,255,255,0) 70%),
-    radial-gradient(var(--primary) 10%, rgba(244, 247, 245,0) 20%);
-  background-size: 100% 100%, 10px 10px;
-  background-position: 0 0;
-}*/
-
-/*@media (max-width: 420px) {
-  body {
-    background: var(--primary);
-  }
-}*/
-/*
-main {
-  display: grid;
-  place-items: center;
-  gap: 1em 0;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--main-light-green);
 }
-*/
 
 .heading {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 300;
-  display: grid;
-  grid: auto / auto auto;
+  margin-left: 142.795px;
 }
 
-.heading > span {
-  margin-left: 0.25em;
-  font-weight: 700;
-}
-
-.heading span {
-  overflow: hidden;
-  display: inline-flex;
-  transition: .6s;
-}
-.heading > span,
-.heading > span.on span {
-  transform: translateY(100%);
-  grid-area: 1 / 2;
-}
-.heading > span span,
-.heading > span.on {
-  transform: translateY(-100%);
-}
-
-.heading.active span.off,
-.heading.active span.off span,
-.heading:not(.active) span.on,
-.heading:not(.active) span.on span {
-  transform: none;
-}
-
-
-.btn {
-  --w: 6em;
-  --bg: rgb(var(--rgb));
-  --bga: rgba(var(--rgb), .4); /* Safari fix */
-  -webkit-appearance: none;
-  border: none;
-  font-size: 100%;
-  width: var(--w);
-  height: var(--w);
-  background: var(--bg);
-  box-shadow: 0 3px 12px 2px var(--bga);
-  border-radius: 50%;
+/* Toggle switch */
+.switch {
   position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  transition: .1s transform, .3s box-shadow;
-  will-change: transform, box-shadow;
-  backface-visibility: hidden;
-}
-
-.btn > * {
-  pointer-events: none;
-}
-
-.btn:focus {
-  outline: none;
-}
-
-.btn:active {
-  transform: scale(.97);
-}
-
-.btn:after {
-  --bg: rgb(var(--rgb));
-  content: '';
-  position: absolute;
-  top: -15%;
-  left: -15%;
-  width: 200%;
-  height: 200%;
-  background: var(--bg);
-  border-radius: inherit;
-  transform: translate(5%, 5%) scale(.03);
-  pointer-events: none;
-}
-
-.btn.animating:after {
-  animation: c .5s cubic-bezier(.5, 0, .5, 1) backwards;
-}
-
-.btn.active,
-.btn:not(.active):after {
-  --rgb: 64, 227, 120;
-}
-
-.btn:not(.active),
-.btn.active:after {
-  --rgb: 229, 55, 94;
-}
-
-@keyframes c {
-  to {
-    transform: none;
-  }
-}
-
-
-.btn span {
   display: inline-block;
-  position: relative;
-  margin-top: 5px;
+  border: 2pt solid var(--main-white);
+  width: 45px;
+  height: 24px;
+  border-radius: 24px;
+  margin-right: 20px;
 }
-.btn b {
-  --w: 7px;
-  overflow: hidden;
-  border-radius: var(--w);
-  display: grid;
-  width: var(--w);
-  height: 35px;
-  top: 0;
-  left: 50%;
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
   position: absolute;
-  transform: translateX(-50%);
-  z-index: 3;
-  will-change: transform;
-}
-.btn b:before {
-  content: '';
-  background: #fff;
-  width: 100%;
-  height: 100%;
-  border-radius: var(--w);
-  transform: translateY(-15px);
-  transition-timing-function: var(--timing);
-  transition: .5s;
-}
-
-.btn.active b:before {
-  transform: translateY(12px);
-  transition-delay: .27s;
-  transition-timing-function: cubic-bezier(.25, .25, .25, 1.25);
-}
-
-.btn svg {
-  --dash: 190;
-  stroke-linecap: round;
-  stroke-dasharray: var(--dash);
-  stroke-dashoffset: var(--dash);
-  width: 46px;
-  height: 46px;
-  transform: scaleX(-1) rotate(-89deg);
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--main-grey);
+  -webkit-transition: .4s;
   transition: .4s;
-  transition-timing-function: var(--timing);
-  margin: auto;
-  position: relative;
-  z-index: 1;
-  will-change: transform, stroke-dashoffset;
-}
-.btn:not(.active) svg {
-  stroke-dashoffset: 40;
-  transform: scaleX(-1) rotate(-52deg);
-  transition: .5s .25s;
+  border-radius: 24px;
 }
 
-.inlineOnOff {
-  display: flex;
-  align-items: end;
-  gap: 10px;
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: var(--main-white);
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+.toggleSwitch:checked + .slider {
+  background-color: var(--main-medium-green);
+}
+
+.toggleSwitch:focus + .slider {
+  box-shadow: 0 0 1px var(--main-medium-green);
+}
+
+.toggleSwitch:checked + .slider:before {
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+.content {
+  /*justify-content: center;*/
+  align-items: center;
+  text-align: center;
+  margin-top: 5%;
+}
+
+.content input {
+  width: 200px;
+}
+
+.content #highlightBtn {
+  background-color: var(--main-light-green);
+}
+
+.content #highlightBtn:hover {
+  background-color: var(--main-medium-green);
+}
+
+.content #highlightBtn:active {
+  background-color: var(--main-dark-green);
+}
+
+.content #highlightedCount {
+  margin-top: 5%;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.content hr {
+  border: 1px solid var(--main-light-green);
+  margin: 5%;
 }
