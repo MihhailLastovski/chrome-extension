@@ -145,3 +145,28 @@ input::placeholder {
   border: 1px solid var(--main-light-green);
   margin: 5%;
 }
+
+.content .color-options {
+  justify-content: center;
+  margin-top: 5%;
+  display: flex;
+  gap: 10px; /* Расстояние между квадратиками */
+}
+
+.content .color-option {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.content .color-option input {
+  display: none; /* Скрыть радиокнопки */
+}
+
+.content .color-option.green { background-color: var(--main-light-green); }
+.content .color-option.cyan { background-color: cyan; }
+.content .color-option.yellow { background-color: yellow; }
+.content .color-option.red { background-color: red; }
+.content .color-option.black { background-color: black; }

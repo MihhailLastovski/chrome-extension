@@ -144,19 +144,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
-
-  // async function toggleSwitchIsActive() {
-  //   const result = await new Promise((resolve, reject) => {
-  //     chrome.storage.local.get("isActive", (result) => {
-  //       resolve(result);
-  //     });
-  //   });
-
-  //   active = result.isActive;
-  //   updateUIState()
-  //   toggleSwitch.checked = active;  
-  // }
-  // toggleSwitchIsActive();
   
   async function toggleSwitchIsActive() {
     const result = await new Promise((resolve, reject) => {
