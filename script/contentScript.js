@@ -41,6 +41,7 @@ async function highlightText(searchText, listId = null) {
   }
   let highlightedCount = document.querySelectorAll('span.highlighted').length;
   chrome.storage.local.set({count: highlightedCount});
+  chrome.runtime.sendMessage({ action: 'updateBadge', count: highlightedCount });
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {

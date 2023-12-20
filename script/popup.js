@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const btn = document.querySelector(".btn");
+  const toggleSwitch = document.querySelector(".toggleSwitch");
   const heading = document.querySelector(".heading");
   const searchTextInput = document.getElementById("searchText");
   const highlightBtn = document.getElementById("highlightBtn");
@@ -28,55 +28,42 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     removeHighlight();
     highlight(); 
-  });
-  
 
-  btn.addEventListener("click", clickHandler);
-  function clickHandler() {
-    active = !active;
-    chrome.storage.local.set({ isActive: active }).then(() => {
-      console.log("Value is set");
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+      if (request.action === 'updateBadge') {
+        const count = request.count || 0;
+        chrome.action.setBadgeText({ text: count > 0 ? count.toString() : '' });
+        chrome.action.setBadgeBackgroundColor({ color: '#9eff00' });
+      }
     });
-    btn.classList.add("animating");
-    btn.addEventListener("animationend", toggleAnimation);
-  }
+  });
 
-
-  async function checkBtnIsActive() {
+  async function toggleSwitchIsActive() {
     const result = await new Promise((resolve, reject) => {
       chrome.storage.local.get("isActive", (result) => {
         resolve(result);
       });
     });
+
+    active = result.isActive;
+
+    heading.innerText = active ? "Highlight On" : "Highlight Off";
+    searchTextInput.disabled = !active;
+    highlightBtn.disabled = !active;
+
+    toggleSwitch.checked = active;
+    
+  }
+  toggleSwitchIsActive();
   
-    const boolActive = result.isActive;
-    if (boolActive) {
-      turnOn();
-      active = true;
-    } else {
-      turnOff();
-      active = false;
-    }
-  }
-  checkBtnIsActive();
+  toggleSwitch.addEventListener('change', function() {
+    active = !active;
+    chrome.storage.local.set({ isActive: active });
 
+    heading.innerText = active ? "Highlight On" : "Highlight Off";
+    searchTextInput.disabled = !active;
+    highlightBtn.disabled = !active;
 
-  function toggleAnimation() {
-    btn.classList.remove("animating");
-    active ? turnOn() : turnOff();
-  }
-
-  function turnOn() {
-    btn.classList.add("active");
-    heading.classList.add("active");
-    searchTextInput.disabled = false;
-    highlightBtn.disabled = false;
-  }
-
-  function turnOff() {
-    btn.classList.remove("active");
-    heading.classList.remove("active");
-    searchTextInput.disabled = true;
-    highlightBtn.disabled = true;
-  }
+    
+  });
 });
