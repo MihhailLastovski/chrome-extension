@@ -135,6 +135,12 @@ input::placeholder {
   background-color: var(--main-dark-green);
 }
 
+.content #highlightedCount {
+  margin-top: 5%;
+  font-size: 17px;
+  font-weight: bold;
+}
+
 .content hr {
   border: 1px solid var(--main-light-green);
   margin: 5%;
