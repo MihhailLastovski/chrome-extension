@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   highlightBtn.addEventListener("click", function () {
     let searchText = searchTextInput.value.trim();
+    let selectedColor = document.querySelector('input[name="highlightColor"]:checked').value;
 
     function removeHighlight() {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
         chrome.tabs.sendMessage(tabs[0].id, {
           action: "highlight",
           searchText: searchText,
+          highlightColor: selectedColor,
         });
       });
     }
