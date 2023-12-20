@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Highlight Text Extension</title>
   <meta charset="UTF-8">
@@ -7,7 +8,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="./script/popup.js"></script>
   <script src="./script/counter.js"></script>
+  <script src="./script/contentScript.js"></script>
 </head>
+
 <body>
   <div class="header">
     <h1 class="heading">Highlight Off</h1>
@@ -16,7 +19,6 @@
       <span class="slider"></span>
     </label>
   </div>
-
   <div class="content">
     <input type="text" id="searchText" placeholder="Input text" disabled>
     <button id="highlightBtn" disabled><i class="fa fa-search"></i></button>
@@ -28,9 +30,15 @@
       <label><input type="radio" name="highlightColor" value="green"> Green</label>
       <label><input type="radio" name="highlightColor" value="orange"> Orange</label>
     </div>
+    
     <hr>
     <div id="highlightedCount">Word counter: 0</div>
-    <a href="list.html">List</a>
+    <hr> 
+    
+    <a id="createListBtn" href="list.html">Create New List</a>
+    <div id="allListsContainer">
+      <ul id="wordLists"></ul>
+    </div>
   </div>
 </body>
 </html> 

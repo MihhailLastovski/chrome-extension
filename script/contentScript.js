@@ -1,7 +1,6 @@
 var locale_HTML = document.body.innerHTML;
 
-async function highlightText(searchText,highlightColor, listId = null) {
-  //document.body.innerHTML = locale_HTML;
+async function highlightText(searchText, highlightColor, listId = null) {
   const resultOld = await new Promise((resolve, reject) => {
     chrome.storage.local.get("isActive", (result) => {
       resolve(result);
