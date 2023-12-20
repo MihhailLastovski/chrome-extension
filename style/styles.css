@@ -2,7 +2,8 @@
 
 :root {
   --main-light-green: #9eff00;
-  --main-dark-green:  #7ecc00;
+  --main-medium-green:  #7ecc00;
+  --main-dark-green: #5e9900;
   --main-white: white;
   --main-black: #2f4d00;
   --main-grey: #ccc;
@@ -39,7 +40,7 @@ input {
 }
 
 input::placeholder {
-  color: #999;
+  color: var(--main-grey);
 }
 
 .header {
@@ -98,11 +99,11 @@ input::placeholder {
 }
 
 .toggleSwitch:checked + .slider {
-  background-color: var(--main-dark-green);
+  background-color: var(--main-medium-green);
 }
 
 .toggleSwitch:focus + .slider {
-  box-shadow: 0 0 1px var(--main-dark-green);
+  box-shadow: 0 0 1px var(--main-medium-green);
 }
 
 .toggleSwitch:checked + .slider:before {
@@ -112,8 +113,29 @@ input::placeholder {
 }
 
 .content {
-  justify-content: center;
+  /*justify-content: center;*/
   align-items: center;
   text-align: center;
-  margin-top: 50%;
+  margin-top: 5%;
+}
+
+.content input {
+  width: 200px;
+}
+
+.content #highlightBtn {
+  background-color: var(--main-light-green);
+}
+
+.content #highlightBtn:hover {
+  background-color: var(--main-medium-green);
+}
+
+.content #highlightBtn:active {
+  background-color: var(--main-dark-green);
+}
+
+.content hr {
+  border: 1px solid var(--main-light-green);
+  margin: 5%;
 }
