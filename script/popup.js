@@ -29,14 +29,13 @@ document.addEventListener("DOMContentLoaded", function () {
     removeHighlight();
     highlight(); 
 
-    const canvas = new OffscreenCanvas(16, 16);
-    const context = canvas.getContext('2d');
-    context.clearRect(0, 0, 16, 16);
-    context.fillStyle = '#00FF00';  // Green
-    context.fillRect(0, 0, 16, 16);
-    const imageData = context.getImageData(0, 0, 16, 16);
-    chrome.action.setIcon({imageData: imageData});
-    
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+      if (request.action === 'updateBadge') {
+        const count = request.count || 0;
+        chrome.action.setBadgeText({ text: count > 0 ? count.toString() : '' });
+        chrome.action.setBadgeBackgroundColor({ color: '#9eff00' });
+      }
+    });
   });
 
   async function toggleSwitchIsActive() {
