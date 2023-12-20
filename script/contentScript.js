@@ -10,6 +10,7 @@ async function highlightText(searchText, highlightColor, listId = null) {
 
   if (boolActive && searchText !== "") {
     const searchRegex = new RegExp(searchText, "gi");
+    
     const colorStyle = `background-color: ${highlightColor};`;
 
     function highlightTextNode(node) {

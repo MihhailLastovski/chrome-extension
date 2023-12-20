@@ -17,10 +17,10 @@ body {
   height: 500px;
 }
 
-button {
+/*button {
   padding: 8px 12px;
   cursor: pointer;
-}
+}*/
 
 a {
   color: var(--main-light-green);
@@ -123,15 +123,20 @@ input::placeholder {
   width: 200px;
 }
 
-.content #highlightBtn {
+.content #highlightBtn,
+button {
+  cursor: pointer;
+  padding: 8px 12px;
   background-color: var(--main-light-green);
 }
 
-.content #highlightBtn:hover {
+.content #highlightBtn:hover,
+button:hover {
   background-color: var(--main-medium-green);
 }
 
-.content #highlightBtn:active {
+.content #highlightBtn:active,
+button:active {
   background-color: var(--main-dark-green);
 }
 
@@ -157,7 +162,7 @@ input::placeholder {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--main-grey);
   cursor: pointer;
 }
 
@@ -165,8 +170,19 @@ input::placeholder {
   display: none; /* Скрыть радиокнопки */
 }
 
+.color-option input:checked + .color-option::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid black; /* Чёрная рамка при выборе радиокнопки */
+  box-sizing: border-box;
+}
+
 .content .color-option.green { background-color: var(--main-light-green); }
 .content .color-option.cyan { background-color: cyan; }
 .content .color-option.yellow { background-color: yellow; }
-.content .color-option.red { background-color: red; }
+.content .color-option.pink { background-color: pink; }
 .content .color-option.black { background-color: black; }

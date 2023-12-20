@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       listNameInput.value = "";
       wordsContainer.innerHTML = "";
+      window.location.href = "popup.html";
     } else {
       alert("Enter list name or words");
     }
