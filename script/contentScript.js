@@ -1,5 +1,3 @@
-var locale_HTML = document.body.innerHTML;
-
 async function highlightText(searchText, highlightColor, listId = null) {
   const resultOld = await new Promise((resolve, reject) => {
     chrome.storage.local.get("isActive", (result) => {
@@ -14,27 +12,28 @@ async function highlightText(searchText, highlightColor, listId = null) {
     const colorStyle = `background-color: ${highlightColor};`;
 
     function highlightTextNode(node) {
-
+      
       if (node.nodeType === Node.TEXT_NODE) {
         let text = node.nodeValue;
         if (searchRegex.test(text)) {
-          let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
-          if (listId) {
-            replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
+
+          if (node.parentNode.className !== "highlighted") {
+            let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
+            if (listId) {
+              replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
+            }         
+            const replacedText = text.replace(searchRegex, replacementText);      
+            const newNode = document.createElement("span");
+            newNode.innerHTML = replacedText;
+            node.parentNode.replaceChild(newNode, node);
           }
-          const replacedText = text.replace(searchRegex, replacementText);
-          const newNode = document.createElement("span");
-          newNode.innerHTML = replacedText;
-          node.parentNode.replaceChild(newNode, node);
+
         }
       } else if ( node.nodeType === Node.ELEMENT_NODE && node.childNodes && node.childNodes.length > 0) {
-        node.childNodes.forEach((childNode) => {
+        node.childNodes.forEach((childNode) => {  
           highlightTextNode(childNode);
         });
       }
-    }
-    if (listId === null) {
-      document.body.innerHTML = locale_HTML;
     }
     highlightTextNode(document.body);
   }
@@ -48,25 +47,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     highlightText(request.searchText, request.highlightColor, request.isActive);
   } else if (request.action === "removeHighlight") {
     const listId = request.listId;
-    if (listId) {
+    if (listId) { 
       document.querySelectorAll(`span[data-list-id="${listId}"].highlighted`).forEach((element) => {
-        const parent = element.parentNode;
-        while (element.firstChild) {
-          parent.insertBefore(element.firstChild, element);
-        }
-        parent.removeChild(element);
+        const { textContent } = element;
+        element.outerHTML = textContent;
       });
     }
     else {
-      // document.querySelectorAll("span.highlighted").forEach((element) => {
-      //   const parent = element.parentNode;
-      //   while (element.firstChild) {
-      //     parent.insertBefore(element.firstChild, element);
-      //   }
-      //   parent.removeChild(element);
-      // });
-      document.body.innerHTML = locale_HTML;
+      document.querySelectorAll("span.highlighted").forEach((element) => {
+        const { textContent } = element;
+        element.outerHTML = textContent;
+      });
     }
-    
   }
 });
