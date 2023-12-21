@@ -51,10 +51,6 @@ input::placeholder {
   background-color: var(--main-light-green);
 }
 
-.heading {
-  margin-left: 142.795px;
-}
-
 /* Toggle switch */
 .switch {
   position: relative;
@@ -170,3 +166,17 @@ input::placeholder {
 .content .color-option.yellow { background-color: yellow; }
 .content .color-option.red { background-color: red; }
 .content .color-option.black { background-color: black; }
+
+.toggleViewSwitch {
+  display: none; /* Скрыть оригинальный checkbox */
+}
+
+.toggleViewSwitch + label {
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 5%;
+}
+
+label i.fa.fa-sun-o {
+  display: none; /* Скрыть обе иконки изначально */
+}
