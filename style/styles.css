@@ -17,20 +17,6 @@ body {
   height: 500px;
 }
 
-button {
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-a {
-  color: var(--main-light-green);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
 input {
   padding: 8px;
   font-size: 14px;
@@ -123,19 +109,24 @@ input::placeholder {
   width: 200px;
 }
 
-.content #highlightBtn {
+.content #highlightBtn,
+button {
+  cursor: pointer;
+  padding: 8px 12px;
   background-color: var(--main-light-green);
 }
 
-.content #highlightBtn:hover {
+.content #highlightBtn:hover,
+button:hover {
   background-color: var(--main-medium-green);
 }
 
-.content #highlightBtn:active {
+.content #highlightBtn:active,
+button:active {
   background-color: var(--main-dark-green);
 }
 
-.content #highlightedCount {
+.content .divsWithText {
   margin-top: 5%;
   font-size: 17px;
   font-weight: bold;
@@ -144,4 +135,33 @@ input::placeholder {
 .content hr {
   border: 1px solid var(--main-light-green);
   margin: 5%;
+}
+
+.content .color-options {
+  justify-content: center;
+  margin-top: 5%;
+  display: flex;
+  gap: 10px; /* Расстояние между квадратиками */
+}
+
+.content .color-option {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--main-grey);
+  cursor: pointer;
+}
+
+.content .color-option input {
+  display: none; /* Скрыть радиокнопки */
+}
+
+.content .color-option.green { background-color: var(--main-light-green); }
+.content .color-option.cyan { background-color: cyan; }
+.content .color-option.yellow { background-color: yellow; }
+.content .color-option.pink { background-color: pink; }
+.content .color-option.black { background-color: black; }
+
+#newListBtn {
+  border-radius: 50%;
 }

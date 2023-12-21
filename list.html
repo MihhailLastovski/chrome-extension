@@ -4,21 +4,29 @@
 <head>
   <title>List management</title>
   <meta charset="UTF-8">
-  <script src="./script/listScript.js"></script>
-  <script src="./script/contentScript.js"></script>
   <link rel="stylesheet" type="text/css" href="style/styles.css">
+  <script src="./script/listScript.js"></script>
 </head>
 
 <body>
+  <div class="header">
+    <h1 class="heading">Highlight Off</h1>
+    <label class="switch">
+      <input class="toggleSwitch" type="checkbox">
+      <span class="slider"></span>
+    </label>
+  </div>
   <h1>List management</h1>
 
   <form id="addListForm">
     <input type="text" id="listNameInput" placeholder="List name">
-    <input type="text" id="wordInput" placeholder="Split by comma">
-    <button type="submit">Add list</button>
+    <div id="wordsContainer">
+    </div>
+    <input type="text" id="newWordInput" placeholder="Add new word">
+    <button type="button" id="addWordBtn">Add Word</button><br />
+
+    <button type="button" id="cancelBtn">Cancel</button>
+    <button type="submit" id="saveListBtn">Add</button>
   </form>
-
-  <ul id="wordLists"></ul>
 </body>
-
 </html>
