@@ -29,6 +29,7 @@ input::placeholder {
   color: var(--main-grey);
 }
 
+/* Header */
 .header {
   margin: -10px -10px 0 -10px;
   display: flex;
@@ -98,8 +99,8 @@ input::placeholder {
   transform: translateX(20px);
 }
 
+/* Content */
 .content {
-  /*justify-content: center;*/
   align-items: center;
   text-align: center;
   margin-top: 5%;
@@ -137,6 +138,7 @@ button:active {
   margin: 5%;
 }
 
+/* Radio buttons */
 .content .color-options {
   justify-content: center;
   margin-top: 5%;
@@ -149,19 +151,15 @@ button:active {
   width: 20px;
   height: 20px;
   border: 1px solid var(--main-grey);
-  /*border-radius: 50%;*/
   cursor: pointer;
 }
 
 .content .color-options input {
-  /*display: none;*/
-   /* Add if not using autoprefixer */
    -webkit-appearance: none;
-   /* Remove most all native input styles */
    appearance: none;
 }
 
-.content .color-options input:checked { /*+ label*/
+.content .color-options input:checked { 
   border: 2px solid var(--main-dark-green);
 }
 
@@ -171,6 +169,32 @@ button:active {
 .content .color-option.pink { background-color: pink; border-color: pink;}
 .content .color-option.black { background-color: black; border-color: black;}
 
-#newListBtn {
+/* Lists */
+.content #newListBtn {
+  margin-left: 5%;
   border-radius: 50%;
+  border: var(--main-white);
+  width: 35px;
+  height: 34px;
+  margin-bottom: 5%;
+}
+
+.content .wordListsItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid var(--main-light-green);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.content .wordListsItem .textContainer {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.content .wordListsItem .buttonsContainer {
+  display: flex;
+  gap: 10px;
 }
