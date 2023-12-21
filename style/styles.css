@@ -141,7 +141,7 @@ button:active {
   justify-content: center;
   margin-top: 5%;
   display: flex;
-  gap: 10px; /* Расстояние между квадратиками */
+  gap: 10px;
 }
 
 .content .color-option {
@@ -149,18 +149,27 @@ button:active {
   width: 20px;
   height: 20px;
   border: 1px solid var(--main-grey);
+  /*border-radius: 50%;*/
   cursor: pointer;
 }
 
-.content .color-option input {
-  display: none; /* Скрыть радиокнопки */
+.content .color-options input {
+  /*display: none;*/
+   /* Add if not using autoprefixer */
+   -webkit-appearance: none;
+   /* Remove most all native input styles */
+   appearance: none;
 }
 
-.content .color-option.green { background-color: var(--main-light-green); }
-.content .color-option.cyan { background-color: cyan; }
-.content .color-option.yellow { background-color: yellow; }
-.content .color-option.pink { background-color: pink; }
-.content .color-option.black { background-color: black; }
+.content .color-options input:checked { /*+ label*/
+  border: 2px solid var(--main-dark-green);
+}
+
+.content .color-options input { background-color: var(--main-light-green); border-color: var(--main-light-green);}
+.content .color-option.cyan { background-color: cyan; border-color: cyan;}
+.content .color-option.yellow { background-color: yellow; border-color: yellow;}
+.content .color-option.pink { background-color: pink; border-color: pink;}
+.content .color-option.black { background-color: black; border-color: black;}
 
 #newListBtn {
   border-radius: 50%;
