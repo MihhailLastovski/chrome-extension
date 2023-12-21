@@ -1,4 +1,14 @@
 document.addEventListener("DOMContentLoaded", function () {
+  const toggleSwitch = document.querySelector(".toggleSwitch");
+  const heading = document.querySelector(".heading");
+  let active;
+
+  const cancelBtn = document.getElementById("cancelBtn");
+  cancelBtn.addEventListener("click", function () {
+    window.location.href = "popup.html";
+  });
+
+
   const addListForm = document.getElementById("addListForm");
   const listNameInput = document.getElementById("listNameInput");
   const wordsContainer = document.getElementById("wordsContainer");
@@ -36,6 +46,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       listNameInput.value = "";
       wordsContainer.innerHTML = "";
+      window.location.href = "popup.html";
     } else {
       alert("Enter list name or words");
     }
@@ -87,5 +98,29 @@ document.addEventListener("DOMContentLoaded", function () {
     wordDiv.appendChild(wordInput);
 
     wordsContainer.appendChild(wordDiv);
+  }
+
+  //Костяк. Нужно заменить вызов функций импортом из файла т.к. этот же код прописан в другом файле
+  async function toggleSwitchIsActive() {
+    const result = await new Promise((resolve, reject) => {
+      chrome.storage.local.get("isActive", (result) => {
+        resolve(result);
+      });
+    });
+    console.log(result.isActive);
+    active = result.isActive;
+    updateUIState();
+    toggleSwitch.checked = active;  
+  }
+  toggleSwitchIsActive();
+  
+  toggleSwitch.addEventListener('change', function() {
+    active = !active;
+    chrome.storage.local.set({ isActive: active });
+    updateUIState();
+  });
+
+  function updateUIState() {
+    heading.innerText = active ? "Highlight On" : "Highlight Off";
   }
 });

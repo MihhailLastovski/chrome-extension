@@ -5,9 +5,17 @@
   <title>List management</title>
   <meta charset="UTF-8">
   <link rel="stylesheet" type="text/css" href="style/styles.css">
+  <script src="./script/listScript.js"></script>
 </head>
 
 <body>
+  <div class="header">
+    <h1 class="heading">Highlight Off</h1>
+    <label class="switch">
+      <input class="toggleSwitch" type="checkbox">
+      <span class="slider"></span>
+    </label>
+  </div>
   <h1>List management</h1>
 
   <form id="addListForm">
@@ -15,11 +23,10 @@
     <div id="wordsContainer">
     </div>
     <input type="text" id="newWordInput" placeholder="Add new word">
-    <button type="button" id="addWordBtn">Add Word</button>
-    <button type="submit" id="saveListBtn">Save List</button>
+    <button type="button" id="addWordBtn">Add Word</button><br />
+
+    <button type="button" id="cancelBtn">Cancel</button>
+    <button type="submit" id="saveListBtn">Add</button>
   </form>
-
-  <script src="./script/listScript.js"></script>
 </body>
-
 </html>

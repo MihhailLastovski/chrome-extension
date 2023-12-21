@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         console.log('Highlighted count:', result.count);
 
-        if (result) {
+        if (result.count) {
             counterElem.innerHTML = `Word counter: ${result.count}`;
         } else {
             counterElem.innerHTML = `Word counter: 0`;
