@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Pacifico|Roboto:300,700');
-
+/*
 :root {
   --main-light-green: #9eff00;
   --main-medium-green:  #7ecc00;
@@ -7,6 +7,24 @@
   --main-white: white;
   --main-black: #2f4d00;
   --main-grey: #ccc;
+}
+*/
+[data-theme="light"] {
+  --main-light-green: #9eff00;
+  --main-medium-green:  #7ecc00;
+  --main-dark-green: #5e9900;
+  --main-white: white;
+  --main-black: #2f4d00;
+  --main-grey: #ccc;
+}
+
+[data-theme="dark"] {
+  --main-light-green: #188100;
+  --main-medium-green: #126600;
+  --main-dark-green: #0c3300;
+  --main-black: #ffffff;
+  --main-white: #333;
+  --main-grey: #666;
 }
 
 body {
