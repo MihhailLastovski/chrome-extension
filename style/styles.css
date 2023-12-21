@@ -17,20 +17,6 @@ body {
   height: 500px;
 }
 
-/*button {
-  padding: 8px 12px;
-  cursor: pointer;
-}*/
-
-a {
-  color: var(--main-light-green);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
 input {
   padding: 8px;
   font-size: 14px;
@@ -140,7 +126,7 @@ button:active {
   background-color: var(--main-dark-green);
 }
 
-.content #highlightedCount {
+.content .divsWithText {
   margin-top: 5%;
   font-size: 17px;
   font-weight: bold;
@@ -170,19 +156,12 @@ button:active {
   display: none; /* Скрыть радиокнопки */
 }
 
-.color-option input:checked + .color-option::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  border: 2px solid black; /* Чёрная рамка при выборе радиокнопки */
-  box-sizing: border-box;
-}
-
 .content .color-option.green { background-color: var(--main-light-green); }
 .content .color-option.cyan { background-color: cyan; }
 .content .color-option.yellow { background-color: yellow; }
 .content .color-option.pink { background-color: pink; }
 .content .color-option.black { background-color: black; }
+
+#newListBtn {
+  border-radius: 50%;
+}

@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const heading = document.querySelector(".heading");
   const searchTextInput = document.getElementById("searchText");
   const highlightBtn = document.getElementById("highlightBtn");
+  const newListBtn = document.getElementById("newListBtn");
   let active;
 
   highlightBtn.addEventListener("click", function () {
@@ -171,4 +172,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // toggleSwitchIsActive(toggleSwitch, heading, searchTextInput, highlightBtn);
   // toggleSwitch.addEventListener('change', handleToggleSwitchChange(active, heading, searchTextInput, highlightBtn));
+
+  newListBtn.addEventListener("click", function () {
+    window.location.href = "list.html";
+  });
 });
