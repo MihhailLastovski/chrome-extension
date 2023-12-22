@@ -24,6 +24,7 @@ async function highlightText(searchText, highlightColor, listId = null) {
             }         
             const replacedText = text.replace(searchRegex, replacementText);      
             const newNode = document.createElement("span");
+            newNode.className = "highlighted";
             newNode.innerHTML = replacedText;
             node.parentNode.replaceChild(newNode, node);
           }
@@ -37,7 +38,7 @@ async function highlightText(searchText, highlightColor, listId = null) {
     }
     highlightTextNode(document.body);
   }
-  let highlightedCount = document.querySelectorAll('span.highlighted').length;
+  let highlightedCount = document.querySelectorAll('span.highlighted').length / 2;
   chrome.storage.local.set({count: highlightedCount});
   chrome.runtime.sendMessage({ action: 'updateBadge', count: highlightedCount });
 }
