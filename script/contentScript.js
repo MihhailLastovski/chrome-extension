@@ -39,6 +39,11 @@ async function highlightText(searchText, highlightColor, listId = null) {
     highlightTextNode(document.body);
   }
   let highlightedCount = document.querySelectorAll('span.highlighted').length / 2;
+  //super difficult secret code 
+  if (highlightedCount % 1 !==0) {
+    highlightedCount += 0.5;
+  }
+  //super difficult secret code 
   chrome.storage.local.set({count: highlightedCount});
   chrome.runtime.sendMessage({ action: 'updateBadge', count: highlightedCount });
 }
