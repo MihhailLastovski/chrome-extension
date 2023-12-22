@@ -229,3 +229,37 @@ button:active {
   display: flex;
   gap: 10px;
 }
+
+/* List.html - adding form*/
+.list-words {
+  border: 2px solid var(--main-light-green);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 5%;
+}
+
+.list-wordsItem {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+}
+
+.word-checkbox {
+  width: 25px;
+  order: -1;
+  margin-left: -20%;
+}
+
+.word-input {
+  border: none; /* Убирает рамку у второго input */
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  margin-left: -25%;
+  color: var(--main-black);
+  background-color: var(--main-white);
+}
+
+.word-input:focus {
+  outline: none;
+}
