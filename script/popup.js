@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const textContainer = document.createElement("div");
       textContainer.className = "textContainer";
       textContainer.textContent = list.name;
-      
+
 
       const buttons = document.createElement("div");
       buttons.className = "buttonsContainer"
