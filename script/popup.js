@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const heading = document.querySelector(".heading");
   const searchTextInput = document.getElementById("searchText");
   const highlightBtn = document.getElementById("highlightBtn");
+  const newListBtn = document.getElementById("newListBtn");
   let active;
 
   highlightBtn.addEventListener("click", function () {
@@ -48,26 +49,44 @@ document.addEventListener("DOMContentLoaded", function () {
   function renderWordLists(lists) {
     wordLists.innerHTML = "";
     lists.forEach((list) => {
-      const listItem = document.createElement("li");
-      listItem.textContent = list.name;
+      const listItem = document.createElement("div");   
+      listItem.className = "wordListsItem";
 
+      const textContainer = document.createElement("div");
+      textContainer.className = "textContainer";
+      textContainer.textContent = list.name;
+
+
+      const buttons = document.createElement("div");
+      buttons.className = "buttonsContainer"
       const enableButton = document.createElement("button");
-      enableButton.textContent = enabledLists.includes(list.id) ? "Off" : "On";
+      enableButton.innerHTML = enabledLists.includes(list.id) ? '<i class="fa fa-pause" aria-hidden="true"></i>' : '<i class="fa fa-play" aria-hidden="true"></i>';
       enableButton.addEventListener("click", function () {
         const enable = !enabledLists.includes(list.id);
         toggleWordList(list.id, enable);
         renderWordLists(lists);
       });
+      buttons.appendChild(enableButton);
+
 
       const deleteButton = document.createElement("button");
-      deleteButton.textContent = "Delete";
+      deleteButton.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
       deleteButton.addEventListener("click", function () {
         deleteWordList(list.id);
         renderWordLists(lists);
       });
+      buttons.appendChild(deleteButton);
 
-      listItem.appendChild(enableButton);
-      listItem.appendChild(deleteButton);
+
+      const updateButton = document.createElement("button");
+      updateButton.innerHTML = '<i class="fa fa-pencil" aria-hidden="true"></i>';
+      updateButton.addEventListener("click", function () {
+        
+      });
+      buttons.appendChild(updateButton);
+
+      listItem.appendChild(textContainer);
+      listItem.appendChild(buttons);
       wordLists.appendChild(listItem);
     });
   }
@@ -171,4 +190,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // toggleSwitchIsActive(toggleSwitch, heading, searchTextInput, highlightBtn);
   // toggleSwitch.addEventListener('change', handleToggleSwitchChange(active, heading, searchTextInput, highlightBtn));
+
+  newListBtn.addEventListener("click", function () {
+    window.location.href = "list.html";
+  });
 });

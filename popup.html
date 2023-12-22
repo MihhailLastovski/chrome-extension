@@ -29,31 +29,21 @@
     <button id="highlightBtn" disabled><i class="fa fa-search"></i></button>
     <br/>
     <div class="color-options">
-      <label class="color-option green">
-        <input type="radio" name="highlightColor" value="green" checked>
-      </label>
-      <label class="color-option cyan">
-        <input type="radio" name="highlightColor" value="cyan">
-      </label>
-      <label class="color-option yellow">
-        <input type="radio" name="highlightColor" value="yellow">
-      </label>  
-      <label class="color-option red">
-        <input type="radio" name="highlightColor" value="red">
-      </label>
-      <label class="color-option black">
-        <input type="radio" name="highlightColor" value="black">
-      </label>
+      <input type="radio" name="highlightColor" value="#9eff00" class="color-option green" checked>
+      <input type="radio" name="highlightColor" value="cyan" class="color-option cyan">
+      <input type="radio" name="highlightColor" value="yellow" class="color-option yellow">  
+      <input type="radio" name="highlightColor" value="pink" class="color-option pink">
+      <input type="radio" name="highlightColor" value="black" class="color-option black">
     </div>
     
     <hr>
-    <div id="highlightedCount">Word counter: 0</div>
+    <div class="divsWithText" id="highlightedCount">Word counter: 0</div>
     <hr> 
-    <i class="fa fa-search"></i>
-    <a id="createListBtn" href="list.html">Create New List</a>
-    <div id="allListsContainer">
-      <ul id="wordLists"></ul>
+    <div class="divsWithText">
+      <label>New List</label>
+      <button id="newListBtn"><i class="fa fa-plus" aria-hidden="true"></i></button>
     </div>
+    <div id="wordLists"></div>
   </div>
 </body>
 <script src="./script/styleScript.js"></script>

@@ -43,20 +43,6 @@ body {
   height: 500px;
 }
 
-button {
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-a {
-  color: var(--main-light-green);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
 input {
   padding: 8px;
   font-size: 14px;
@@ -69,6 +55,7 @@ input::placeholder {
   color: var(--main-grey);
 }
 
+/* Header */
 .header {
   margin: -10px -10px 0 -10px;
   display: flex;
@@ -77,6 +64,15 @@ input::placeholder {
   background-color: var(--main-light-green);
 }
 
+.toggleViewSwitch {
+  display: none;
+}
+
+.toggleViewSwitch + label {
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 5%; 
+}
 /* Toggle switch */
 .switch {
   position: relative;
@@ -134,8 +130,8 @@ input::placeholder {
   transform: translateX(20px);
 }
 
+/* Content */
 .content {
-  /*justify-content: center;*/
   align-items: center;
   text-align: center;
   margin-top: 5%;
@@ -145,19 +141,24 @@ input::placeholder {
   width: 200px;
 }
 
-.content #highlightBtn {
+.content #highlightBtn,
+button {
+  cursor: pointer;
+  padding: 8px 12px;
   background-color: var(--main-light-green);
 }
 
-.content #highlightBtn:hover {
+.content #highlightBtn:hover,
+button:hover {
   background-color: var(--main-medium-green);
 }
 
-.content #highlightBtn:active {
+.content #highlightBtn:active,
+button:active {
   background-color: var(--main-dark-green);
 }
 
-.content #highlightedCount {
+.content .divsWithText {
   margin-top: 5%;
   font-size: 17px;
   font-weight: bold;
@@ -168,38 +169,63 @@ input::placeholder {
   margin: 5%;
 }
 
+/* Radio buttons */
 .content .color-options {
   justify-content: center;
   margin-top: 5%;
   display: flex;
-  gap: 10px; /* Расстояние между квадратиками */
+  gap: 10px;
 }
 
 .content .color-option {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--main-grey);
   cursor: pointer;
 }
 
-.content .color-option input {
-  display: none; /* Скрыть радиокнопки */
+.content .color-options input {
+   -webkit-appearance: none;
+   appearance: none;
 }
 
-.content .color-option.green { background-color: var(--main-light-green); }
-.content .color-option.cyan { background-color: cyan; }
-.content .color-option.yellow { background-color: yellow; }
-.content .color-option.red { background-color: red; }
-.content .color-option.black { background-color: black; }
-
-
-.toggleViewSwitch {
-  display: none;
+.content .color-options input:checked { 
+  border: 2px solid var(--main-dark-green);
 }
 
-.toggleViewSwitch + label {
-  display: inline-block;
-  cursor: pointer;
+.content .color-options input { background-color: var(--main-light-green); border-color: var(--main-light-green);}
+.content .color-option.cyan { background-color: cyan; border-color: cyan;}
+.content .color-option.yellow { background-color: yellow; border-color: yellow;}
+.content .color-option.pink { background-color: pink; border-color: pink;}
+.content .color-option.black { background-color: black; border-color: black;}
+
+/* Lists */
+.content #newListBtn {
   margin-left: 5%;
+  border-radius: 50%;
+  border: var(--main-white);
+  width: 35px;
+  height: 34px;
+  margin-bottom: 5%;
+}
+
+.content .wordListsItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid var(--main-light-green);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.content .wordListsItem .textContainer {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.content .wordListsItem .buttonsContainer {
+  display: flex;
+  gap: 10px;
 }
