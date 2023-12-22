@@ -7,7 +7,6 @@ function calculateSettingAsThemeString({ localStorageTheme, systemSettingDark })
   if (systemSettingDark.matches) {
     return "dark";
   }
-
   return "light";
 }
 //обновляет хтмл тэг

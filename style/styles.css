@@ -9,6 +9,7 @@
   --main-grey: #ccc;
 }
 */
+
 [data-theme="light"] {
   --main-light-green: #9eff00;
   --main-medium-green:  #7ecc00;
@@ -16,6 +17,9 @@
   --main-white: white;
   --main-black: #2f4d00;
   --main-grey: #ccc;
+  label i.fa.fa-sun-o {
+    display: none;
+  }
 }
 
 [data-theme="dark"] {
@@ -25,6 +29,10 @@
   --main-black: #ffffff;
   --main-white: #333;
   --main-grey: #666;
+  label i.fa.fa-moon-o {
+    display: none; 
+  }
+  
 }
 
 body {
@@ -187,15 +195,11 @@ input::placeholder {
 
 
 .toggleViewSwitch {
-  display: none; /* Скрыть оригинальный checkbox */
+  display: none;
 }
 
 .toggleViewSwitch + label {
   display: inline-block;
   cursor: pointer;
   margin-left: 5%;
-}
-
-label i.fa.fa-moon-o {
-  display: none; /* Скрыть обе иконки изначально */
 }
