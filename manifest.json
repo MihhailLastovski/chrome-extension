@@ -3,6 +3,7 @@
   "name": "Highlight Text Extension",
   "version": "1.0",
   "permissions": [
+    "identity",
     "activeTab",
     "scripting",
     "storage",

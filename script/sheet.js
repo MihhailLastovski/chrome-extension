@@ -1,7 +1,6 @@
-// Replace these values with your API key and spreadsheet ID
 const API_KEY = 'AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk';
 const SPREADSHEET_ID = '1Rqf6joJtaZncIXbrejAhl73dPQouBsiVRD7w1qciupc';
-const RANGE = 'sheet1!A1:B5'; // Replace with your sheet name and range
+const RANGE = 'sheet1!A1:B5';
 
 function getData() {
     fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${RANGE}?key=${API_KEY}`)
