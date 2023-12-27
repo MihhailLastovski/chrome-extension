@@ -22,18 +22,30 @@
       <span class="slider"></span>
     </label>
   </div>
-  <h1>List management</h1>
+  <div class="content">
+    <form id="addListForm">
+      <label>
+        <div class="divsWithText">List name</div>
+        <br><input type="text" id="listNameInput">
+      </label>
+      <hr>
+      
+      
+        <div class="divsWithText">Words</div>
+        <div id="wordsContainer" class="list-words">
+          <div id="lastListItem" class="list-wordsItem">
+            <!--input class="word-checkbox" type="checkbox"-->
+            <input id="cbox" type="checkbox" class="word-checkbox">
+		        <label for="cbox"></label>
 
-  <form id="addListForm">
-    <input type="text" id="listNameInput" placeholder="List name">
-    <div id="wordsContainer">
-    </div>
-    <input type="text" id="newWordInput" placeholder="Add new word">
-    <button type="button" id="addWordBtn">Add Word</button><br />
+            <input class="word-input" type="text" id="newWordInput">       
+          </div>         
+        </div>
 
-    <button type="button" id="cancelBtn">Cancel</button>
-    <button type="submit" id="saveListBtn">Add</button>
-  </form>
+      <button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
+      <button type="submit" id="saveListBtn" class="listFormBtn">Add</button>
+    </form>
+  </div>
 </body>
 <script src="./script/styleScript.js"></script>
 </html>
