@@ -1,11 +1,38 @@
 @import url('https://fonts.googleapis.com/css?family=Pacifico|Roboto:300,700');
-
+/*
 :root {
   --main-light-green: #9eff00;
-  --main-dark-green:  #7ecc00;
+  --main-medium-green:  #7ecc00;
+  --main-dark-green: #5e9900;
   --main-white: white;
   --main-black: #2f4d00;
   --main-grey: #ccc;
+}
+*/
+
+[data-theme="light"] {
+  --main-light-green: #9eff00;
+  --main-medium-green:  #7ecc00;
+  --main-dark-green: #5e9900;
+  --main-white: white;
+  --main-black: #2f4d00;
+  --main-grey: #ccc;
+  label i.fa.fa-sun-o {
+    display: none;
+  }
+}
+
+[data-theme="dark"] {
+  --main-light-green: #188100;
+  --main-medium-green: #126600;
+  --main-dark-green: #0c3300;
+  --main-black: #ffffff;
+  --main-white: #333;
+  --main-grey: #666;
+  label i.fa.fa-moon-o {
+    display: none; 
+  }
+  
 }
 
 body {
@@ -14,20 +41,6 @@ body {
   font-family: 'Roboto', sans-serif;
   width: 400px;
   height: 500px;
-}
-
-button {
-  padding: 8px 12px;
-  cursor: pointer;
-}
-
-a {
-  color: var(--main-light-green);
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
 }
 
 input {
@@ -39,9 +52,10 @@ input {
 }
 
 input::placeholder {
-  color: #999;
+  color: var(--main-grey);
 }
 
+/* Header */
 .header {
   margin: -10px -10px 0 -10px;
   display: flex;
@@ -50,10 +64,15 @@ input::placeholder {
   background-color: var(--main-light-green);
 }
 
-.heading {
-  margin-left: 142.795px;
+.toggleViewSwitch {
+  display: none;
 }
 
+.toggleViewSwitch + label {
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 5%; 
+}
 /* Toggle switch */
 .switch {
   position: relative;
@@ -98,11 +117,11 @@ input::placeholder {
 }
 
 .toggleSwitch:checked + .slider {
-  background-color: var(--main-dark-green);
+  background-color: var(--main-medium-green);
 }
 
 .toggleSwitch:focus + .slider {
-  box-shadow: 0 0 1px var(--main-dark-green);
+  box-shadow: 0 0 1px var(--main-medium-green);
 }
 
 .toggleSwitch:checked + .slider:before {
@@ -111,9 +130,190 @@ input::placeholder {
   transform: translateX(20px);
 }
 
+/* Content */
 .content {
-  justify-content: center;
   align-items: center;
   text-align: center;
-  margin-top: 50%;
+  margin-top: 5%;
+}
+
+.content input {
+  width: 200px;
+}
+
+.content #highlightBtn,
+button {
+  cursor: pointer;
+  padding: 8px 12px;
+  background-color: var(--main-light-green);
+}
+
+.content #highlightBtn:hover,
+button:hover {
+  background-color: var(--main-medium-green);
+}
+
+.content #highlightBtn:active,
+button:active {
+  background-color: var(--main-dark-green);
+}
+
+.content .divsWithText {
+  margin-top: 5%;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.content hr {
+  border: 1px solid var(--main-light-green);
+  margin: 5%;
+}
+
+/* Radio buttons */
+.content .color-options {
+  justify-content: center;
+  margin-top: 5%;
+  display: flex;
+  gap: 10px;
+}
+
+.content .color-option {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--main-grey);
+  cursor: pointer;
+}
+
+.content .color-options input {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.content .color-options input:checked { 
+  border: 2px solid var(--main-dark-green);
+}
+
+.content .color-options input { background-color: var(--main-light-green); border-color: var(--main-light-green);}
+.content .color-option.cyan { background-color: cyan; border-color: cyan;}
+.content .color-option.yellow { background-color: yellow; border-color: yellow;}
+.content .color-option.pink { background-color: pink; border-color: pink;}
+.content .color-option.black { background-color: black; border-color: black;}
+
+/* Lists */
+.content #newListBtn {
+  margin-left: 5%;
+  border-radius: 50%;
+  border: var(--main-white);
+  width: 35px;
+  height: 34px;
+  margin-bottom: 5%;
+}
+
+.content .wordListsItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 2px solid var(--main-light-green);
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.content .wordListsItem .textContainer {
+  font-size: 17px;
+  font-weight: bold;
+}
+
+.content .wordListsItem .buttonsContainer {
+  display: flex;
+  gap: 10px;
+}
+
+/* List.html - adding form*/
+.list-words {
+  border: 2px solid var(--main-light-green);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 5%;
+}
+
+.list-wordsItem {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+}
+
+.word-checkbox { 
+  position: absolute; 
+  overflow: hidden; 
+  clip: rect(0 0 0 0); 
+  height: 1px;  
+  padding: 0; 
+  border: 0; 
+  margin-left: 5%;
+}
+
+.word-checkbox + label { 
+  position: relative; 
+  font-size: 14px; 
+  cursor: pointer; 
+  display: inline-flex; 
+  align-items: center; 
+  height: 22px; 
+  color: rgb(97, 97, 97); 
+
+  order: -1;
+}
+
+.word-checkbox + label::before { 
+  content: " "; 
+  display: inline-block; 
+  vertical-align: middle; 
+  margin-right: 3px; 
+  width: 20px; 
+  height: 20px; 
+  background-color: var(--main-white); 
+  border-width: 1px; 
+  border-style: solid; 
+  border-color: rgb(55, 148, 36); 
+  border-radius: 2px; 
+  box-shadow: none; 
+}
+
+.word-checkbox:checked + label::after { 
+  content: " "; 
+  background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNMTczLjg5OCA0MzkuNDA0bC0xNjYuNC0xNjYuNGMtOS45OTctOS45OTctOS45OTctMjYuMjA2IDAtMzYuMjA0bDM2LjIwMy0zNi4yMDRjOS45OTctOS45OTggMjYuMjA3LTkuOTk4IDM2LjIwNCAwTDE5MiAzMTIuNjkgNDMyLjA5NSA3Mi41OTZjOS45OTctOS45OTcgMjYuMjA3LTkuOTk3IDM2LjIwNCAwbDM2LjIwMyAzNi4yMDRjOS45OTcgOS45OTcgOS45OTcgMjYuMjA2IDAgMzYuMjA0bC0yOTQuNCAyOTQuNDAxYy05Ljk5OCA5Ljk5Ny0yNi4yMDcgOS45OTctMzYuMjA0LS4wMDF6Ii8+PC9zdmc+"); 
+  background-repeat: no-repeat; 
+  background-size: 10px 10px; 
+  background-position: center center; 
+  position: absolute; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  margin-left: 0px; 
+  left: 0px; 
+  top: 0px; 
+  text-align: center; 
+  background-color: var(--main-light-green); 
+  font-size: 10px; 
+  height: 22px; 
+  width: 22px; 
+}
+
+.word-input {
+  border: none; /* Убирает рамку у второго input */
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  color: var(--main-black);
+  background-color: var(--main-white);
+}
+
+.word-input:focus {
+  outline: none;
+}
+
+.listFormBtn {
+  margin-top: 5%;
 }
