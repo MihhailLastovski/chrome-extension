@@ -26,5 +26,8 @@
       "matches": ["<all_urls>"],
       "js": ["./script/contentScript.js"]
     }
-  ]
+  ],
+  "background": {
+    "service_worker": "./script/background.js"
+  }
 }

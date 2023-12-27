@@ -33,15 +33,17 @@
       
         <div class="divsWithText">Words</div>
         <div id="wordsContainer" class="list-words">
-          <div class="list-wordsItem">
-            <input class="word-checkbox" type="checkbox">
-            <input class="word-input" type="text" id="newWordInput">       
-          </div>
-        </div>
+          <div id="lastListItem" class="list-wordsItem">
+            <input id="cbox" type="checkbox" class="word-checkbox">
+		        <label for="cbox"></label>
 
-      <button type="button" id="addWordBtn">Add Word</button><br />
-      <button type="button" id="cancelBtn">Cancel</button>
-      <button type="submit" id="saveListBtn">Add</button>
+            <input class="word-input" type="text" id="newWordInput">       
+          </div>         
+        </div>
+        <button type="button" id="addWordBtn">Add Word</button><br />
+
+      <button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
+      <button type="submit" id="saveListBtn" class="listFormBtn">Add</button>
     </form>
   </div>
 </body>

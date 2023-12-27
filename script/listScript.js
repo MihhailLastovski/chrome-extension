@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
     window.location.href = "popup.html";
   });
 
+  
+
   const addListForm = document.getElementById("addListForm");
   const listNameInput = document.getElementById("listNameInput");
   const wordsContainer = document.getElementById("wordsContainer");
@@ -26,18 +28,22 @@ document.addEventListener("DOMContentLoaded", function () {
       listNameInput.value = listToEdit.name;
       wordsContainer.innerHTML = "";
 
-      // Создаем новый элемент перед существующими словами
       const newWordItem = document.createElement("div");
       newWordItem.className = "list-wordsItem";
 
+
       const newCheckbox = document.createElement("input");
-      newCheckbox.className = "word-checkbox";
       newCheckbox.type = "checkbox";
-
+      newCheckbox.checked = true;
+      newCheckbox.id = "cbox" + wordsContainer.childElementCount;
+      newCheckbox.className = "word-checkbox";
+  
+      const label = document.createElement("label");
+      label.htmlFor = newCheckbox.id;
+  
       const newWordInput = document.createElement("input");
-      newWordInput.className = "word-input";
       newWordInput.type = "text";
-
+      newWordInput.className = "word-input";
       newWordItem.appendChild(newCheckbox);
       newWordItem.appendChild(newWordInput);
       wordsContainer.appendChild(newWordItem);
@@ -103,11 +109,13 @@ document.addEventListener("DOMContentLoaded", function () {
       alert("Enter list name or words");
     }
   }
+  const lastListItem = document.getElementById("lastListItem");
+
 
   addListForm.addEventListener("submit", function (event) {
     event.preventDefault();
     const listName = listNameInput.value.trim();
-    const words = [];
+    let words = [];
 
     const wordDivs = document.querySelectorAll("#wordsContainer > div");
     wordDivs.forEach((wordDiv) => {
@@ -180,7 +188,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = enabled;
+    checkbox.id = "cbox" + wordsContainer.childElementCount;
     checkbox.className = "word-checkbox";
+
+    const label = document.createElement("label");
+    label.htmlFor = checkbox.id;
 
     const wordInput = document.createElement("input");
     wordInput.type = "text";
@@ -194,10 +206,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     wordDiv.appendChild(checkbox);
+    wordDiv.appendChild(label);
     wordDiv.appendChild(wordInput);
     wordDiv.appendChild(deleteBtn);
 
-    wordsContainer.appendChild(wordDiv);
+    wordsContainer.insertBefore(wordDiv, lastListItem)
   }
 
   const saveChangesBtn = document.getElementById("saveChangesBtn");
