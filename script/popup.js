@@ -8,13 +8,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const newListBtn = document.getElementById("newListBtn");
   let active;
 
+  const counterElem = document.getElementById('highlightedCount');
+
   highlightBtn.addEventListener("click", function () {
     let searchText = searchTextInput.value.trim();
     selectedColor = document.querySelector('input[name="highlightColor"]:checked').value;
 
+    
+
     function removeHighlight() {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: "removeHighlight" });
+        chrome.tabs.sendMessage(tabs[0].id, { action: "removeHighlight" });       
       });
     }
 
@@ -33,14 +37,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     removeHighlight();
     highlight(); 
-
-    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-      if (request.action === 'updateBadge') {
-        const count = request.count || 0;
-        chrome.action.setBadgeText({ text: count > 0 ? count.toString() : '' });
-        chrome.action.setBadgeBackgroundColor({ color: '#9eff00' });
-      }
-    });
+  });
+  
+  chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.action === 'updateBadge') {
+      const count = request.count || 0;
+      chrome.action.setBadgeText({ text: count > 0 ? count.toString() : '' });
+      chrome.action.setBadgeBackgroundColor({ color: '#9eff00' });
+      counterElem.innerHTML = `Word counter: ${count}`;
+      chrome.storage.local.set({count: count});
+    }
   });
 
   const wordLists = document.getElementById("wordLists");
@@ -199,4 +205,16 @@ document.addEventListener("DOMContentLoaded", function () {
   newListBtn.addEventListener("click", function () {
     window.location.href = "list.html";
   });
+ 
+
+  async function testt() {
+    const result = await new Promise((resolve, reject) => {
+      chrome.storage.local.get("count", (result) => {
+        resolve(result);
+      });
+    });
+    counterElem.innerHTML = `Word counter: ${result.count}`;
+  }
+  testt();
+
 });
