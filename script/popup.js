@@ -1,5 +1,5 @@
 //import { toggleSwitchIsActive, handleToggleSwitchChange } from './script/header.mjs';
-
+let selectedColor;
 document.addEventListener("DOMContentLoaded", function () {
   const toggleSwitch = document.querySelector(".toggleSwitch");
   const heading = document.querySelector(".heading");
@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   highlightBtn.addEventListener("click", function () {
     let searchText = searchTextInput.value.trim();
-    let selectedColor = document.querySelector('input[name="highlightColor"]:checked').value;
+    selectedColor = document.querySelector('input[name="highlightColor"]:checked').value;
 
     function removeHighlight() {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const updateButton = document.createElement("button");
       updateButton.innerHTML = '<i class="fa fa-pencil" aria-hidden="true"></i>';
       updateButton.addEventListener("click", function () {
-        
+        window.location.href = `list.html?listId=${list.id}`;
       });
       buttons.appendChild(updateButton);
 
@@ -107,12 +107,9 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   function toggleWordList(listId, enable) {
-    function removeHighlight(listId) {
+    function removeHighlight() {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {
-          action: "removeHighlight",
-          listId,
-        });
+        chrome.tabs.sendMessage(tabs[0].id, { action: "removeHighlight", listId: listId });
       });
     }
 
@@ -133,31 +130,39 @@ document.addEventListener("DOMContentLoaded", function () {
     chrome.storage.local.get("wordLists", function (data) {
       const lists = data.wordLists || [];
       const listToHighlight = lists.find((list) => list.id === listId);
-
+  
       if (listToHighlight) {
-        listToHighlight.words.forEach((wordObj) => {
+        const sortedWords = listToHighlight.words.sort((a, b) => {
+          return b.word.length - a.word.length;
+        });
+  
+        sortedWords.forEach((wordObj) => {
           const searchText = wordObj.word.trim();
-          chrome.tabs.query(
-            { active: true, currentWindow: true },
-            function (tabs) {
-              chrome.scripting.executeScript({
-                target: { tabId: tabs[0].id },
-                function: highlightText,
-                args: [searchText, listId],
-              });
-              highlightText(searchText);
-            }
-          );
+          chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+            chrome.scripting.executeScript({
+              target: { tabId: tabs[0].id },
+              files: ["./script/contentScript.js"],
+            });
+            chrome.tabs.sendMessage(tabs[0].id, {
+              action: "highlight",
+              searchText: searchText,
+              highlightColor: selectedColor,
+              listId: listId,
+            });
+          });
         });
       }
     });
   }
+  
 
   function deleteWordList(listId) {
     chrome.storage.local.get("wordLists", function (data) {
       let lists = data.wordLists || [];
       let updatedLists = lists.filter((list) => list.id !== listId);
-
+      chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, { action: "removeHighlight", listId: listId });
+      });
       chrome.storage.local.set({ wordLists: updatedLists }, function () {
         getAllWordLists(renderWordLists);
       });
