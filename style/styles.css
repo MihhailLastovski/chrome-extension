@@ -313,3 +313,7 @@ button:active {
 .word-input:focus {
   outline: none;
 }
+
+.listFormBtn {
+  margin-top: 5%;
+}
