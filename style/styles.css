@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Pacifico|Roboto:300,700');
-
+/*
 :root {
   --main-light-green: #9eff00;
   --main-medium-green:  #7ecc00;
@@ -7,6 +7,32 @@
   --main-white: white;
   --main-black: #2f4d00;
   --main-grey: #ccc;
+}
+*/
+
+[data-theme="light"] {
+  --main-light-green: #9eff00;
+  --main-medium-green:  #7ecc00;
+  --main-dark-green: #5e9900;
+  --main-white: white;
+  --main-black: #2f4d00;
+  --main-grey: #ccc;
+  label i.fa.fa-sun-o {
+    display: none;
+  }
+}
+
+[data-theme="dark"] {
+  --main-light-green: #188100;
+  --main-medium-green: #126600;
+  --main-dark-green: #0c3300;
+  --main-black: #ffffff;
+  --main-white: #333;
+  --main-grey: #666;
+  label i.fa.fa-moon-o {
+    display: none; 
+  }
+  
 }
 
 body {
@@ -38,10 +64,15 @@ input::placeholder {
   background-color: var(--main-light-green);
 }
 
-.heading {
-  margin-left: 142.795px;
+.toggleViewSwitch {
+  display: none;
 }
 
+.toggleViewSwitch + label {
+  display: inline-block;
+  cursor: pointer;
+  margin-left: 5%; 
+}
 /* Toggle switch */
 .switch {
   position: relative;
@@ -197,4 +228,38 @@ button:active {
 .content .wordListsItem .buttonsContainer {
   display: flex;
   gap: 10px;
+}
+
+/* List.html - adding form*/
+.list-words {
+  border: 2px solid var(--main-light-green);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 5%;
+}
+
+.list-wordsItem {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+}
+
+.word-checkbox {
+  width: 25px;
+  order: -1;
+  margin-left: -20%;
+}
+
+.word-input {
+  border: none; /* Убирает рамку у второго input */
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  margin-left: -25%;
+  color: var(--main-black);
+  background-color: var(--main-white);
+}
+
+.word-input:focus {
+  outline: none;
 }

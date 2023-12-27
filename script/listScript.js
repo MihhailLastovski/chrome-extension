@@ -21,8 +21,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const wordDivs = document.querySelectorAll("#wordsContainer > div");
     wordDivs.forEach((wordDiv) => {
-      const checkbox = wordDiv.querySelector(".word-input");
-      const wordInput = wordDiv.querySelector("input[type='text']");
+      const checkbox = wordDiv.querySelector(".word-checkbox");
+      const wordInput = wordDiv.querySelector(".word-input");
 
       const word = wordInput.value.trim(); 
       const enabled = checkbox.checked;
@@ -83,16 +83,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function addWord(word) {
     const wordDiv = document.createElement("div");
+    wordDiv.className ="list-wordsItem";
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = true;
-    checkbox.className = "word-input";
+    checkbox.className = "word-checkbox";
 
     const wordInput = document.createElement("input");
     wordInput.type = "text";
     wordInput.value = word;
     wordInput.readOnly = true; 
+    wordInput.className = "word-input";
 
     wordDiv.appendChild(checkbox);
     wordDiv.appendChild(wordInput);

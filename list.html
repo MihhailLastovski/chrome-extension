@@ -1,32 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html data-theme="light">
 
 <head>
   <title>List management</title>
   <meta charset="UTF-8">
-  <link rel="stylesheet" type="text/css" href="style/styles.css">
+  <link id="styleLink" rel="stylesheet" type="text/css" href="style/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <script src="./script/listScript.js"></script>
 </head>
 
 <body>
   <div class="header">
+    <input class="toggleViewSwitch" type="checkbox" id="darkModeToggle">
+    <label for="darkModeToggle">
+      <i class="fa fa-sun-o fa-3x" aria-hidden="true"></i>
+      <i class="fa fa-moon-o fa-3x" aria-hidden="true"></i>
+    </label>
     <h1 class="heading">Highlight Off</h1>
     <label class="switch">
       <input class="toggleSwitch" type="checkbox">
       <span class="slider"></span>
     </label>
   </div>
-  <h1>List management</h1>
+  <div class="content">
+    <form id="addListForm">
+      <label>
+        <div class="divsWithText">List name</div>
+        <br><input type="text" id="listNameInput">
+      </label>
+      <hr>
+      
+      
+        <div class="divsWithText">Words</div>
+        <div id="wordsContainer" class="list-words">
+          <div class="list-wordsItem">
+            <input class="word-checkbox" type="checkbox">
+            <input class="word-input" type="text" id="newWordInput">       
+          </div>
+        </div>
 
-  <form id="addListForm">
-    <input type="text" id="listNameInput" placeholder="List name">
-    <div id="wordsContainer">
-    </div>
-    <input type="text" id="newWordInput" placeholder="Add new word">
-    <button type="button" id="addWordBtn">Add Word</button><br />
-
-    <button type="button" id="cancelBtn">Cancel</button>
-    <button type="submit" id="saveListBtn">Add</button>
-  </form>
+      <button type="button" id="addWordBtn">Add Word</button><br />
+      <button type="button" id="cancelBtn">Cancel</button>
+      <button type="submit" id="saveListBtn">Add</button>
+    </form>
+  </div>
 </body>
+<script src="./script/styleScript.js"></script>
 </html>
