@@ -14,46 +14,46 @@ document.addEventListener("DOMContentLoaded", function () {
   const newWordInput = document.getElementById("newWordInput");
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const listId = urlParams.get("listId");
+  const listId = urlParams.get('listId');
 
   chrome.storage.local.get("wordLists", function (data) {
     let lists = data.wordLists || [];
     const listIndex = lists.findIndex((list) => list.id === listId);
-
+  
     if (listIndex !== -1) {
       const listToEdit = lists[listIndex];
-
+  
       listNameInput.value = listToEdit.name;
       wordsContainer.innerHTML = "";
-
+  
       // Создаем новый элемент перед существующими словами
       const newWordItem = document.createElement("div");
       newWordItem.className = "list-wordsItem";
-
+      
       const newCheckbox = document.createElement("input");
       newCheckbox.className = "word-checkbox";
       newCheckbox.type = "checkbox";
-
+      
       const newWordInput = document.createElement("input");
       newWordInput.className = "word-input";
       newWordInput.type = "text";
-
+      
       newWordItem.appendChild(newCheckbox);
       newWordItem.appendChild(newWordInput);
       wordsContainer.appendChild(newWordItem);
-
-      listToEdit.words.forEach((wordObj) => {
-        if (wordObj.word.trim() !== "") {
-          addWord(wordObj.word, wordObj.enabled);
-        }
-      });
-
+  
+       listToEdit.words.forEach((wordObj) => {
+      if (wordObj.word.trim() !== "") { // Проверяем, что слово не пустое
+        addWord(wordObj.word, wordObj.enabled);
+      }
+    });
+  
       const saveChangesBtn = document.createElement("button");
       saveChangesBtn.textContent = "Save Changes";
       saveChangesBtn.addEventListener("click", function () {
         saveEditedList(listIndex, lists);
       });
-
+  
       addListForm.appendChild(saveChangesBtn);
       newWordInput.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
@@ -64,8 +64,8 @@ document.addEventListener("DOMContentLoaded", function () {
             newWordInput.value = "";
           }
         }
-      });
-
+      });  
+      
       addWordBtn.addEventListener("click", function () {
         const word = newWordInput.value.trim();
         if (word !== "") {
@@ -74,7 +74,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
     }
+    
   });
+  
+  
 
   function saveEditedList(index, lists) {
     const listName = listNameInput.value.trim();
@@ -98,7 +101,8 @@ document.addEventListener("DOMContentLoaded", function () {
       lists[index].name = listName;
       lists[index].words = editedWords;
 
-      chrome.storage.local.set({ wordLists: lists }, function () {});
+      chrome.storage.local.set({ wordLists: lists }, function () {
+      });
     } else {
       alert("Enter list name or words");
     }
@@ -114,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const checkbox = wordDiv.querySelector(".word-checkbox");
       const wordInput = wordDiv.querySelector(".word-input");
 
-      const word = wordInput.value.trim();
+      const word = wordInput.value.trim(); 
       const enabled = checkbox.checked;
 
       if (word !== "") {
@@ -132,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
           name: listName,
           words: words,
         };
-
+        
         saveWordList(newList);
       } else {
       }
@@ -163,8 +167,8 @@ document.addEventListener("DOMContentLoaded", function () {
         newWordInput.value = "";
       }
     }
-  });
-
+  });  
+  
   addWordBtn.addEventListener("click", function () {
     const word = newWordInput.value.trim();
     if (word !== "") {
@@ -172,33 +176,36 @@ document.addEventListener("DOMContentLoaded", function () {
       newWordInput.value = "";
     }
   });
+  
 
   function addWord(word, enabled = true) {
     const wordDiv = document.createElement("div");
     wordDiv.className = "list-wordsItem";
-
+  
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = enabled;
     checkbox.className = "word-checkbox";
-
+  
     const wordInput = document.createElement("input");
     wordInput.type = "text";
     wordInput.value = word;
     wordInput.className = "word-input";
-
+  
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Delete";
     deleteBtn.addEventListener("click", function () {
       wordDiv.remove();
     });
-
+  
     wordDiv.appendChild(checkbox);
     wordDiv.appendChild(wordInput);
     wordDiv.appendChild(deleteBtn);
-
+  
     wordsContainer.appendChild(wordDiv);
   }
+  
+
 
   const saveChangesBtn = document.getElementById("saveChangesBtn");
   if (saveChangesBtn) {
@@ -229,11 +236,11 @@ document.addEventListener("DOMContentLoaded", function () {
     console.log(result.isActive);
     active = result.isActive;
     updateUIState();
-    toggleSwitch.checked = active;
+    toggleSwitch.checked = active;  
   }
   toggleSwitchIsActive();
-
-  toggleSwitch.addEventListener("change", function () {
+  
+  toggleSwitch.addEventListener('change', function() {
     active = !active;
     chrome.storage.local.set({ isActive: active });
     updateUIState();
