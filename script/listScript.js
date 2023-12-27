@@ -8,16 +8,19 @@ document.addEventListener("DOMContentLoaded", function () {
     window.location.href = "popup.html";
   });
 
+  
 
   const addListForm = document.getElementById("addListForm");
   const listNameInput = document.getElementById("listNameInput");
   const wordsContainer = document.getElementById("wordsContainer");
   const newWordInput = document.getElementById("newWordInput");
+  const lastListItem = document.getElementById("lastListItem");
+
 
   addListForm.addEventListener("submit", function (event) {
     event.preventDefault();
     const listName = listNameInput.value.trim();
-    const words = [];
+    let words = [];
 
     const wordDivs = document.querySelectorAll("#wordsContainer > div");
     wordDivs.forEach((wordDiv) => {
@@ -72,15 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  const addWordBtn = document.getElementById("addWordBtn");
-  addWordBtn.addEventListener("click", function () {
-    const word = newWordInput.value.trim();
-    if (word !== "") {
-      addWord(word);
-      newWordInput.value = "";
-    }
-  });
-
   function addWord(word) {
     const wordDiv = document.createElement("div");
     wordDiv.className ="list-wordsItem";
@@ -88,7 +82,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = true;
+    checkbox.id = "cbox" + wordsContainer.childElementCount;
     checkbox.className = "word-checkbox";
+
+    const label = document.createElement("label");
+    label.htmlFor = checkbox.id;
 
     const wordInput = document.createElement("input");
     wordInput.type = "text";
@@ -97,9 +95,10 @@ document.addEventListener("DOMContentLoaded", function () {
     wordInput.className = "word-input";
 
     wordDiv.appendChild(checkbox);
+    wordDiv.appendChild(label);
     wordDiv.appendChild(wordInput);
 
-    wordsContainer.appendChild(wordDiv);
+    wordsContainer.insertBefore(wordDiv, lastListItem)
   }
 
   //Костяк. Нужно заменить вызов функций импортом из файла т.к. этот же код прописан в другом файле
