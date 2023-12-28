@@ -213,7 +213,11 @@ document.addEventListener("DOMContentLoaded", function () {
         resolve(result);
       });
     });
-    counterElem.innerHTML = `Word counter: ${result.count}`;
+    if (result.count) {
+      counterElem.innerHTML = `Word counter: ${result.count}`
+    } else {
+      counterElem.innerHTML = `Word counter: 0`;
+    }
   }
   testt();
 
