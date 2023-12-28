@@ -143,23 +143,26 @@ document.addEventListener("DOMContentLoaded", function () {
         });
   
         sortedWords.forEach((wordObj) => {
-          const searchText = wordObj.word.trim();
-          chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-            chrome.scripting.executeScript({
-              target: { tabId: tabs[0].id },
-              files: ["./script/contentScript.js"],
+          if (wordObj.enabled) { 
+            const searchText = wordObj.word.trim();
+            chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+              chrome.scripting.executeScript({
+                target: { tabId: tabs[0].id },
+                files: ["./script/contentScript.js"],
+              });
+              chrome.tabs.sendMessage(tabs[0].id, {
+                action: "highlight",
+                searchText: searchText,
+                highlightColor: selectedColor,
+                listId: listId,
+              });
             });
-            chrome.tabs.sendMessage(tabs[0].id, {
-              action: "highlight",
-              searchText: searchText,
-              highlightColor: selectedColor,
-              listId: listId,
-            });
-          });
+          }
         });
       }
     });
   }
+  
   
 
   function deleteWordList(listId) {
