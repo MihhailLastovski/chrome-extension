@@ -3,6 +3,7 @@
   "name": "Highlight Text Extension",
   "version": "1.0",
   "permissions": [
+    "identity",
     "activeTab",
     "scripting",
     "storage",
@@ -21,6 +22,12 @@
     "48": "images/icon48.png",
     "128": "images/icon128.png"
   },
+  "web_accessible_resources": [
+    {
+      "resources": ["sheet.html", "./script/sheet.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
@@ -30,4 +37,5 @@
   "background": {
     "service_worker": "./script/background.js"
   }
+
 }
