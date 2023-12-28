@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.location.href = "popup.html";
   });
 
-  
+  const lastListItem = document.getElementById("lastListItem");
 
   const addListForm = document.getElementById("addListForm");
   const listNameInput = document.getElementById("listNameInput");
@@ -18,6 +18,17 @@ document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(queryString);
   const listId = urlParams.get("listId");
 
+
+
+
+
+
+
+
+
+
+
+
   chrome.storage.local.get("wordLists", function (data) {
     let lists = data.wordLists || [];
     const listIndex = lists.findIndex((list) => list.id === listId);
@@ -26,27 +37,26 @@ document.addEventListener("DOMContentLoaded", function () {
       const listToEdit = lists[listIndex];
 
       listNameInput.value = listToEdit.name;
-      wordsContainer.innerHTML = "";
+      // wordsContainer.innerHTML = "";
 
-      const newWordItem = document.createElement("div");
-      newWordItem.className = "list-wordsItem";
+      // const newWordItem = document.createElement("div");
+      // newWordItem.className = "list-wordsItem";
 
-
-      const newCheckbox = document.createElement("input");
-      newCheckbox.type = "checkbox";
-      newCheckbox.checked = true;
-      newCheckbox.id = "cbox" + wordsContainer.childElementCount;
-      newCheckbox.className = "word-checkbox";
+      // const newCheckbox = document.createElement("input");
+      // newCheckbox.type = "checkbox";
+      // newCheckbox.checked = true;
+      // newCheckbox.id = "cbox";
+      // newCheckbox.className = "word-checkbox";
   
-      const label = document.createElement("label");
-      label.htmlFor = newCheckbox.id;
+      // const label = document.createElement("label");
+      // label.htmlFor = newCheckbox.id;
   
-      const newWordInput = document.createElement("input");
-      newWordInput.type = "text";
-      newWordInput.className = "word-input";
-      newWordItem.appendChild(newCheckbox);
-      newWordItem.appendChild(newWordInput);
-      wordsContainer.appendChild(newWordItem);
+      // const newWordInput = document.createElement("input");
+      // newWordInput.type = "text";
+      // newWordInput.className = "word-input";
+      // newWordItem.appendChild(newCheckbox);
+      // newWordItem.appendChild(newWordInput);
+      // wordsContainer.appendChild(newWordItem);
 
       listToEdit.words.forEach((wordObj) => {
         if (wordObj.word.trim() !== "") {
@@ -72,13 +82,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
 
-      addWordBtn.addEventListener("click", function () {
-        const word = newWordInput.value.trim();
-        if (word !== "") {
-          addWord(word);
-          newWordInput.value = "";
-        }
-      });
+      // addWordBtn.addEventListener("click", function () {
+      //   const word = newWordInput.value.trim();
+      //   if (word !== "") {
+      //     addWord(word);
+      //     newWordInput.value = "";
+      //   }
+      // });
     }
   });
 
@@ -109,8 +119,6 @@ document.addEventListener("DOMContentLoaded", function () {
       alert("Enter list name or words");
     }
   }
-  const lastListItem = document.getElementById("lastListItem");
-
 
   addListForm.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -173,13 +181,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  addWordBtn.addEventListener("click", function () {
-    const word = newWordInput.value.trim();
-    if (word !== "") {
-      addWord(word);
-      newWordInput.value = "";
-    }
-  });
+  // addWordBtn.addEventListener("click", function () {
+  //   const word = newWordInput.value.trim();
+  //   if (word !== "") {
+  //     addWord(word);
+  //     newWordInput.value = "";
+  //   }
+  // });
 
   function addWord(word, enabled = true) {
     const wordDiv = document.createElement("div");
@@ -221,17 +229,17 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Добавляем обработчик события для добавления нового слова
-  const addWordForm = document.getElementById("addWordForm");
-  if (addWordForm) {
-    addWordForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      const newWord = newWordInput.value.trim();
-      if (newWord !== "") {
-        addWord(newWord);
-        newWordInput.value = "";
-      }
-    });
-  }
+  // const addWordForm = document.getElementById("addWordForm");
+  // if (addWordForm) {
+  //   addWordForm.addEventListener("submit", function (event) {
+  //     event.preventDefault();
+  //     const newWord = newWordInput.value.trim();
+  //     if (newWord !== "") {
+  //       addWord(newWord);
+  //       newWordInput.value = "";
+  //     }
+  //   });
+  // }
 
   async function toggleSwitchIsActive() {
     const result = await new Promise((resolve, reject) => {
