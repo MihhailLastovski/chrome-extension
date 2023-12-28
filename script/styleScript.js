@@ -15,7 +15,6 @@ function updateThemeOnHtmlEl({ theme }) {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  chrome.storage.local.set({ "theme": "light" });
   const darkModeToggle = document.getElementById("darkModeToggle");
   const systemSettingDark = window.matchMedia("(prefers-color-scheme: dark)");
 
