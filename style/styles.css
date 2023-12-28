@@ -1,21 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Pacifico|Roboto:300,700');
-/*
-:root {
-  --main-light-green: #9eff00;
-  --main-medium-green:  #7ecc00;
-  --main-dark-green: #5e9900;
-  --main-white: white;
-  --main-black: #2f4d00;
-  --main-grey: #ccc;
-}
-*/
 
 [data-theme="light"] {
-  --main-light-green: #9eff00;
-  --main-medium-green:  #7ecc00;
-  --main-dark-green: #5e9900;
-  --main-white: white;
-  --main-black: #2f4d00;
+  --main-light-green: #b3ff99;
+  --main-medium-green: #8cff66;
+  --main-dark-green: #2db300;
+  --main-white: #ecffe6;
+  --main-black: #061a00;
   --main-grey: #ccc;
   label i.fa.fa-sun-o {
     display: none;
@@ -23,11 +13,11 @@
 }
 
 [data-theme="dark"] {
-  --main-light-green: #188100;
-  --main-medium-green: #126600;
-  --main-dark-green: #0c3300;
-  --main-black: #ffffff;
-  --main-white: #333;
+  --main-light-green: #2db300;
+  --main-medium-green: #8cff66;
+  --main-dark-green: #b3ff99;
+  --main-black: #ecffe6;
+  --main-white: #061a00;
   --main-grey: #666;
   label i.fa.fa-moon-o {
     display: none; 
@@ -146,6 +136,7 @@ button {
   cursor: pointer;
   padding: 8px 12px;
   background-color: var(--main-light-green);
+  border-radius: 5px;
 }
 
 .content #highlightBtn:hover,
@@ -274,9 +265,9 @@ button:active {
   width: 20px; 
   height: 20px; 
   background-color: var(--main-white); 
-  border-width: 1px; 
+  border-width: 2px; 
   border-style: solid; 
-  border-color: rgb(55, 148, 36); 
+  border-color: var(--main-medium-green); 
   border-radius: 2px; 
   box-shadow: none; 
 }
@@ -295,7 +286,7 @@ button:active {
   left: 0px; 
   top: 0px; 
   text-align: center; 
-  background-color: var(--main-light-green); 
+  background-color: var(--main-medium-green); 
   font-size: 10px; 
   height: 22px; 
   width: 22px; 
