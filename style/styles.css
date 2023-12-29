@@ -13,11 +13,11 @@
 }
 
 [data-theme="dark"] {
-  --main-light-green: #2db300;
-  --main-medium-green: #8cff66;
-  --main-dark-green: #b3ff99;
+  --main-light-green: #4e7043;
+  --main-medium-green: #458131;
+  --main-dark-green: #3c931f;
   --main-black: #ecffe6;
-  --main-white: #061a00;
+  --main-white: black;
   --main-grey: #666;
   label i.fa.fa-moon-o {
     display: none; 
@@ -46,7 +46,13 @@ input::placeholder {
 }
 
 h2 {
-  text-align: center;
+  margin-left: 5%;
+  margin-top: 5%;
+}
+
+p {
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 /* Header */
@@ -186,14 +192,14 @@ hr {
 }
 
 .content .color-options input:checked { 
-  border: 2px solid var(--main-dark-green);
+  border: 2px solid var(--main-white);
 }
 
-.content .color-options input { background-color: var(--main-light-green); border-color: var(--main-light-green);}
+.content .color-option.green { background-color: #b3ff99; border-color: #b3ff99;}
 .content .color-option.cyan { background-color: cyan; border-color: cyan;}
 .content .color-option.yellow { background-color: yellow; border-color: yellow;}
 .content .color-option.pink { background-color: pink; border-color: pink;}
-.content .color-option.black { background-color: black; border-color: black;}
+.content .color-option.blueviolet { background-color: blueviolet; border-color: blueviolet;}
 
 /* Lists */
 .content #newListBtn {
@@ -317,4 +323,14 @@ hr {
 
 .radioLabel {
   align-items: center;
+}
+
+.inputBoxes {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.inputBoxes input {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 5%; /* Добавляем отступ между input внутри блока */
 }

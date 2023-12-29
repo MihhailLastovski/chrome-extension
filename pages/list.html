@@ -22,30 +22,23 @@
       <input class="toggleSwitch" type="checkbox">
       <span class="slider"></span>
     </label>
-  </div>
+  </div> 
   <div class="content">
     <form id="addListForm">
-      <label>
-        <div class="divsWithText">List name</div>
-        <br><input type="text" id="listNameInput">
-      </label>
+      
+      <input type="text" id="listNameInput" placeholder="List name" required>
       <hr>
-
-
       <div class="divsWithText">Words</div>
       <div id="wordsContainer" class="list-words">
         <div id="lastListItem" class="list-wordsItem">
           <input id="cbox" type="checkbox" class="word-checkbox">
           <label for="cbox"></label>
-
           <input class="word-input" type="text" id="newWordInput">
         </div>
       </div>
-
       <button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
       <button type="submit" id="saveListBtn" class="listFormBtn">Add</button>
     </form>
   </div>
 </body>
-
 </html>

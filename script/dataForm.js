@@ -6,9 +6,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const createListBtn = document.getElementById('createListBtn');
     const cancelBtn = document.getElementById('cancelBtn');
     const userData = document.getElementById('userData');
+    const buttonsDiv = document.getElementById('buttonsDiv');
     const radioButtons = document.querySelectorAll("label.radioLabel input");
     var selectedButton = null;
-    var linkInput, sheetInput, rangeInput;
+    var div, linkInput, sheetInput, rangeInput;
 
     radioButtons.forEach(btn => {
         btn.addEventListener('change', function() {
@@ -16,7 +17,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 selectedButton = btn;               
             }
             if (btn.value === "external") {
-                var form = document.createElement("form");
+                createListBtn.type = "submit";
+                div = document.createElement("div");
+                div.className = "inputBoxes";
 
                 linkInput = document.createElement("input");
                 linkInput.type = "text";
@@ -33,23 +36,27 @@ document.addEventListener("DOMContentLoaded", function () {
                 rangeInput.required = true;
                 rangeInput.placeholder = "A1:B5";
 
-                form.appendChild(linkInput);
-                form.appendChild(sheetInput);
-                form.appendChild(rangeInput);
-                userData.appendChild(form);
+                div.appendChild(linkInput);      
+                div.appendChild(sheetInput);
+                div.appendChild(rangeInput);
+                userData.insertBefore(div, buttonsDiv);
             } else {
-                userData.innerHTML = "";
+                createListBtn.type = "button";
+                div.innerHTML = "";
             }
         });
     });
 
     createListBtn.addEventListener("click", function () {
+        createListBtn.removeEventListener('submit', createListBtn);
         if (selectedButton!== null && selectedButton.value === "external") {
-            getDataFromSheets(linkInput.value, sheetInput.value, rangeInput.value);   
-            window.location.href = "list.html";     
+            createListBtn.addEventListener("submit", function () {
+                getDataFromSheets(linkInput.value, sheetInput.value, rangeInput.value);   
+                window.location.href = "list.html"; 
+            });    
         } else {
             window.location.href = "list.html";
-        }
+        }       
     });
 
     cancelBtn.addEventListener("click", function () {
