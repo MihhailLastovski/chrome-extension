@@ -37,7 +37,28 @@ document.addEventListener("DOMContentLoaded", function () {
                 form.appendChild(sheetInput);
                 form.appendChild(rangeInput);
                 userData.appendChild(form);
-            } else {
+            } 
+            else if(btn.value === "externalLocal"){
+                var fileInput = document.createElement("input");
+                fileInput.type = "file";
+                fileInput.accept = ".txt"; 
+
+                fileInput.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            const content = event.target.result;
+                            const words = content.split(/\s+/).filter(word => word.trim() !== '');
+                            window.location.href = `list.html?dataFile=${words}`
+                        };
+                        reader.readAsText(file);
+                    }
+                });
+
+                userData.appendChild(fileInput);
+            }
+            else {
                 userData.innerHTML = "";
             }
         });

@@ -18,7 +18,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(queryString);
   const listId = urlParams.get('listId');
   const encodedDataString = urlParams.get('data');
-  
+  const fileData = urlParams.get('dataFile');
+
   if (encodedDataString) {
     const dataList = JSON.parse(decodeURIComponent(encodedDataString));
     if (dataList && dataList.length > 0) {
@@ -26,6 +27,14 @@ document.addEventListener("DOMContentLoaded", function () {
             addWord(word, true); 
         });
     }
+  }
+
+  if (fileData) {
+    const decodedData = decodeURIComponent(fileData);
+    const wordsArray = decodedData.split(',');
+    wordsArray.forEach(word => {
+      addWord(word.trim(), true); 
+    });
   }
   chrome.storage.local.get("wordLists", function (data) {
     let lists = data.wordLists || [];
