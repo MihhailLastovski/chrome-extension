@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
       addWord(word.trim(), true); 
     });
   }
+
   chrome.storage.local.get("wordLists", function (data) {
     let lists = data.wordLists || [];
     const listIndex = lists.findIndex((list) => list.id === listId);
@@ -135,6 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
           id: Date.now().toString(),
           name: listName,
           words: words,
+          ...(encodedDataString && { icon: 'fa-sheet-plastic' })
         };
         
         saveWordList(newList);
@@ -172,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function addWord(word, enabled = true) {
     const wordDiv = document.createElement("div");
     wordDiv.className = "list-wordsItem";
-  
+    
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = enabled;

@@ -70,6 +70,13 @@ document.addEventListener("DOMContentLoaded", function () {
     lists.forEach((list) => {
       const listItem = document.createElement("div");
       listItem.className = "wordListsItem";
+      if(list.icon){
+        const iconList = document.createElement("i");
+        iconList.innerHTML =
+          '<i>Icon</i>';
+          listItem.appendChild(iconList);
+      }
+      
 
       const textContainer = document.createElement("div");
       textContainer.className = "textContainer";
@@ -103,7 +110,6 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = `list.html?listId=${list.id}`;
       });
       buttons.appendChild(updateButton);
-
       listItem.appendChild(textContainer);
       listItem.appendChild(buttons);
       wordLists.appendChild(listItem);
