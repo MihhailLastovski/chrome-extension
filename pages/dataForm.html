@@ -22,17 +22,22 @@
             <span class="slider"></span>
         </label>
     </div>
-        <h2>Create new list</h2>
-        <hr>
-        <div class="divsWithText">Where do you want to manage the words?</div>
-        <p>
-            A standard list allows you to manage words directly.
-            <br>An external list, downloads a list of words from an exterrnal site (e.g. Google Sheets)
-        </p>
-        <div>
-            <label class="radioLabel"><input type="radio" name="listChoise">Standart list</label>
-            <label class="radioLabel"><input type="radio" name="listChoise">External list</label>
-        </div>  
+    <h2>Create new list</h2>
+    <hr>
+    <div class="divsWithText">Where do you want to manage the words?</div>
+    <p>
+        A standard list allows you to manage words directly.
+        <br>An external list, downloads a list of words from an exterrnal site (e.g. Google Sheets)
+    </p>
+    <div>
+        <label class="radioLabel">
+            <input type="radio" name="listChoise" value="standard" checked>Standart list
+        </label>
+        <label class="radioLabel">
+            <input type="radio" name="listChoise" value="external">External list
+        </label>
+    </div>  
+    <div id="userData"></div>
     <div class="content">
         <button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
         <button type="button" id="createListBtn" class="listFormBtn">Next</button>
