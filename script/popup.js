@@ -226,7 +226,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // toggleSwitch.addEventListener('change', handleToggleSwitchChange(active, heading, searchTextInput, highlightBtn));
 
   newListBtn.addEventListener("click", function () {
-    window.location.href = "list.html";
+    window.location.href = "dataForm.html";
   });
 
   async function testt() {
