@@ -55,6 +55,10 @@ input::placeholder {
   color: var(--main-grey);
 }
 
+h2 {
+  text-align: center;
+}
+
 /* Header */
 .header {
   margin: -10px -10px 0 -10px;
@@ -158,13 +162,13 @@ button:active {
   background-color: var(--main-dark-green);
 }
 
-.content .divsWithText {
+.divsWithText {
   margin-top: 5%;
   font-size: 17px;
   font-weight: bold;
 }
 
-.content hr {
+hr {
   border: 1px solid var(--main-light-green);
   margin: 5%;
 }
@@ -316,4 +320,10 @@ button:active {
 
 .listFormBtn {
   margin-top: 5%;
+}
+
+/* dataForm.html - adding form*/
+
+.radioLabel {
+  align-items: center;
 }
