@@ -23,16 +23,19 @@ function getDataFromSheets(url, sheetName, range) {
     })
     .then(data => {
       if (data && data.values && data.values.length > 0) {
-        data.values.forEach(row => {
-          dataList.push(...row); // Add each row to the list
-        });
+          const dataList = [];
+          data.values.forEach(row => {
+              dataList.push(...row); // Add each row to the list
+          });
 
-        // Display accumulated list in the console
-        console.log('Data List:', dataList);
+          // Вместо отображения в консоли, вызываем колбэк, передавая полученный dataList
+          if (callback && typeof callback === 'function') {
+              callback(dataList);
+          }
       } else {
-        console.log('No data found in the response.');
+          console.log('No data found in the response.');
       }
-    })
+  })
     .catch(error => {
       console.error('Error fetching data:', error);
     });

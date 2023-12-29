@@ -44,9 +44,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     createListBtn.addEventListener("click", function () {
-        if (selectedButton!== null && selectedButton.value === "external") {
-            getDataFromSheets(linkInput.value, sheetInput.value, rangeInput.value);   
-            window.location.href = "list.html";     
+        if (selectedButton !== null && selectedButton.value === "external") {
+            getDataFromSheets(linkInput.value, sheetInput.value, rangeInput.value, function(dataList) {
+                const dataString = encodeURIComponent(JSON.stringify(dataList));
+                window.location.href = `list.html?data=${dataString}`;
+            });
         } else {
             window.location.href = "list.html";
         }
@@ -56,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = "popup.html";
     });
 
-    function getDataFromSheets(url, sheetName, range) {
+    function getDataFromSheets(url, sheetName, range, callback) {
         const API_KEY = 'AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk';
         const dataList = []; // List to accumulate data
     
@@ -81,12 +83,15 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(data => {
             if (data && data.values && data.values.length > 0) {
+                const dataList = [];
                 data.values.forEach(row => {
                     dataList.push(...row); // Add each row to the list
                 });
-    
-                // Display accumulated list in the console
-                console.log('Data List:', dataList);
+                console.log(dataList)
+                // Вместо отображения в консоли, вызываем колбэк, передавая полученный dataList
+                if (callback && typeof callback === 'function') {
+                    callback(dataList);
+                }
             } else {
                 console.log('No data found in the response.');
             }

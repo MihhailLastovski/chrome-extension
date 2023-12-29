@@ -17,7 +17,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const listId = urlParams.get('listId');
-
+  const encodedDataString = urlParams.get('data');
+  
+  if (encodedDataString) {
+    const dataList = JSON.parse(decodeURIComponent(encodedDataString));
+    if (dataList && dataList.length > 0) {
+        dataList.forEach(word => {
+            addWord(word, true); 
+        });
+    }
+  }
   chrome.storage.local.get("wordLists", function (data) {
     let lists = data.wordLists || [];
     const listIndex = lists.findIndex((list) => list.id === listId);
