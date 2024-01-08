@@ -9,7 +9,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const buttonsDiv = document.getElementById('buttonsDiv');
     const radioButtons = document.querySelectorAll("label.radioLabel input");
     var selectedButton = null;
-    var div, linkInput, sheetInput, rangeInput;
+    var linkInput, sheetInput, rangeInput;
+
+    var div = document.createElement("div");
+    div.className = "inputBoxes";
+    userData.insertBefore(div, buttonsDiv);
 
     radioButtons.forEach(btn => {
         btn.addEventListener('change', function() {
@@ -17,13 +21,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 selectedButton = btn;               
             }
             if (btn.value === "external") {
-                if(div){
-                    div.innerHTML = "";
-                }
+                div.innerHTML = "";               
                 
-                createListBtn.type = "submit";
-                div = document.createElement("div");
-                div.className = "inputBoxes";
+                //createListBtn.type = "submit";
 
                 linkInput = document.createElement("input");
                 linkInput.type = "text";
@@ -42,12 +42,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 div.appendChild(linkInput);
                 div.appendChild(sheetInput);
-                div.appendChild(rangeInput);
-                userData.insertBefore(div, buttonsDiv);
+                div.appendChild(rangeInput);               
             } 
             else if(btn.value === "externalLocal"){
-                createListBtn.type = "button";
-                div.innerHTML = "";
+                //createListBtn.type = "button";
+                div.innerHTML = "";                
+
                 var fileInput = document.createElement("input");
                 fileInput.type = "file";
                 fileInput.accept = ".txt"; 
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 div.appendChild(fileInput);
             }
             else {
-                createListBtn.type = "button";
+                //createListBtn.type = "button";
                 div.innerHTML = "";
             }
         });
