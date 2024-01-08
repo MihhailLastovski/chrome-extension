@@ -6,8 +6,8 @@ chrome.runtime.onInstalled.addListener(function () {
     }
   });
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    console.log('nice!!!');
     if (changeInfo.status === 'complete') {
+      console.log('Tab is updated');
       chrome.action.setBadgeText({ text: '' });
       chrome.storage.local.set({count: 0});
     }

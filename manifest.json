@@ -22,20 +22,13 @@
     "48": "images/icon48.png",
     "128": "images/icon128.png"
   },
-  "web_accessible_resources": [
-    {
-      "resources": ["sheet.html", "./script/sheet.js"],
-      "matches": ["<all_urls>"]
-    }
-  ],
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["./script/contentScript.js"]
+      "js": [ "script/contentScript.js" ]
     }
   ],
   "background": {
-    "service_worker": "./script/background.js"
+    "service_worker": "script/background.js"
   }
-
 }
