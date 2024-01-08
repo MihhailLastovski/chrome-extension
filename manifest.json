@@ -30,5 +30,11 @@
   ],
   "background": {
     "service_worker": "script/background.js"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["script/header.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

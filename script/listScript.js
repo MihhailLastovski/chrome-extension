@@ -226,6 +226,9 @@ document.addEventListener("DOMContentLoaded", function () {
   toggleSwitchIsActive();
   
   toggleSwitch.addEventListener('change', function() {
+    chrome.runtime.sendMessage({
+      action: "toggleSwitched"
+    });
     active = !active;
     chrome.storage.local.set({ isActive: active });
     updateUIState();
@@ -234,4 +237,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function updateUIState() {
     heading.innerText = active ? "Highlight On" : "Highlight Off";
   }
+
+  chrome.runtime.sendMessage({
+    action: "toggleSwitched"
+  });
 });
