@@ -24,7 +24,7 @@
     </div>
     <h2>Create new list</h2>
     <hr>
-    <div class="divsWithText">Where do you want to manage the words?</div>
+    <h2>Where do you want to manage the words?</h2>
     <p>
         A standard list allows you to manage words directly.
         <br>An external list, downloads a list of words from an exterrnal site (e.g. Google Sheets)
@@ -40,10 +40,13 @@
             <input type="radio" name="listChoise" value="externalLocal">Choose file
         </label>
     </div>  
-    <div id="userData"></div>
-    <div class="content">
-        <button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
-        <button type="button" id="createListBtn" class="listFormBtn">Next</button>
+    <div>
+        <form id="userData">
+            <div id="buttonsDiv" class="content">
+                <button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
+                <button type="button" id="createListBtn" class="listFormBtn">Next</button>
+            </div>
+        </form>
     </div>
 </body>
 </html> 

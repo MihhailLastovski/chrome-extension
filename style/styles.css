@@ -1,21 +1,11 @@
 @import url('https://fonts.googleapis.com/css?family=Pacifico|Roboto:300,700');
-/*
-:root {
-  --main-light-green: #9eff00;
-  --main-medium-green:  #7ecc00;
-  --main-dark-green: #5e9900;
-  --main-white: white;
-  --main-black: #2f4d00;
-  --main-grey: #ccc;
-}
-*/
 
 [data-theme="light"] {
-  --main-light-green: #9eff00;
-  --main-medium-green:  #7ecc00;
-  --main-dark-green: #5e9900;
-  --main-white: white;
-  --main-black: #2f4d00;
+  --main-light-green: #b3ff99;
+  --main-medium-green: #8cff66;
+  --main-dark-green: #2db300;
+  --main-white: #ecffe6;
+  --main-black: #061a00;
   --main-grey: #ccc;
   label i.fa.fa-sun-o {
     display: none;
@@ -23,11 +13,11 @@
 }
 
 [data-theme="dark"] {
-  --main-light-green: #188100;
-  --main-medium-green: #126600;
-  --main-dark-green: #0c3300;
-  --main-black: #ffffff;
-  --main-white: #333;
+  --main-light-green: #4e7043;
+  --main-medium-green: #458131;
+  --main-dark-green: #3c931f;
+  --main-black: #ecffe6;
+  --main-white: black;
   --main-grey: #666;
   label i.fa.fa-moon-o {
     display: none; 
@@ -56,7 +46,13 @@ input::placeholder {
 }
 
 h2 {
-  text-align: center;
+  margin-left: 5%;
+  margin-top: 5%;
+}
+
+p {
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 /* Header */
@@ -150,14 +146,17 @@ button {
   cursor: pointer;
   padding: 8px 12px;
   background-color: var(--main-light-green);
+  border-radius: 5px;
 }
 
 .content #highlightBtn:hover,
+input[type=file]::file-selector-button:hover,
 button:hover {
   background-color: var(--main-medium-green);
 }
 
 .content #highlightBtn:active,
+input[type=file]::file-selector-button:active,
 button:active {
   background-color: var(--main-dark-green);
 }
@@ -195,14 +194,14 @@ hr {
 }
 
 .content .color-options input:checked { 
-  border: 2px solid var(--main-dark-green);
+  border: 2px solid var(--main-white);
 }
 
-.content .color-options input { background-color: var(--main-light-green); border-color: var(--main-light-green);}
+.content .color-option.green { background-color: #b3ff99; border-color: #b3ff99;}
 .content .color-option.cyan { background-color: cyan; border-color: cyan;}
 .content .color-option.yellow { background-color: yellow; border-color: yellow;}
 .content .color-option.pink { background-color: pink; border-color: pink;}
-.content .color-option.black { background-color: black; border-color: black;}
+.content .color-option.blueviolet { background-color: blueviolet; border-color: blueviolet;}
 
 /* Lists */
 .content #newListBtn {
@@ -278,9 +277,9 @@ hr {
   width: 20px; 
   height: 20px; 
   background-color: var(--main-white); 
-  border-width: 1px; 
+  border-width: 2px; 
   border-style: solid; 
-  border-color: rgb(55, 148, 36); 
+  border-color: var(--main-medium-green); 
   border-radius: 2px; 
   box-shadow: none; 
 }
@@ -299,7 +298,7 @@ hr {
   left: 0px; 
   top: 0px; 
   text-align: center; 
-  background-color: var(--main-light-green); 
+  background-color: var(--main-medium-green); 
   font-size: 10px; 
   height: 22px; 
   width: 22px; 
@@ -328,3 +327,33 @@ hr {
   align-items: center;
 }
 
+.inputBoxes {
+  margin-left: 5%;
+  margin-right: 5%;
+}
+.inputBoxes input {
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 5%; /* Добавляем отступ между input внутри блока */
+}
+
+input[type=file] {
+  width: 350px;
+  max-width: 100%;
+  color: var(--main-black);
+  padding: 5px;
+  background: var(--main-white);
+  border-radius: 10px;
+  border: 1px solid var(--main-black);
+}
+
+input[type=file]::file-selector-button {
+  margin-right: 20px;
+  border: none;
+  background: var(--main-light-green);
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: var(--main-black);
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+}
