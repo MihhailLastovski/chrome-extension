@@ -1,5 +1,15 @@
 let selectedColor;
 document.addEventListener("DOMContentLoaded", function () {
+  chrome.storage.local.get("enabledLists", function (data) {
+    let enabledLists = data.enabledLists || [];
+
+    enabledLists.forEach((listId) => {
+      toggleWordList(listId, false);
+    });
+
+    enabledLists = [];
+    renderWordLists([]);
+  });
   const toggleSwitch = document.querySelector(".toggleSwitch");
   const heading = document.querySelector(".heading");
   const searchTextInput = document.getElementById("searchText");
@@ -8,16 +18,16 @@ document.addEventListener("DOMContentLoaded", function () {
   let active;
 
   const counterElem = document.getElementById("highlightedCount");
-  const colorOptions = document.querySelectorAll('.color-option');
-  colorOptions.forEach(option => {
+  const colorOptions = document.querySelectorAll(".color-option");
+  colorOptions.forEach((option) => {
     if (option.checked) {
       selectedColor = option.value;
     }
   });
 
-  colorOptions.forEach(option => {
-    option.addEventListener('change', function() {
-      selectedColor = this.value; 
+  colorOptions.forEach((option) => {
+    option.addEventListener("change", function () {
+      selectedColor = this.value;
     });
   });
 
@@ -69,13 +79,11 @@ document.addEventListener("DOMContentLoaded", function () {
     lists.forEach((list) => {
       const listItem = document.createElement("div");
       listItem.className = "wordListsItem";
-      if(list.icon){
+      if (list.icon) {
         const iconList = document.createElement("i");
-        iconList.innerHTML =
-          '<i>Icon</i>';
-          listItem.appendChild(iconList);
+        iconList.innerHTML = "<i>Icon</i>";
+        listItem.appendChild(iconList);
       }
-      
 
       const textContainer = document.createElement("div");
       textContainer.className = "textContainer";
