@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
       enableButton.addEventListener("click", function () {
         chrome.action.setBadgeText({ text: '' });
         chrome.storage.local.set({count: 0});
-        testt();
+        counterUpdating();
         const enable = !enabledLists.includes(list.id);
         toggleWordList(list.id, enable);
         renderWordLists(lists);
@@ -206,43 +206,30 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  chrome.runtime.sendMessage({
-    action: "toggleSwitched",
-    toggleSwitch: toggleSwitch,
-    heading: heading,
-    searchTextInput: searchTextInput,
-    highlightBtn: highlightBtn
-  });
-
-  // async function toggleSwitchIsActive() {
-  //   const result = await new Promise((resolve, reject) => {
-  //     chrome.storage.local.get("isActive", (result) => {
-  //       resolve(result);
-  //     });
-  //   });
-  //   active = result.isActive;
-  //   updateUIState();
-  //   toggleSwitch.checked = active;
-  // }
-  // toggleSwitchIsActive();
+  /*Костыль. Пора бы уже починить...*/
+  async function toggleSwitchIsActive() {
+    const result = await new Promise((resolve, reject) => {
+      chrome.storage.local.get("isActive", (result) => {
+        resolve(result);
+      });
+    });
+    active = result.isActive;
+    updateUIState();
+    toggleSwitch.checked = active;
+  }
+  toggleSwitchIsActive();
 
   toggleSwitch.addEventListener("change", function () {
     active = !active;
     chrome.storage.local.set({ isActive: active });
-    chrome.runtime.sendMessage({
-      action: "toggleSwitched",
-      toggleSwitch: toggleSwitch,
-      heading: heading,
-      searchTextInput: searchTextInput,
-      highlightBtn: highlightBtn
-    });
+    updateUIState();
   });
 
-  // function updateUIState() {
-  //   heading.innerText = active ? "Highlight On" : "Highlight Off";
-  //   searchTextInput.disabled = !active;
-  //   highlightBtn.disabled = !active;
-  // }
+  function updateUIState() {
+    heading.innerText = active ? "Highlight On" : "Highlight Off";
+    searchTextInput.disabled = !active;
+    highlightBtn.disabled = !active;
+  }
 
   // toggleSwitchIsActive(toggleSwitch, heading, searchTextInput, highlightBtn);
   // toggleSwitch.addEventListener('change', handleToggleSwitchChange(active, heading, searchTextInput, highlightBtn));
@@ -251,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.location.href = "dataForm.html";
   });
 
-  async function testt() {
+  async function counterUpdating() {
     const result = await new Promise((resolve, reject) => {
       chrome.storage.local.get("count", (result) => {
         resolve(result);
@@ -263,5 +250,5 @@ document.addEventListener("DOMContentLoaded", function () {
       counterElem.innerHTML = `Word counter: 0`;
     }
   }
-  testt();
+  counterUpdating();
 });
