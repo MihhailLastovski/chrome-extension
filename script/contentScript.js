@@ -11,39 +11,8 @@ async function highlightText(searchText, highlightColor, listId = null) {
 
     const colorStyle = `background-color: ${highlightColor};`;
 
-    // function highlightTextNode(node) {
-    //   if (node.nodeType === Node.TEXT_NODE) {
-    //     let text = node.nodeValue;
-    //     if (searchRegex.test(text)) {
-    //       if (node.parentNode.className !== "highlighted") {
-    //         let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
-    //         let newNode = document.createElement("span");
-    //         newNode.className = "highlightedP";
-    //         if (listId) {
-    //           replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
-    //           newNode.setAttribute("data-list-id", listId);
-    //         }
-    //         const replacedText = text.replace(searchRegex, replacementText);
-    //         newNode.innerHTML = replacedText;
-    //         node.parentNode.replaceChild(newNode, node);
-    //       }
-    //     }
-    //   } else if (
-    //     node.nodeType === Node.ELEMENT_NODE &&
-    //     node.childNodes &&
-    //     node.childNodes.length > 0
-    //   ) {
-    //     node.childNodes.forEach((childNode) => {
-    //       highlightTextNode(childNode);
-    //     });
-    //   }
-    // }
-
     function highlightTextNode(node) {
-      if (
-        node.nodeType === Node.TEXT_NODE &&
-        !isDescendantOfStyleOrScript(node)
-      ) {
+      if (node.nodeType === Node.TEXT_NODE && !isDescendantOfStyleOrScript(node)) {
         let text = node.nodeValue;
         if (searchRegex.test(text)) {
           if (node.parentNode.className !== "highlighted") {
@@ -87,14 +56,7 @@ async function highlightText(searchText, highlightColor, listId = null) {
     highlightTextNode(document.body);
   }
   let highlightedCount =
-    document.querySelectorAll("span.highlighted").length; // / 2;
-  //super difficult secret code
-  /*
-  if (highlightedCount % 1 !== 0) {
-    highlightedCount += 0.5;
-  }
-  */
-  //super difficult secret code
+    document.querySelectorAll("span.highlighted").length;
   chrome.storage.local.set({ count: highlightedCount });
   chrome.runtime.sendMessage({
     action: "updateBadge",
