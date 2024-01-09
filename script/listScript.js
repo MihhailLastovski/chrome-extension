@@ -212,13 +212,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  /*Костыль. Пора бы уже починить...*/
   async function toggleSwitchIsActive() {
     const result = await new Promise((resolve, reject) => {
       chrome.storage.local.get("isActive", (result) => {
         resolve(result);
       });
     });
-    console.log(result.isActive);
     active = result.isActive;
     updateUIState();
     toggleSwitch.checked = active;  
