@@ -1,4 +1,3 @@
-//import { toggleSwitchIsActive, handleToggleSwitchChange } from './script/header.mjs';
 let selectedColor;
 document.addEventListener("DOMContentLoaded", function () {
   const toggleSwitch = document.querySelector(".toggleSwitch");
@@ -70,6 +69,13 @@ document.addEventListener("DOMContentLoaded", function () {
     lists.forEach((list) => {
       const listItem = document.createElement("div");
       listItem.className = "wordListsItem";
+      if(list.icon){
+        const iconList = document.createElement("i");
+        iconList.innerHTML =
+          '<i>Icon</i>';
+          listItem.appendChild(iconList);
+      }
+      
 
       const textContainer = document.createElement("div");
       textContainer.className = "textContainer";
@@ -82,6 +88,9 @@ document.addEventListener("DOMContentLoaded", function () {
         ? '<i class="fa fa-pause" aria-hidden="true"></i>'
         : '<i class="fa fa-play" aria-hidden="true"></i>';
       enableButton.addEventListener("click", function () {
+        chrome.action.setBadgeText({ text: '' });
+        chrome.storage.local.set({count: 0});
+        counterUpdating();
         const enable = !enabledLists.includes(list.id);
         toggleWordList(list.id, enable);
         renderWordLists(lists);
@@ -103,7 +112,6 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = `list.html?listId=${list.id}`;
       });
       buttons.appendChild(updateButton);
-
       listItem.appendChild(textContainer);
       listItem.appendChild(buttons);
       wordLists.appendChild(listItem);
@@ -198,6 +206,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  /*Костыль. Пора бы уже починить...*/
   async function toggleSwitchIsActive() {
     const result = await new Promise((resolve, reject) => {
       chrome.storage.local.get("isActive", (result) => {
@@ -226,10 +235,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // toggleSwitch.addEventListener('change', handleToggleSwitchChange(active, heading, searchTextInput, highlightBtn));
 
   newListBtn.addEventListener("click", function () {
-    window.location.href = "list.html";
+    window.location.href = "dataForm.html";
   });
 
-  async function testt() {
+  async function counterUpdating() {
     const result = await new Promise((resolve, reject) => {
       chrome.storage.local.get("count", (result) => {
         resolve(result);
@@ -241,5 +250,5 @@ document.addEventListener("DOMContentLoaded", function () {
       counterElem.innerHTML = `Word counter: 0`;
     }
   }
-  testt();
+  counterUpdating();
 });

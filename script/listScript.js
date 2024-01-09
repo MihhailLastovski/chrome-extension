@@ -17,6 +17,25 @@ document.addEventListener("DOMContentLoaded", function () {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const listId = urlParams.get('listId');
+  const encodedDataString = urlParams.get('data');
+  const fileData = urlParams.get('dataFile');
+
+  if (encodedDataString) {
+    const dataList = JSON.parse(decodeURIComponent(encodedDataString));
+    if (dataList && dataList.length > 0) {
+        dataList.forEach(word => {
+            addWord(word, true); 
+        });
+    }
+  }
+
+  if (fileData) {
+    const decodedData = decodeURIComponent(fileData);
+    const wordsArray = decodedData.split(',');
+    wordsArray.forEach(word => {
+      addWord(word.trim(), true); 
+    });
+  }
 
   chrome.storage.local.get("wordLists", function (data) {
     let lists = data.wordLists || [];
@@ -117,6 +136,7 @@ document.addEventListener("DOMContentLoaded", function () {
           id: Date.now().toString(),
           name: listName,
           words: words,
+          ...(encodedDataString && { icon: 'fa-sheet-plastic' })
         };
         
         saveWordList(newList);
@@ -154,7 +174,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function addWord(word, enabled = true) {
     const wordDiv = document.createElement("div");
     wordDiv.className = "list-wordsItem";
-  
+    
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = enabled;
@@ -192,13 +212,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  /*Костыль. Пора бы уже починить...*/
   async function toggleSwitchIsActive() {
     const result = await new Promise((resolve, reject) => {
       chrome.storage.local.get("isActive", (result) => {
         resolve(result);
       });
     });
-    console.log(result.isActive);
     active = result.isActive;
     updateUIState();
     toggleSwitch.checked = active;  
