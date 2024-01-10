@@ -11,8 +11,8 @@
 </head>
 
 <body>
-    <h2>Show Google Sheets</h2>
-    <div id="">
+    <h2 id="showGuide">Show Google Sheets</h2>
+    <div id="guide">
         <h2>Google Sheets assistant</h2>
         <p>          
             1. File > Share > Publish to web.<br>
@@ -20,8 +20,11 @@
             3. Copy the URL.          
         </p>
     </div>
-    <input type="text" id="textInput" placeholder="Paste the link here">
-    <button id="getSheets">Show</button>
-    <iframe id="googleSheets"></iframe>
+    <div class="content">
+        <input type="text" id="textInput" placeholder="Paste the link here">
+        <button id="getSheets">Show</button>
+        <hr>
+        <iframe id="googleSheets"></iframe>
+    </div>
 </body>
 </html> 
