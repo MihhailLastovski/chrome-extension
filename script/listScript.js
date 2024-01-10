@@ -1,8 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const toggleSwitch = document.querySelector(".toggleSwitch");
-  const heading = document.querySelector(".heading");
-  let active;
-
   const cancelBtn = document.getElementById("cancelBtn");
   cancelBtn.addEventListener("click", function () {
     window.location.href = "popup.html";
@@ -210,28 +206,5 @@ document.addEventListener("DOMContentLoaded", function () {
     saveChangesBtn.addEventListener("click", function () {
       saveEditedList(listIndex, lists);
     });
-  }
-
-  /*Костыль. Пора бы уже починить...*/
-  async function toggleSwitchIsActive() {
-    const result = await new Promise((resolve, reject) => {
-      chrome.storage.local.get("isActive", (result) => {
-        resolve(result);
-      });
-    });
-    active = result.isActive;
-    updateUIState();
-    toggleSwitch.checked = active;  
-  }
-  toggleSwitchIsActive();
-  
-  toggleSwitch.addEventListener('change', function() {
-    active = !active;
-    chrome.storage.local.set({ isActive: active });
-    updateUIState();
-  });
-
-  function updateUIState() {
-    heading.innerText = active ? "Highlight On" : "Highlight Off";
   }
 });

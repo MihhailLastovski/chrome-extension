@@ -5,27 +5,22 @@
     <meta charset="UTF-8">
     <link id="styleLink" rel="stylesheet" type="text/css" href="../style/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="../script/header.js"></script>
     <script src="../script/styleScript.js"></script>
     <script src="../script/changeSheets.js"></script>
 </head>
 
 <body>
-    <div class="header">
-        <input class="toggleViewSwitch" type="checkbox" id="darkModeToggle">
-        <label for="darkModeToggle">
-            <i class="fa fa-sun-o fa-3x" aria-hidden="true"></i>
-            <i class="fa fa-moon-o fa-3x" aria-hidden="true"></i>
-        </label>
-        <h1 class="heading">Highlight Off</h1>
-        <label class="switch">
-            <input class="toggleSwitch" type="checkbox">
-            <span class="slider"></span>
-        </label>
-    </div>
     <h2>Show Google Sheets</h2>
-    <img width="400" src="../images/GoogleAssistant1.png">
-    <img width="400" src="../images/GoogleAssistant2.png">
-    <input type="text" id="textInput" placeholder="Public URL">
+    <div id="">
+        <h2>Google Sheets assistant</h2>
+        <p>          
+            1. File > Share > Publish to web.<br>
+            2. Click Publish.<br>
+            3. Copy the URL.          
+        </p>
+    </div>
+    <input type="text" id="textInput" placeholder="Paste the link here">
     <button id="getSheets">Show</button>
     <iframe id="googleSheets"></iframe>
 </body>

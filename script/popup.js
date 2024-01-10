@@ -1,11 +1,8 @@
 let selectedColor;
 document.addEventListener("DOMContentLoaded", function () {
-  const toggleSwitch = document.querySelector(".toggleSwitch");
-  const heading = document.querySelector(".heading");
   const searchTextInput = document.getElementById("searchText");
   const highlightBtn = document.getElementById("highlightBtn");
   const newListBtn = document.getElementById("newListBtn");
-  let active;
 
   const counterElem = document.getElementById("highlightedCount");
   const colorOptions = document.querySelectorAll('.color-option');
@@ -205,34 +202,6 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
-
-  /*Костыль. Пора бы уже починить...*/
-  async function toggleSwitchIsActive() {
-    const result = await new Promise((resolve, reject) => {
-      chrome.storage.local.get("isActive", (result) => {
-        resolve(result);
-      });
-    });
-    active = result.isActive;
-    updateUIState();
-    toggleSwitch.checked = active;
-  }
-  toggleSwitchIsActive();
-
-  toggleSwitch.addEventListener("change", function () {
-    active = !active;
-    chrome.storage.local.set({ isActive: active });
-    updateUIState();
-  });
-
-  function updateUIState() {
-    heading.innerText = active ? "Highlight On" : "Highlight Off";
-    searchTextInput.disabled = !active;
-    highlightBtn.disabled = !active;
-  }
-
-  // toggleSwitchIsActive(toggleSwitch, heading, searchTextInput, highlightBtn);
-  // toggleSwitch.addEventListener('change', handleToggleSwitchChange(active, heading, searchTextInput, highlightBtn));
 
   newListBtn.addEventListener("click", function () {
     window.location.href = "dataForm.html";

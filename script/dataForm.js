@@ -1,8 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const toggleSwitch = document.querySelector(".toggleSwitch");
-    const heading = document.querySelector(".heading");
-    let active;
-
     const createListBtn = document.getElementById('createListBtn');
     const cancelBtn = document.getElementById('cancelBtn');
     const userData = document.getElementById('userData');
@@ -190,29 +186,4 @@ document.addEventListener("DOMContentLoaded", function () {
     //             console.error('Error fetching data:', error);
     //         });
     // }
-    
-
-    /*Костыль. Пора бы уже починить...*/
-    async function toggleSwitchIsActive() {
-        const result = await new Promise((resolve, reject) => {
-        chrome.storage.local.get("isActive", (result) => {
-            resolve(result);
-        });
-        });
-        console.log(result.isActive);
-        active = result.isActive;
-        updateUIState();
-        toggleSwitch.checked = active;  
-    }
-    toggleSwitchIsActive();
-
-    toggleSwitch.addEventListener('change', function() {
-        active = !active;
-        chrome.storage.local.set({ isActive: active });
-        updateUIState();
-    });
-
-    function updateUIState() {
-        heading.innerText = active ? "Highlight On" : "Highlight Off";
-    }
 });
