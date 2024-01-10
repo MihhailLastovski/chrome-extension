@@ -16,34 +16,43 @@ document.addEventListener("DOMContentLoaded", function () {
   const newWordInput = document.getElementById("newWordInput");
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
-  const listId = urlParams.get('listId');
-  const encodedDataString = urlParams.get('data');
-  const fileData = urlParams.get('dataFile');
+  const listId = urlParams.get("listId");
+  const encodedDataString = urlParams.get("data");
+  const encodedDataStringList = urlParams.get("dataList");
+  const fileData = urlParams.get("dataFile");
 
   if (encodedDataString) {
     const dataList = JSON.parse(decodeURIComponent(encodedDataString));
     if (dataList && dataList.length > 0) {
-        dataList.forEach(word => {
-            addWord(word, true); 
-        });
+      dataList.forEach((word) => {
+        addWord(word, true);
+      });
     }
   }
-
+  if (encodedDataStringList) {
+    const data = decodeURIComponent(encodedDataStringList);
+    const rows = data.split("\n");
+    rows.forEach((row) => {
+      const columns = row.split("\t");
+      const word = columns[0].trim();
+      addWord(word, true);
+    });
+  }
   if (fileData) {
     const decodedData = decodeURIComponent(fileData);
-    const wordsArray = decodedData.split(',');
-    wordsArray.forEach(word => {
-      addWord(word.trim(), true); 
+    const wordsArray = decodedData.split(",");
+    wordsArray.forEach((word) => {
+      addWord(word.trim(), true);
     });
   }
 
   chrome.storage.local.get("wordLists", function (data) {
     let lists = data.wordLists || [];
     const listIndex = lists.findIndex((list) => list.id === listId);
-  
+
     if (listIndex !== -1) {
       const listToEdit = lists[listIndex];
-  
+
       listNameInput.value = listToEdit.name;
 
       listToEdit.words.forEach((wordObj) => {
@@ -73,41 +82,37 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       });
     }
-    
   });
-  
-  
 
   function saveEditedList(index, lists) {
     const listName = listNameInput.value.trim();
     const editedWords = [];
-  
+
     const wordDivs = document.querySelectorAll("#wordsContainer > div");
     wordDivs.forEach((wordDiv) => {
       const checkbox = wordDiv.querySelector(".word-checkbox");
       const wordInput = wordDiv.querySelector(".word-input");
-  
+
       const word = wordInput.value.trim();
       const enabled = checkbox.checked;
-  
-      if (word !== "") { 
+
+      if (word !== "") {
         editedWords.push({
           word: word,
           enabled: enabled,
         });
       }
     });
-  
+
     if (listName && editedWords.length > 0) {
       lists[index].name = listName;
       lists[index].words = editedWords;
-  
+
       chrome.storage.local.set({ wordLists: lists }, function () {});
     } else {
       alert("Enter list name or non-empty words");
     }
   }
-  
 
   addListForm.addEventListener("submit", function (event) {
     event.preventDefault();
@@ -119,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const checkbox = wordDiv.querySelector(".word-checkbox");
       const wordInput = wordDiv.querySelector(".word-input");
 
-      const word = wordInput.value.trim(); 
+      const word = wordInput.value.trim();
       const enabled = checkbox.checked;
 
       if (word !== "") {
@@ -136,9 +141,9 @@ document.addEventListener("DOMContentLoaded", function () {
           id: Date.now().toString(),
           name: listName,
           words: words,
-          ...(encodedDataString && { icon: 'fa-sheet-plastic' })
+          ...(encodedDataString && { icon: "fa-sheet-plastic" }),
         };
-        
+
         saveWordList(newList);
       } else {
       }
@@ -174,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function addWord(word, enabled = true) {
     const wordDiv = document.createElement("div");
     wordDiv.className = "list-wordsItem";
-    
+
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = enabled;
@@ -188,13 +193,13 @@ document.addEventListener("DOMContentLoaded", function () {
     wordInput.type = "text";
     wordInput.value = word;
     wordInput.className = "word-input";
-  
+
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "Delete";
     deleteBtn.addEventListener("click", function () {
       wordDiv.remove();
     });
-    
+
     wordDiv.appendChild(checkbox);
     wordDiv.appendChild(label);
     wordDiv.appendChild(wordInput);
@@ -202,8 +207,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     wordsContainer.insertBefore(wordDiv, lastListItem);
   }
-  
-
 
   const saveChangesBtn = document.getElementById("saveChangesBtn");
   if (saveChangesBtn) {
@@ -221,11 +224,11 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     active = result.isActive;
     updateUIState();
-    toggleSwitch.checked = active;  
+    toggleSwitch.checked = active;
   }
   toggleSwitchIsActive();
-  
-  toggleSwitch.addEventListener('change', function() {
+
+  toggleSwitch.addEventListener("change", function () {
     active = !active;
     chrome.storage.local.set({ isActive: active });
     updateUIState();
