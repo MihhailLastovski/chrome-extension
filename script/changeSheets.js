@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-
   const input = document.getElementById("textInput");
   const button = document.getElementById("getSheets");
   const iframe = document.getElementById("googleSheets");
@@ -21,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const wordsInRow = cells.map((cell) => cell.textContent.trim());
             return words.concat(wordsInRow.filter((word) => word !== ""));
           }, []);
-          iframe.src = input.value + "?widget=true";
+          iframe.src = input.value + "?widget=true&amp;headers=false";
           console.log(wordsArray);
         }
       })
