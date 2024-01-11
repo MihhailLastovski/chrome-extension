@@ -12,26 +12,24 @@
 </head>
 
 <body>
-<div class="content">
-    <form id="addListForm">   
+  <form id="addListForm"> 
+    <div class="content"> 
       <input type="text" id="listNameInput" placeholder="List name" required>
       <hr>
-      <h2 id="showGuide">Import list</h2>
-      <div id="zxcursed" class="guide">
-        <button type="button" id="googleListBtn" class="listFormBtn">External</button>
-        <button type="button" id="fileListBtn" class="listFormBtn">Choose</button>
+      <div id="buttonsInLists">
+        <button type="button" id="googleListBtn" class="listFormBtn"><i class="fa fa-chrome" aria-hidden="true"></i></button>
+        <button type="button" id="fileListBtn" class="listFormBtn"><i class="fa fa-upload" aria-hidden="true"></i></button>
       </div>
-
       <div id="wordsContainer" class="list-words">
         <div id="lastListItem" class="list-wordsItem">
-        <input id="cbox" type="checkbox" class="word-checkbox">
-        <label for="cbox"></label>
-        <input class="word-input" type="text" id="newWordInput">
+          <input id="cbox" type="checkbox" class="word-checkbox">
+          <label for="cbox"></label>
+          <input class="word-input" type="text" id="newWordInput">
         </div>
       </div>
       <button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
       <button type="submit" id="saveListBtn" class="listFormBtn">Add</button>
-    </form>
-</div>
+    </div>
+  </form>
 </body>
 </html>

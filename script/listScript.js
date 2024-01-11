@@ -66,7 +66,7 @@ document.addEventListener("DOMContentLoaded", function () {
       if (addWordBtn) {
         addWordBtn.style.display = "none";
       }
-      addListForm.appendChild(saveChangesBtn);
+      addListForm.lastElementChild.appendChild(saveChangesBtn);
       newWordInput.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
           event.preventDefault();
@@ -204,28 +204,12 @@ document.addEventListener("DOMContentLoaded", function () {
     wordsContainer.insertBefore(wordDiv, lastListItem);
   }
 
-  const saveChangesBtn = document.getElementById("saveChangesBtn");
-  if (saveChangesBtn) {
-    saveChangesBtn.addEventListener("click", function () {
-      saveEditedList(listIndex, lists);
-    });
-  }
-
   /*************************************changeSheets.js********************************************/
 
-  const guide = document.getElementById("zxcursed");
-  const showGuide = document.getElementById("showGuide");
+  const divWithButtonsInList = document.getElementById("buttonsInLists");
   const googleListBtn = document.getElementById("googleListBtn");
   const fileListBtn = document.getElementById("fileListBtn");
 
-  showGuide.addEventListener("click", function () {
-    //guides.forEach((guide) => {
-      const guideDisplay = window
-        .getComputedStyle(guide)
-        .getPropertyValue("display");
-      guide.style.display = guideDisplay === "none" ? "block" : "none";
-    //});
-  });
 
   
 
@@ -252,7 +236,9 @@ document.addEventListener("DOMContentLoaded", function () {
         reader.readAsText(file);
       }
     });
-
-    guide.appendChild(fileInput);
+    
+    if (!document.querySelector('input[type="file"]')) {
+      addListForm.lastElementChild.insertBefore(fileInput, wordsContainer);
+    }
   });
 });
