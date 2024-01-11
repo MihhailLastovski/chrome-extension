@@ -55,6 +55,34 @@ p {
   margin-right: 5%;
 }
 
+button {
+  cursor: pointer;
+  padding: 8px 12px;
+  background-color: var(--main-light-green);
+  border-radius: 5px;
+}
+
+input[type=file]::file-selector-button:hover,
+button:hover {
+  background-color: var(--main-medium-green);
+}
+
+input[type=file]::file-selector-button:active,
+button:active {
+  background-color: var(--main-dark-green);
+}
+
+.divsWithText {
+  margin-top: 5%;
+  font-size: 17px;
+  font-weight: bold;
+}
+
+hr {
+  border: 1px solid var(--main-light-green);
+  margin: 5%;
+}
+
 /* Header */
 .header {
   margin: -10px -10px 0 -10px;
@@ -141,37 +169,6 @@ p {
   width: 200px;
 }
 
-.content #highlightBtn,
-button {
-  cursor: pointer;
-  padding: 8px 12px;
-  background-color: var(--main-light-green);
-  border-radius: 5px;
-}
-
-.content #highlightBtn:hover,
-input[type=file]::file-selector-button:hover,
-button:hover {
-  background-color: var(--main-medium-green);
-}
-
-.content #highlightBtn:active,
-input[type=file]::file-selector-button:active,
-button:active {
-  background-color: var(--main-dark-green);
-}
-
-.divsWithText {
-  margin-top: 5%;
-  font-size: 17px;
-  font-weight: bold;
-}
-
-hr {
-  border: 1px solid var(--main-light-green);
-  margin: 5%;
-}
-
 /* Radio buttons */
 .content .color-options {
   justify-content: center;
@@ -213,6 +210,28 @@ hr {
   margin-bottom: 5%;
 }
 
+input[type=file] {
+  width: 350px;
+  max-width: 100%;
+  color: var(--main-black);
+  padding: 5px;
+  background: var(--main-white);
+  border-radius: 10px;
+  border: 1px solid var(--main-black);
+  margin-top: 5%;
+}
+
+input[type=file]::file-selector-button {
+  margin-right: 20px;
+  border: none;
+  background: var(--main-light-green);
+  padding: 10px 20px;
+  border-radius: 10px;
+  color: var(--main-black);
+  cursor: pointer;
+  transition: background .2s ease-in-out;
+}
+
 .content .wordListsItem {
   display: flex;
   justify-content: space-between;
@@ -233,7 +252,11 @@ hr {
   gap: 10px;
 }
 
-/* List.html - adding form*/
+/* List.html - adding form */
+#buttonsInLists {
+  margin-top: -5%;
+}
+
 .list-words {
   border: 2px solid var(--main-light-green);
   border-radius: 10px;
@@ -247,6 +270,7 @@ hr {
   gap: 10px; 
 }
 
+/* List.html - Checkboxes */
 .word-checkbox { 
   position: absolute; 
   overflow: hidden; 
@@ -305,7 +329,7 @@ hr {
 }
 
 .word-input {
-  border: none; /* Убирает рамку у второго input */
+  border: none;
   padding: 8px;
   font-size: 14px;
   border-radius: 4px;
@@ -321,43 +345,7 @@ hr {
   margin-top: 5%;
 }
 
-/* dataForm.html - adding form*/
-
-.radioLabel {
-  align-items: center;
-}
-
-.inputBoxes {
-  margin-left: 5%;
-  margin-right: 5%;
-}
-.inputBoxes input {
-  width: 100%;
-  box-sizing: border-box;
-  margin-top: 5%; /* Добавляем отступ между input внутри блока */
-}
-
-input[type=file] {
-  width: 350px;
-  max-width: 100%;
-  color: var(--main-black);
-  padding: 5px;
-  background: var(--main-white);
-  border-radius: 10px;
-  border: 1px solid var(--main-black);
-}
-
-input[type=file]::file-selector-button {
-  margin-right: 20px;
-  border: none;
-  background: var(--main-light-green);
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: var(--main-black);
-  cursor: pointer;
-  transition: background .2s ease-in-out;
-}
-
+/* changeSheets.html - Text showing */
 #guide {
   display: none;
 }
