@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  const guide = document.getElementById("guide");
+  const guide = document.getElementById("zxcursed");
   const showGuide = document.getElementById("showGuide");
 
   showGuide.addEventListener("click", function () {
