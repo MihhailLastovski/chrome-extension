@@ -2,32 +2,47 @@
 <html data-theme="light">
 
 <head>
-  <title>List management</title>
-  <meta charset="UTF-8">
-  <link id="styleLink" rel="stylesheet" type="text/css" href="../style/styles.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="../script/header.js"></script>
-  <script src="../script/styleScript.js"></script>
-  <script src="../script/listScript.js"></script>
+<title>List management</title>
+<meta charset="UTF-8">
+<link id="styleLink" rel="stylesheet" type="text/css" href="../style/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="../script/header.js"></script>
+<script src="../script/styleScript.js"></script>
+<script src="../script/listScript.js"></script>
 </head>
 
 <body>
-  <div class="content">
-    <form id="addListForm">
-      
+<div class="content">
+    <form id="addListForm">   
       <input type="text" id="listNameInput" placeholder="List name" required>
       <hr>
-      <div class="divsWithText">Words</div>
+      <h2 id="showGuide">Import list</h2>
+      <div id="guide">
+        <div>
+          <label class="radioLabel">
+            <input type="radio" name="listChoise" value="external">External list
+          </label>
+          <label class="radioLabel">
+            <input type="radio" name="listChoise" value="externalLocal">Choose file
+          </label>
+        </div>  
+        <div id="userData">
+          <div id="buttonsDiv" class="content">
+            <button type="button" id="createListBtn" class="listFormBtn">Next</button>
+          </div>
+        </div>
+      </div>
+
       <div id="wordsContainer" class="list-words">
         <div id="lastListItem" class="list-wordsItem">
-          <input id="cbox" type="checkbox" class="word-checkbox">
-          <label for="cbox"></label>
-          <input class="word-input" type="text" id="newWordInput">
+        <input id="cbox" type="checkbox" class="word-checkbox">
+        <label for="cbox"></label>
+        <input class="word-input" type="text" id="newWordInput">
         </div>
       </div>
       <button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
       <button type="submit" id="saveListBtn" class="listFormBtn">Add</button>
     </form>
-  </div>
+</div>
 </body>
 </html>
