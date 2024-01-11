@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   newListBtn.addEventListener("click", function () {
-    window.location.href = "dataForm.html";
+    window.location.href = "list.html";
   });
 
   async function counterUpdating() {
