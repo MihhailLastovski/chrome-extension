@@ -1,7 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const toggleSwitch = document.querySelector(".toggleSwitch");
-  const heading = document.querySelector(".heading");
-  let active;
 
   const input = document.getElementById("textInput");
   const button = document.getElementById("getSheets");
@@ -24,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const wordsInRow = cells.map((cell) => cell.textContent.trim());
             return words.concat(wordsInRow.filter((word) => word !== ""));
           }, []);
-          iframe.src = input.value;
+          iframe.src = input.value + "?widget=true";
           console.log(wordsArray);
         }
       })
@@ -39,27 +36,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  /*Костыль. Пора бы уже починить...*/
-  async function toggleSwitchIsActive() {
-    const result = await new Promise((resolve, reject) => {
-      chrome.storage.local.get("isActive", (result) => {
-        resolve(result);
-      });
-    });
-    console.log(result.isActive);
-    active = result.isActive;
-    updateUIState();
-    toggleSwitch.checked = active;
-  }
-  toggleSwitchIsActive();
+  const guide = document.getElementById("guide");
+  const showGuide = document.getElementById("showGuide");
 
-  toggleSwitch.addEventListener("change", function () {
-    active = !active;
-    chrome.storage.local.set({ isActive: active });
-    updateUIState();
+  showGuide.addEventListener("click", function () {
+    const guideDisplay = window
+      .getComputedStyle(guide)
+      .getPropertyValue("display");
+    guide.style.display = guideDisplay === "none" ? "block" : "none";
   });
-
-  function updateUIState() {
-    heading.innerText = active ? "Highlight On" : "Highlight Off";
-  }
 });

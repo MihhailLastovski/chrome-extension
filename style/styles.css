@@ -357,3 +357,19 @@ input[type=file]::file-selector-button {
   cursor: pointer;
   transition: background .2s ease-in-out;
 }
+
+#guide {
+  display: none;
+  margin-left: 10%;
+}
+
+#showGuide {
+  margin-left: 15%;
+  cursor: pointer;
+  color: var(--main-black);
+  transition: text-decoration 0.5s ease;
+}
+
+#showGuide:hover {
+  color: var(--main-dark-green);
+}
