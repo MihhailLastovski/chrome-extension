@@ -206,19 +206,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /*************************************changeSheets.js********************************************/
 
-  const divWithButtonsInList = document.getElementById("buttonsInLists");
+  //const divWithButtonsInList = document.getElementById("buttonsInLists");
   const googleListBtn = document.getElementById("googleListBtn");
+  const csvListBtn = document.getElementById("csvListBtn");
   const fileListBtn = document.getElementById("fileListBtn");
 
-
-  
+  var divWithListImportSettigs = document.createElement("div");
+  addListForm.lastElementChild.insertBefore(divWithListImportSettigs, wordsContainer);
 
   googleListBtn.addEventListener("click", function () {  
     window.location.href = "changeSheets.html";
   });
 
+  csvListBtn.addEventListener("click", function () {  
+    divWithListImportSettigs.innerHTML = "";
+
+    var csvInput = document.createElement('input');
+    csvInput.innerHTML = '<input type="text" id="textInput" placeholder="Paste the link here"></input>';
+
+
+    var csvButton = document.createElement('button');
+    csvButton.textContent = "OK";
+    
+
+    divWithListImportSettigs.appendChild(csvInput);
+    divWithListImportSettigs.appendChild(csvButton);
+  });
+
   fileListBtn.addEventListener("click", function () {  
     // Выбор файла и перенос значений в список
+    divWithListImportSettigs.innerHTML = "";
 
     var fileInput = document.createElement("input");
     fileInput.type = "file";
@@ -239,8 +256,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
     
-    if (!document.querySelector('input[type="file"]')) {
-      addListForm.lastElementChild.insertBefore(fileInput, wordsContainer);
-    }
+    divWithListImportSettigs.appendChild(fileInput);   
   });
 });
