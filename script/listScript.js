@@ -231,7 +231,9 @@ document.addEventListener("DOMContentLoaded", function () {
         reader.onload = function(event) {
           const content = event.target.result;
           const words = content.split(/\s+/).filter(word => word.trim() !== '');
-          window.location.href = `list.html?dataFile=${words}`;
+          words.forEach(word => {
+            addWord(word.trim());
+          });
         };
         reader.readAsText(file);
       }
