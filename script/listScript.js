@@ -222,13 +222,62 @@ document.addEventListener("DOMContentLoaded", function () {
     divWithListImportSettigs.innerHTML = "";
 
     var csvInput = document.createElement('input');
-    csvInput.innerHTML = '<input type="text" id="textInput" placeholder="Paste the link here"></input>';
+    csvInput.type = "text";
+    csvInput.id = "textInput";
+    csvInput.placeholder = "Paste the link"
 
 
     var csvButton = document.createElement('button');
     csvButton.textContent = "OK";
     
+    csvButton.addEventListener("click", function () {
+      // Функция для запроса данных и обработки их в массив слов
+      async function fetchDataAndProcessWords(url) {
+        try {
+          const response = await fetch(url);
+          const htmlData = await response.text();
 
+          // Преобразование HTML-кода в текст
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(htmlData, 'text/html');
+          const table = doc.querySelector(".waffle");
+          if (table) {
+            const rows = Array.from(table.querySelectorAll("tr"));
+            wordsArray = rows.reduce((words, row) => {
+              const cells = Array.from(row.querySelectorAll("td"));
+              const wordsInRow = cells.map((cell) => cell.textContent.trim());
+              return words.concat(wordsInRow.filter((word) => word !== ""));
+            }, []);
+          }
+
+          wordsArray.forEach(word => {
+            addWord(word.trim());
+          });
+        } catch (error) {
+          console.error('Ошибка при получении данных:', error);
+        }
+      }
+      fetchDataAndProcessWords(csvInput.value);
+      csvInput.value = "";
+    });
+
+    var csvh2 = document.createElement('h2');
+    csvh2.textContent = "Google Sheets assistant";
+    csvh2.style.textAlign = "left";
+    csvh2.style.marginLeft = "17%";
+
+    var csvp = document.createElement('p');
+    csvp.innerHTML = 
+    `<p>          
+      1. File > Share > Publish to web.<br>
+      2. Click Publish.<br>
+      3. Copy the URL.          
+    </p>`;
+    csvp.style.textAlign = "left";
+    csvp.style.marginLeft = "13%";
+
+    divWithListImportSettigs.appendChild(csvh2);
+    divWithListImportSettigs.appendChild(csvp);
     divWithListImportSettigs.appendChild(csvInput);
     divWithListImportSettigs.appendChild(csvButton);
   });
