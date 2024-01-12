@@ -3,8 +3,28 @@ document.addEventListener("DOMContentLoaded", function () {
   const button = document.getElementById("getSheets");
   const iframe = document.getElementById("googleSheets");
   const buttonToList = document.getElementById("toList");
-
+  const allWordsToList = document.getElementById("wordsToList");
+  const apiKey = 'AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk';
+  let spreadsheetId;
+  let sheets = [];
   let wordsArray = [];
+
+  function getListOfSheets(spreadsheetId) {
+
+    fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}`)
+      .then((response) => response.json())
+      .then((data) => {
+        sheets = data.sheets;
+
+        if (sheets) {
+          console.log("List of Sheets:");
+          sheets.forEach(sheet => console.log(sheet.properties.title));
+        } else {
+          console.error("No sheets found.");
+        }
+      })
+      .catch((error) => console.error("Error fetching sheets:", error));
+  }
 
   button.addEventListener("click", function () {
     fetch(input.value)
@@ -21,11 +41,18 @@ document.addEventListener("DOMContentLoaded", function () {
             return words.concat(wordsInRow.filter((word) => word !== ""));
           }, []);
           iframe.src = input.value + "?widget=true&amp;headers=false";
-          console.log(wordsArray);
+
+          spreadsheetId = getSpreadsheetIdFromUrl(input.value);
+          if (spreadsheetId) {
+            getListOfSheets(spreadsheetId);
+          } else {
+            console.error("Invalid Google Sheets URL.");
+          }
         }
       })
       .catch((error) => console.error("Error:", error));
   });
+
   buttonToList.addEventListener("click", function () {
     if (wordsArray.length > 0) {
       const dataString = encodeURIComponent(wordsArray.join("\n"));
@@ -34,6 +61,37 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("No data to transfer to the list.");
     }
   });
+
+  allWordsToList.addEventListener("click", function () {
+    const allWordsArray = [];
+  
+    if (sheets.length > 0) {
+      const fetchPromises = sheets.map((sheet) => {
+        return fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(sheet.properties.title)}?key=${apiKey}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const sheetWords = data.values.flat();
+            allWordsArray.push(...sheetWords);
+          })
+          .catch((error) => console.error(`Error fetching words from ${sheet.properties.title}:`, error));
+      });
+  
+      Promise.all(fetchPromises)
+        .then(() => {
+          const allWordsDataString = encodeURIComponent(allWordsArray.join("\n"));
+          window.location.href = `list.html?dataList=${allWordsDataString}`;
+        })
+        .catch((error) => console.error('Error during fetching:', error));
+    } else {
+      console.error("No sheets available.");
+    }
+  });
+  
 
   const guide = document.getElementById("guide");
   const showGuide = document.getElementById("showGuide");
@@ -44,4 +102,10 @@ document.addEventListener("DOMContentLoaded", function () {
       .getPropertyValue("display");
     guide.style.display = guideDisplay === "none" ? "block" : "none";
   });
+
+  function getSpreadsheetIdFromUrl(url) {
+    const regex = /\/spreadsheets\/d\/(.+?)\//;
+    const match = url.match(regex);
+    return match && match[1] ? match[1] : null;
+  }
 });
