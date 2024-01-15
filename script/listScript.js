@@ -223,8 +223,8 @@ document.addEventListener("DOMContentLoaded", function () {
     wordsContainer
   );
 
-  googleListBtn.addEventListener("click", function () {
-    window.location.href = "changeSheets.html";
+  googleListBtn.addEventListener("click", function () {  
+    window.location.href = `changeSheets.html?listId=${listId}`;
   });
 
   var toList = document.createElement("button");
@@ -233,7 +233,9 @@ document.addEventListener("DOMContentLoaded", function () {
   var wordsToList = document.createElement("button");
   wordsToList.type = "button";
 
-  var listBox;
+  var listBox, rangeEndInput, rangeStartInput;
+  
+
   linkToListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
 
@@ -273,8 +275,19 @@ document.addEventListener("DOMContentLoaded", function () {
       toList.textContent = "To list ->";
       wordsToList.id = "wordsToList";
       wordsToList.textContent = "All words from doc";
+      rangeStartInput = document.createElement("input");
+      rangeStartInput.type = "text";
+      rangeStartInput.id = "rangeStart";
+      rangeStartInput.placeholder = "Range Start";
+
+      rangeEndInput = document.createElement("input");
+      rangeEndInput.type = "text";
+      rangeEndInput.id = "rangeEnd";
+      rangeEndInput.placeholder = "Range End";
       divWithListImportSettigs.appendChild(toList);
       divWithListImportSettigs.appendChild(wordsToList);
+      divWithListImportSettigs.appendChild(rangeStartInput);
+      divWithListImportSettigs.appendChild(rangeEndInput);
     });
 
     const hr = document.createElement("hr");
@@ -288,31 +301,34 @@ document.addEventListener("DOMContentLoaded", function () {
     var selectedSheetName = listBox.options[listBox.selectedIndex].value;
   
     if (selectedSheetName) {
-      const selectedSheet = sheets.find((sheet) => sheet.properties.title === selectedSheetName);
+      const rangeStart = document.getElementById("rangeStart").value;
+      const rangeEnd = document.getElementById("rangeEnd").value;
   
-      if (selectedSheet) {
-        fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(selectedSheetName)}?key=${apiKey}`)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-            return response.json();
-          })
-          .then((data) => {
-            const sheetWords = data.values.flat();
-            sheetWords.forEach((word) => {
-              addWord(word.trim());
-            });
-          })
-          .catch((error) => console.error(`Error fetching words from ${selectedSheetName}:`, error));
-      } else {
-        console.error("Selected sheet not found.");
+      let range = selectedSheetName;
+  
+      if (rangeStart && rangeEnd) {
+        range += `!${rangeStart}:${rangeEnd}`;
       }
+  
+      fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?key=${apiKey}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          const sheetWords = data.values.flat();
+  
+          sheetWords.forEach((word) => {
+            addWord(word.trim());
+          });
+        })
+        .catch((error) => console.error(`Error fetching words from ${range}:`, error));
     } else {
       console.error("No sheet selected.");
     }
   });
-  
 
   wordsToList.addEventListener("click", function () {
     const allWordsArray = [];
@@ -348,7 +364,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(() => {
           allWordsArray.forEach((word) => {
             addWord(word.trim());
-          });;
+          });
         })
         .catch((error) => console.error("Error during fetching:", error));
     } else {
