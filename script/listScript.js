@@ -191,7 +191,8 @@ document.addEventListener("DOMContentLoaded", function () {
     wordInput.className = "word-input";
 
     const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete";
+    deleteBtn.innerHTML = '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
+    deleteBtn.className = "trash-btn";
     deleteBtn.addEventListener("click", function () {
       wordDiv.remove();
     });
