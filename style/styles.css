@@ -270,6 +270,16 @@ input[type=file]::file-selector-button {
   gap: 10px; 
 }
 
+.listFormBtn {
+  margin-top: 5%;
+}
+
+.trash-btn {
+  border: none;
+  padding: 2px;
+  margin-left: 20%;
+}
+
 /* List.html - Checkboxes */
 .word-checkbox { 
   position: absolute; 
@@ -339,10 +349,6 @@ input[type=file]::file-selector-button {
 
 .word-input:focus {
   outline: none;
-}
-
-.listFormBtn {
-  margin-top: 5%;
 }
 
 /* changeSheets.html - Text showing */
