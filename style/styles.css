@@ -277,7 +277,6 @@ input[type=file]::file-selector-button {
 .trash-btn {
   border: none;
   padding: 2px;
-  margin-left: 20%;
 }
 
 /* List.html - Checkboxes */
@@ -339,12 +338,19 @@ input[type=file]::file-selector-button {
 }
 
 .word-input {
+  resize: none;
+  height: 22px;
+  width: 100%;
   border: none;
   padding: 8px;
   font-size: 14px;
   border-radius: 4px;
   color: var(--main-black);
   background-color: var(--main-white);
+}
+
+.word-input::-webkit-scrollbar {
+  display: none;
 }
 
 .word-input:focus {

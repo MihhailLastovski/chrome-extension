@@ -181,11 +181,11 @@ document.addEventListener("DOMContentLoaded", function () {
     checkbox.checked = enabled;
     checkbox.id = "cbox" + wordsContainer.childElementCount;
     checkbox.className = "word-checkbox";
-
+    
     const label = document.createElement("label");
     label.htmlFor = checkbox.id;
 
-    const wordInput = document.createElement("input");
+    const wordInput = document.createElement("textarea");
     wordInput.type = "text";
     wordInput.value = word;
     wordInput.className = "word-input";
