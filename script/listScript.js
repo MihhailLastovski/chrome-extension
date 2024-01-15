@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   cancelBtn.addEventListener("click", function () {
     window.location.href = "popup.html";
   });
+  const apiKey = "AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk";
 
   const lastListItem = document.getElementById("lastListItem");
 
@@ -58,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       const saveChangesBtn = document.createElement("button");
+      saveChangesBtn.type = "submit";
       saveChangesBtn.textContent = "Save Changes";
       saveChangesBtn.addEventListener("click", function () {
         saveEditedList(listIndex, lists);
@@ -185,13 +187,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const label = document.createElement("label");
     label.htmlFor = checkbox.id;
 
-    const wordInput = document.createElement("input");
+    const wordInput = document.createElement("textarea");
     wordInput.type = "text";
     wordInput.value = word;
     wordInput.className = "word-input";
 
     const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Delete";
+    deleteBtn.innerHTML =
+      '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
+    deleteBtn.className = "trash-btn";
     deleteBtn.addEventListener("click", function () {
       wordDiv.remove();
     });
@@ -206,72 +210,232 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /*************************************changeSheets.js********************************************/
 
-  //const divWithButtonsInList = document.getElementById("buttonsInLists");
   const googleListBtn = document.getElementById("googleListBtn");
   const csvListBtn = document.getElementById("csvListBtn");
   const fileListBtn = document.getElementById("fileListBtn");
+  const linkToListBtn = document.getElementById("linkToList");
+  var sheets = [];
+  var spreadsheetId;
 
   var divWithListImportSettigs = document.createElement("div");
-  addListForm.lastElementChild.insertBefore(divWithListImportSettigs, wordsContainer);
+  addListForm.lastElementChild.insertBefore(
+    divWithListImportSettigs,
+    wordsContainer
+  );
 
   googleListBtn.addEventListener("click", function () {  
     window.location.href = `changeSheets.html?listId=${listId}`;
   });
-
-  csvListBtn.addEventListener("click", function () {  
+  var toList = document.createElement("button");
+  var wordsToList = document.createElement("button");
+  var listBox, rangeEndInput, rangeStartInput;
+  linkToListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
 
-    var csvInput = document.createElement('input');
+    var linkInput = document.createElement("input");
+    linkInput.type = "text";
+    linkInput.id = "linkInput";
+    linkInput.placeholder = "Paste the link";
+    listBox = document.createElement("select");
+    listBox.id = "listbox";
+    var okButton = document.createElement("button");
+    okButton.type = "button";
+    okButton.textContent = "OK";
+
+    okButton.addEventListener("click", function () {
+      fetchListsAndAddToListbox(linkInput.value);
+      linkInput.value = "";
+      toList.id = "toList";
+      toList.textContent = "To list ->";
+      wordsToList.id = "wordsToList";
+      wordsToList.textContent = "All words from doc";
+      rangeStartInput = document.createElement("input");
+      rangeStartInput.type = "text";
+      rangeStartInput.id = "rangeStart";
+      rangeStartInput.placeholder = "Range Start";
+
+      rangeEndInput = document.createElement("input");
+      rangeEndInput.type = "text";
+      rangeEndInput.id = "rangeEnd";
+      rangeEndInput.placeholder = "Range End";
+      divWithListImportSettigs.appendChild(toList);
+      divWithListImportSettigs.appendChild(wordsToList);
+      divWithListImportSettigs.appendChild(rangeStartInput);
+      divWithListImportSettigs.appendChild(rangeEndInput);
+    });
+
+    divWithListImportSettigs.appendChild(linkInput);
+    divWithListImportSettigs.appendChild(okButton);
+    divWithListImportSettigs.appendChild(listBox);
+  });
+  toList.addEventListener("click", function () {
+    var selectedSheetName = listBox.options[listBox.selectedIndex].value;
+  
+    if (selectedSheetName) {
+      const rangeStart = document.getElementById("rangeStart").value;
+      const rangeEnd = document.getElementById("rangeEnd").value;
+  
+      let range = selectedSheetName;
+  
+      if (rangeStart && rangeEnd) {
+        range += `!${rangeStart}:${rangeEnd}`;
+      }
+  
+      fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}?key=${apiKey}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Network response was not ok: ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          const sheetWords = data.values.flat();
+  
+          sheetWords.forEach((word) => {
+            addWord(word.trim());
+          });
+        })
+        .catch((error) => console.error(`Error fetching words from ${range}:`, error));
+    } else {
+      console.error("No sheet selected.");
+    }
+  });
+
+  wordsToList.addEventListener("click", function () {
+    const allWordsArray = [];
+
+    if (sheets.length > 0) {
+      const fetchPromises = sheets.map((sheet) => {
+        return fetch(
+          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(
+            sheet.properties.title
+          )}?key=${apiKey}`
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(
+                `Network response was not ok: ${response.statusText}`
+              );
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const sheetWords = data.values.flat();
+            allWordsArray.push(...sheetWords);
+          })
+          .catch((error) =>
+            console.error(
+              `Error fetching words from ${sheet.properties.title}:`,
+              error
+            )
+          );
+      });
+
+      Promise.all(fetchPromises)
+        .then(() => {
+          allWordsArray.forEach((word) => {
+            addWord(word.trim());
+          });
+        })
+        .catch((error) => console.error("Error during fetching:", error));
+    } else {
+      console.error("No sheets available.");
+    }
+  });
+  async function fetchListsAndAddToListbox(url) {
+    try {
+      spreadsheetId = getSpreadsheetIdFromUrl(url);
+
+      const sheetsResponse = await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}`
+      );
+
+      if (!sheetsResponse.ok) {
+        console.error(
+          "Error fetching sheets. HTTP Status:",
+          sheetsResponse.status
+        );
+        const errorText = await sheetsResponse.text();
+        console.error("Error details:", errorText);
+        return;
+      }
+
+      const sheetsData = await sheetsResponse.json();
+      const sheetsList = sheetsData.sheets;
+
+      if (sheetsList && sheetsList.length > 0) {
+        sheetsList.forEach((sheet) => {
+          sheets = sheetsData.sheets;
+          addSheetToListbox(sheet.properties.title);
+        });
+      } else {
+        console.error("No sheets found.");
+      }
+    } catch (error) {
+      console.error("Error fetching sheets:", error);
+    }
+  }
+
+  function addSheetToListbox(sheetName) {
+    const listBox = document.getElementById("listbox");
+
+    const option = document.createElement("option");
+    option.value = sheetName;
+    option.text = sheetName;
+
+    listBox.add(option);
+  }
+  csvListBtn.addEventListener("click", function () {
+    divWithListImportSettigs.innerHTML = "";
+
+    var csvInput = document.createElement("input");
     csvInput.type = "text";
     csvInput.id = "textInput";
-    csvInput.placeholder = "Paste the link"
+    csvInput.placeholder = "Paste the link";
 
-
-    var csvButton = document.createElement('button');
+    var csvButton = document.createElement("button");
     csvButton.textContent = "OK";
-    
+    csvButton.type = "button";
+
     csvButton.addEventListener("click", function () {
-      // Функция для запроса данных и обработки их в массив слов
       async function fetchDataAndProcessWords(url) {
         try {
           const response = await fetch(url);
-          const htmlData = await response.text();
+          const csvData = await response.text();
 
-          // Преобразование HTML-кода в текст
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(htmlData, 'text/html');
-          const table = doc.querySelector(".waffle");
-          if (table) {
-            const rows = Array.from(table.querySelectorAll("tr"));
-            wordsArray = rows.reduce((words, row) => {
-              const cells = Array.from(row.querySelectorAll("td"));
-              const wordsInRow = cells.map((cell) => cell.textContent.trim());
-              return words.concat(wordsInRow.filter((word) => word !== ""));
-            }, []);
-          }
+          const rows = csvData.split("\n");
+          const wordsArray = rows.reduce((words, row) => {
+            const columns = row.split(",");
+            const wordsInRow = columns.map((cell) => cell.trim());
+            return words.concat(wordsInRow.filter((word) => word !== ""));
+          }, []);
 
-          wordsArray.forEach(word => {
+          wordsArray.forEach((word) => {
             addWord(word.trim());
           });
         } catch (error) {
-          console.error('Ошибка при получении данных:', error);
+          console.error("Ошибка при получении данных:", error);
         }
       }
-      fetchDataAndProcessWords(csvInput.value);
+
+      const csvLink = csvInput.value.replace("/edit", "/export?format=csv");
+
+      fetchDataAndProcessWords(csvLink);
+
       csvInput.value = "";
     });
 
-    var csvh2 = document.createElement('h2');
+    var csvh2 = document.createElement("h2");
     csvh2.textContent = "Google Sheets assistant";
     csvh2.style.textAlign = "left";
     csvh2.style.marginLeft = "17%";
 
-    var csvp = document.createElement('p');
-    csvp.innerHTML = 
-    `<p>          
+    var csvp = document.createElement("p");
+    csvp.innerHTML = `<p>          
       1. File > Share > Publish to web.<br>
       2. Click Publish.<br>
-      3. Copy the URL.          
+      3. Choose format csv.<br>
+      4. Copy the URL.          
     </p>`;
     csvp.style.textAlign = "left";
     csvp.style.marginLeft = "13%";
@@ -281,30 +445,36 @@ document.addEventListener("DOMContentLoaded", function () {
     divWithListImportSettigs.appendChild(csvInput);
     divWithListImportSettigs.appendChild(csvButton);
   });
-
-  fileListBtn.addEventListener("click", function () {  
+  function getSpreadsheetIdFromUrl(url) {
+    const regex = /\/spreadsheets\/d\/(.+?)\//;
+    const match = url.match(regex);
+    return match && match[1] ? match[1] : null;
+  }
+  fileListBtn.addEventListener("click", function () {
     // Выбор файла и перенос значений в список
     divWithListImportSettigs.innerHTML = "";
 
     var fileInput = document.createElement("input");
     fileInput.type = "file";
-    fileInput.accept = ".txt"; 
+    fileInput.accept = ".txt";
 
-    fileInput.addEventListener('change', function(event) {
+    fileInput.addEventListener("change", function (event) {
       const file = event.target.files[0];
       if (file) {
         const reader = new FileReader();
-        reader.onload = function(event) {
+        reader.onload = function (event) {
           const content = event.target.result;
-          const words = content.split(/\s+/).filter(word => word.trim() !== '');
-          words.forEach(word => {
+          const words = content
+            .split(/\s+/)
+            .filter((word) => word.trim() !== "");
+          words.forEach((word) => {
             addWord(word.trim());
           });
         };
         reader.readAsText(file);
       }
     });
-    
-    divWithListImportSettigs.appendChild(fileInput);   
+
+    divWithListImportSettigs.appendChild(fileInput);
   });
 });

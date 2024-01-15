@@ -14,12 +14,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const input = document.getElementById("textInput");
   const button = document.getElementById("getSheets");
   const iframe = document.getElementById("googleSheets");
-  const buttonToList = document.getElementById("toList");
-  const allWordsToList = document.getElementById("wordsToList");
   const apiKey = 'AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk';
   let spreadsheetId;
   let sheets = [];
-  let wordsArray = [];
 
   function getListOfSheets(spreadsheetId) {
 
@@ -65,50 +62,11 @@ document.addEventListener("DOMContentLoaded", function () {
       .catch((error) => console.error("Error:", error));
   });
 
-  buttonToList.addEventListener("click", function () {
-    if (wordsArray.length > 0) {
-      const dataString = encodeURIComponent(wordsArray.join("\n"));
-      window.location.href = `list.html?dataList=${dataString}`;
-    } else {
-      console.error("No data to transfer to the list.");
-    }
-  });
-
-  allWordsToList.addEventListener("click", function () {
-    const allWordsArray = [];
-  
-    if (sheets.length > 0) {
-      const fetchPromises = sheets.map((sheet) => {
-        return fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(sheet.properties.title)}?key=${apiKey}`)
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-            return response.json();
-          })
-          .then((data) => {
-            const sheetWords = data.values.flat();
-            allWordsArray.push(...sheetWords);
-          })
-          .catch((error) => console.error(`Error fetching words from ${sheet.properties.title}:`, error));
-      });
-  
-      Promise.all(fetchPromises)
-        .then(() => {
-          const allWordsDataString = encodeURIComponent(allWordsArray.join("\n"));
-          window.location.href = `list.html?dataList=${allWordsDataString}`;
-        })
-        .catch((error) => console.error('Error during fetching:', error));
-    } else {
-      console.error("No sheets available.");
-    }
-  });
-  
-
   const guide = document.getElementById("guide");
   const showGuide = document.getElementById("showGuide");
 
   showGuide.addEventListener("click", function () {
+    console.log("Click")
     const guideDisplay = window
       .getComputedStyle(guide)
       .getPropertyValue("display");
