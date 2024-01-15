@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       const saveChangesBtn = document.createElement("button");
+      saveChangesBtn.type = "submit";
       saveChangesBtn.textContent = "Save Changes";
       saveChangesBtn.addEventListener("click", function () {
         saveEditedList(listIndex, lists);
@@ -238,6 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
     listBox = document.createElement("select");
     listBox.id = "listbox";
     var okButton = document.createElement("button");
+    okButton.type = "button";
     okButton.textContent = "OK";
 
     okButton.addEventListener("click", function () {
@@ -379,6 +381,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var csvButton = document.createElement("button");
     csvButton.textContent = "OK";
+    csvButton.type = "button";
 
     csvButton.addEventListener("click", function () {
       async function fetchDataAndProcessWords(url) {
