@@ -277,8 +277,11 @@ document.addEventListener("DOMContentLoaded", function () {
       divWithListImportSettigs.appendChild(wordsToList);
     });
 
+    const hr = document.createElement("hr");
+
     divWithListImportSettigs.appendChild(linkInput);
     divWithListImportSettigs.appendChild(okButton);
+    divWithListImportSettigs.appendChild(hr);
     divWithListImportSettigs.appendChild(listBox);
   });
   toList.addEventListener("click", function () {
