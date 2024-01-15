@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
   cancelBtn.addEventListener("click", function () {
     window.location.href = "popup.html";
   });
-  const apiKey = "AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk"; 
+  const apiKey = "AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk";
 
   const lastListItem = document.getElementById("lastListItem");
 
@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", function () {
     checkbox.checked = enabled;
     checkbox.id = "cbox" + wordsContainer.childElementCount;
     checkbox.className = "word-checkbox";
-    
+
     const label = document.createElement("label");
     label.htmlFor = checkbox.id;
 
@@ -192,7 +192,8 @@ document.addEventListener("DOMContentLoaded", function () {
     wordInput.className = "word-input";
 
     const deleteBtn = document.createElement("button");
-    deleteBtn.innerHTML = '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
+    deleteBtn.innerHTML =
+      '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
     deleteBtn.className = "trash-btn";
     deleteBtn.addEventListener("click", function () {
       wordDiv.remove();
@@ -208,11 +209,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   /*************************************changeSheets.js********************************************/
 
-  //const divWithButtonsInList = document.getElementById("buttonsInLists");
   const googleListBtn = document.getElementById("googleListBtn");
   const csvListBtn = document.getElementById("csvListBtn");
   const fileListBtn = document.getElementById("fileListBtn");
   const linkToListBtn = document.getElementById("linkToList");
+  var sheets = [];
+  var spreadsheetId;
 
   var divWithListImportSettigs = document.createElement("div");
   addListForm.lastElementChild.insertBefore(
@@ -223,48 +225,131 @@ document.addEventListener("DOMContentLoaded", function () {
   googleListBtn.addEventListener("click", function () {
     window.location.href = "changeSheets.html";
   });
+  var toList = document.createElement("button");
+  var wordsToList = document.createElement("button");
+  var listBox;
   linkToListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
-  
+
     var linkInput = document.createElement("input");
     linkInput.type = "text";
     linkInput.id = "linkInput";
     linkInput.placeholder = "Paste the link";
-    var listBox = document.createElement("select");
+    listBox = document.createElement("select");
     listBox.id = "listbox";
     var okButton = document.createElement("button");
     okButton.textContent = "OK";
-  
+
     okButton.addEventListener("click", function () {
       fetchListsAndAddToListbox(linkInput.value);
       linkInput.value = "";
+      toList.id = "toList";
+      toList.textContent = "To list ->";
+      wordsToList.id = "wordsToList";
+      wordsToList.textContent = "All words from doc";
+      divWithListImportSettigs.appendChild(toList);
+      divWithListImportSettigs.appendChild(wordsToList);
     });
-  
+
     divWithListImportSettigs.appendChild(linkInput);
     divWithListImportSettigs.appendChild(okButton);
     divWithListImportSettigs.appendChild(listBox);
   });
+  toList.addEventListener("click", function () {
+    var selectedSheetName = listBox.options[listBox.selectedIndex].value;
+  
+    if (selectedSheetName) {
+      const selectedSheet = sheets.find((sheet) => sheet.properties.title === selectedSheetName);
+  
+      if (selectedSheet) {
+        fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(selectedSheetName)}?key=${apiKey}`)
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const sheetWords = data.values.flat();
+            sheetWords.forEach((word) => {
+              addWord(word.trim());
+            });
+          })
+          .catch((error) => console.error(`Error fetching words from ${selectedSheetName}:`, error));
+      } else {
+        console.error("Selected sheet not found.");
+      }
+    } else {
+      console.error("No sheet selected.");
+    }
+  });
+  
 
+  wordsToList.addEventListener("click", function () {
+    const allWordsArray = [];
+
+    if (sheets.length > 0) {
+      const fetchPromises = sheets.map((sheet) => {
+        return fetch(
+          `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(
+            sheet.properties.title
+          )}?key=${apiKey}`
+        )
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(
+                `Network response was not ok: ${response.statusText}`
+              );
+            }
+            return response.json();
+          })
+          .then((data) => {
+            const sheetWords = data.values.flat();
+            allWordsArray.push(...sheetWords);
+          })
+          .catch((error) =>
+            console.error(
+              `Error fetching words from ${sheet.properties.title}:`,
+              error
+            )
+          );
+      });
+
+      Promise.all(fetchPromises)
+        .then(() => {
+          allWordsArray.forEach((word) => {
+            addWord(word.trim());
+          });;
+        })
+        .catch((error) => console.error("Error during fetching:", error));
+    } else {
+      console.error("No sheets available.");
+    }
+  });
   async function fetchListsAndAddToListbox(url) {
     try {
-      const spreadsheetId = getSpreadsheetIdFromUrl(url); 
-  
+      spreadsheetId = getSpreadsheetIdFromUrl(url);
+
       const sheetsResponse = await fetch(
         `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}`
       );
-  
+
       if (!sheetsResponse.ok) {
-        console.error("Error fetching sheets. HTTP Status:", sheetsResponse.status);
+        console.error(
+          "Error fetching sheets. HTTP Status:",
+          sheetsResponse.status
+        );
         const errorText = await sheetsResponse.text();
         console.error("Error details:", errorText);
         return;
       }
-  
+
       const sheetsData = await sheetsResponse.json();
       const sheetsList = sheetsData.sheets;
-  
+
       if (sheetsList && sheetsList.length > 0) {
         sheetsList.forEach((sheet) => {
+          sheets = sheetsData.sheets;
           addSheetToListbox(sheet.properties.title);
         });
       } else {
@@ -274,7 +359,6 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Error fetching sheets:", error);
     }
   }
-  
 
   function addSheetToListbox(sheetName) {
     const listBox = document.getElementById("listbox");
@@ -320,12 +404,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const csvLink = csvInput.value.replace("/edit", "/export?format=csv");
 
       fetchDataAndProcessWords(csvLink);
-      
+
       csvInput.value = "";
     });
-    
-  
-    
+
     var csvh2 = document.createElement("h2");
     csvh2.textContent = "Google Sheets assistant";
     csvh2.style.textAlign = "left";
