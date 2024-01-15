@@ -226,11 +226,36 @@ document.addEventListener("DOMContentLoaded", function () {
   googleListBtn.addEventListener("click", function () {  
     window.location.href = `changeSheets.html?listId=${listId}`;
   });
+
   var toList = document.createElement("button");
+  toList.type = "button";
+
   var wordsToList = document.createElement("button");
+  wordsToList.type = "button";
+
   var listBox, rangeEndInput, rangeStartInput;
+  
+
   linkToListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
+
+    var csvh2 = document.createElement("h2");
+    csvh2.textContent = "Google Sheets assistant";
+    csvh2.style.textAlign = "left";
+    csvh2.style.marginLeft = "17%";
+
+    var csvp = document.createElement("p");
+    csvp.innerHTML = `<p>          
+      1. Access settings.<br>
+      2. Under “General access” click the Down arrow.<br>
+      3. Choose Anyone with the link.<br>
+      4. Copy the URL.         
+    </p>`;
+    csvp.style.textAlign = "left";
+    csvp.style.marginLeft = "13%";
+
+    divWithListImportSettigs.appendChild(csvh2);
+    divWithListImportSettigs.appendChild(csvp);
 
     var linkInput = document.createElement("input");
     linkInput.type = "text";
@@ -238,6 +263,7 @@ document.addEventListener("DOMContentLoaded", function () {
     linkInput.placeholder = "Paste the link";
     listBox = document.createElement("select");
     listBox.id = "listbox";
+
     var okButton = document.createElement("button");
     okButton.type = "button";
     okButton.textContent = "OK";
@@ -450,8 +476,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const match = url.match(regex);
     return match && match[1] ? match[1] : null;
   }
+
+  // Выбор файла и перенос значений в список
   fileListBtn.addEventListener("click", function () {
-    // Выбор файла и перенос значений в список
     divWithListImportSettigs.innerHTML = "";
 
     var fileInput = document.createElement("input");
