@@ -1,4 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const listId = urlParams.get("listId");
+  const cancelBtn = document.getElementById("cancelBtn");
+  cancelBtn.addEventListener("click", function () {
+    if(listId) {
+      window.location.href = `list.html?listId=${listId}`;
+    }
+    else {
+      window.location.href = "list.html";
+    }
+  });
+
   const input = document.getElementById("textInput");
   const button = document.getElementById("getSheets");
   const iframe = document.getElementById("googleSheets");

@@ -215,7 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
   addListForm.lastElementChild.insertBefore(divWithListImportSettigs, wordsContainer);
 
   googleListBtn.addEventListener("click", function () {  
-    window.location.href = "changeSheets.html";
+    window.location.href = `changeSheets.html?listId=${listId}`;
   });
 
   csvListBtn.addEventListener("click", function () {  
