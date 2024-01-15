@@ -348,10 +348,11 @@ input[type=file]::file-selector-button {
 /* changeSheets.html - Text showing */
 #guide {
   display: none;
+  margin-left: 5%;
 }
 
 #showGuide {
-  margin-left: 5%;
+  margin-left: 10%;
   cursor: pointer;
   color: var(--main-black);
   transition: text-decoration 0.5s ease;
@@ -360,3 +361,4 @@ input[type=file]::file-selector-button {
 #showGuide:hover {
   color: var(--main-dark-green);
 }
+
