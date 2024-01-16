@@ -226,18 +226,42 @@ document.addEventListener("DOMContentLoaded", function () {
   googleListBtn.addEventListener("click", function () {  
     window.location.href = `changeSheets.html?listId=${listId}`;
   });
+
   var toList = document.createElement("button");
+  toList.type = "button";
+
   var wordsToList = document.createElement("button");
+  wordsToList.type = "button";
+
   var listBox, rangeEndInput, rangeStartInput;
+  
+
   linkToListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
+
+    var csvh2 = document.createElement("h2");
+    csvh2.textContent = "Google Sheets assistant";
+    csvh2.style.textAlign = "left";
+    csvh2.style.marginLeft = "17%";
+
+    var csvp = document.createElement("p");
+    csvp.innerHTML = `<p>          
+      1. Access settings.<br>
+      2. Under “General access” click the Down arrow.<br>
+      3. Choose Anyone with the link.<br>
+      4. Copy the URL.         
+    </p>`;
+    csvp.style.textAlign = "left";
+    csvp.style.marginLeft = "13%";
+
+    divWithListImportSettigs.appendChild(csvh2);
+    divWithListImportSettigs.appendChild(csvp);
 
     var linkInput = document.createElement("input");
     linkInput.type = "text";
     linkInput.id = "linkInput";
     linkInput.placeholder = "Paste the link";
-    listBox = document.createElement("select");
-    listBox.id = "listbox";
+
     var okButton = document.createElement("button");
     okButton.type = "button";
     okButton.textContent = "OK";
@@ -245,29 +269,50 @@ document.addEventListener("DOMContentLoaded", function () {
     okButton.addEventListener("click", function () {
       fetchListsAndAddToListbox(linkInput.value);
       linkInput.value = "";
+
+      const hr = document.createElement("hr");
+
+      const h2 = document.createElement("h2");
+      h2.textContent = "Add words from:"
+
+      listBox = document.createElement("select");
+      listBox.id = "listbox";
+
       toList.id = "toList";
-      toList.textContent = "To list ->";
+      toList.innerHTML = '<i class="fa fa-search"></i>';
+
       wordsToList.id = "wordsToList";
-      wordsToList.textContent = "All words from doc";
+      wordsToList.textContent = "All document";
+
+      const divRange = document.createElement("div");
+      divRange.id = "divRange";
+
       rangeStartInput = document.createElement("input");
       rangeStartInput.type = "text";
       rangeStartInput.id = "rangeStart";
-      rangeStartInput.placeholder = "Range Start";
+      rangeStartInput.placeholder = "A1";
 
       rangeEndInput = document.createElement("input");
       rangeEndInput.type = "text";
       rangeEndInput.id = "rangeEnd";
-      rangeEndInput.placeholder = "Range End";
-      divWithListImportSettigs.appendChild(toList);
+      rangeEndInput.placeholder = "B2";
+
+      divWithListImportSettigs.appendChild(hr);
+      divWithListImportSettigs.appendChild(h2);
+
+      divRange.appendChild(listBox);
+      divRange.appendChild(rangeStartInput);
+      divRange.appendChild(rangeEndInput);
+      divRange.appendChild(toList);
+      divWithListImportSettigs.appendChild(divRange);
+      
       divWithListImportSettigs.appendChild(wordsToList);
-      divWithListImportSettigs.appendChild(rangeStartInput);
-      divWithListImportSettigs.appendChild(rangeEndInput);
     });
 
     divWithListImportSettigs.appendChild(linkInput);
     divWithListImportSettigs.appendChild(okButton);
-    divWithListImportSettigs.appendChild(listBox);
   });
+
   toList.addEventListener("click", function () {
     var selectedSheetName = listBox.options[listBox.selectedIndex].value;
   
@@ -342,6 +387,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("No sheets available.");
     }
   });
+
   async function fetchListsAndAddToListbox(url) {
     try {
       spreadsheetId = getSpreadsheetIdFromUrl(url);
@@ -385,6 +431,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     listBox.add(option);
   }
+
   csvListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
 
@@ -445,13 +492,15 @@ document.addEventListener("DOMContentLoaded", function () {
     divWithListImportSettigs.appendChild(csvInput);
     divWithListImportSettigs.appendChild(csvButton);
   });
+  
   function getSpreadsheetIdFromUrl(url) {
     const regex = /\/spreadsheets\/d\/(.+?)\//;
     const match = url.match(regex);
     return match && match[1] ? match[1] : null;
   }
+
+  // Выбор файла и перенос значений в список
   fileListBtn.addEventListener("click", function () {
-    // Выбор файла и перенос значений в список
     divWithListImportSettigs.innerHTML = "";
 
     var fileInput = document.createElement("input");

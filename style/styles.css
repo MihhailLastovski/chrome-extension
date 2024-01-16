@@ -253,7 +253,7 @@ input[type=file]::file-selector-button {
 
 /* List.html - adding form */
 #buttonsInLists {
-  margin-top: -5%;
+  /*margin-top: -5%;*/
   margin-bottom: 5%;
 }
 
@@ -374,3 +374,19 @@ input[type=file]::file-selector-button {
   color: var(--main-dark-green);
 }
 
+
+
+/* Общие стили для select */
+select {
+  padding: 4px;
+  border-radius: 4px;
+}
+
+#divRange {
+  display: flex;
+  justify-content: center;
+}
+
+#divRange input {
+  width: 25px;
+}
