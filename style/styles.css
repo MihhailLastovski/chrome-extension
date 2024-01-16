@@ -253,7 +253,7 @@ input[type=file]::file-selector-button {
 
 /* List.html - adding form */
 #buttonsInLists {
-  margin-top: -5%;
+  /*margin-top: -5%;*/
   margin-bottom: 5%;
 }
 
@@ -268,6 +268,15 @@ input[type=file]::file-selector-button {
   display: flex;
   align-items: center;
   gap: 10px; 
+}
+
+.listFormBtn {
+  margin-top: 5%;
+}
+
+.trash-btn {
+  border: none;
+  padding: 2px;
 }
 
 /* List.html - Checkboxes */
@@ -329,6 +338,9 @@ input[type=file]::file-selector-button {
 }
 
 .word-input {
+  resize: none;
+  height: 22px;
+  width: 100%;
   border: none;
   padding: 8px;
   font-size: 14px;
@@ -337,21 +349,22 @@ input[type=file]::file-selector-button {
   background-color: var(--main-white);
 }
 
-.word-input:focus {
-  outline: none;
+.word-input::-webkit-scrollbar {
+  display: none;
 }
 
-.listFormBtn {
-  margin-top: 5%;
+.word-input:focus {
+  outline: none;
 }
 
 /* changeSheets.html - Text showing */
 #guide {
   display: none;
+  margin-left: 5%;
 }
 
 #showGuide {
-  margin-left: 5%;
+  margin-left: 10%;
   cursor: pointer;
   color: var(--main-black);
   transition: text-decoration 0.5s ease;
@@ -359,4 +372,21 @@ input[type=file]::file-selector-button {
 
 #showGuide:hover {
   color: var(--main-dark-green);
+}
+
+
+
+/* Общие стили для select */
+select {
+  padding: 4px;
+  border-radius: 4px;
+}
+
+#divRange {
+  display: flex;
+  justify-content: center;
+}
+
+#divRange input {
+  width: 25px;
 }
