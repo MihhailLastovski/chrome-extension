@@ -261,8 +261,6 @@ document.addEventListener("DOMContentLoaded", function () {
     linkInput.type = "text";
     linkInput.id = "linkInput";
     linkInput.placeholder = "Paste the link";
-    listBox = document.createElement("select");
-    listBox.id = "listbox";
 
     var okButton = document.createElement("button");
     okButton.type = "button";
@@ -271,32 +269,50 @@ document.addEventListener("DOMContentLoaded", function () {
     okButton.addEventListener("click", function () {
       fetchListsAndAddToListbox(linkInput.value);
       linkInput.value = "";
+
+      const hr = document.createElement("hr");
+
+      const h2 = document.createElement("h2");
+      h2.textContent = "Add words from:"
+
+      listBox = document.createElement("select");
+      listBox.id = "listbox";
+
       toList.id = "toList";
-      toList.textContent = "To list ->";
+      toList.innerHTML = '<i class="fa fa-search"></i>';
+
       wordsToList.id = "wordsToList";
-      wordsToList.textContent = "All words from doc";
+      wordsToList.textContent = "All document";
+
+      const divRange = document.createElement("div");
+      divRange.id = "divRange";
+
       rangeStartInput = document.createElement("input");
       rangeStartInput.type = "text";
       rangeStartInput.id = "rangeStart";
-      rangeStartInput.placeholder = "Range Start";
+      rangeStartInput.placeholder = "A1";
 
       rangeEndInput = document.createElement("input");
       rangeEndInput.type = "text";
       rangeEndInput.id = "rangeEnd";
-      rangeEndInput.placeholder = "Range End";
-      divWithListImportSettigs.appendChild(toList);
-      divWithListImportSettigs.appendChild(wordsToList);
-      divWithListImportSettigs.appendChild(rangeStartInput);
-      divWithListImportSettigs.appendChild(rangeEndInput);
-    });
+      rangeEndInput.placeholder = "B2";
 
-    const hr = document.createElement("hr");
+      divWithListImportSettigs.appendChild(hr);
+      divWithListImportSettigs.appendChild(h2);
+
+      divRange.appendChild(listBox);
+      divRange.appendChild(rangeStartInput);
+      divRange.appendChild(rangeEndInput);
+      divRange.appendChild(toList);
+      divWithListImportSettigs.appendChild(divRange);
+      
+      divWithListImportSettigs.appendChild(wordsToList);
+    });
 
     divWithListImportSettigs.appendChild(linkInput);
     divWithListImportSettigs.appendChild(okButton);
-    divWithListImportSettigs.appendChild(hr);
-    divWithListImportSettigs.appendChild(listBox);
   });
+
   toList.addEventListener("click", function () {
     var selectedSheetName = listBox.options[listBox.selectedIndex].value;
   
@@ -371,6 +387,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("No sheets available.");
     }
   });
+
   async function fetchListsAndAddToListbox(url) {
     try {
       spreadsheetId = getSpreadsheetIdFromUrl(url);
@@ -414,6 +431,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     listBox.add(option);
   }
+
   csvListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
 
@@ -474,6 +492,7 @@ document.addEventListener("DOMContentLoaded", function () {
     divWithListImportSettigs.appendChild(csvInput);
     divWithListImportSettigs.appendChild(csvButton);
   });
+  
   function getSpreadsheetIdFromUrl(url) {
     const regex = /\/spreadsheets\/d\/(.+?)\//;
     const match = url.match(regex);
