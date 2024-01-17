@@ -5,13 +5,15 @@ chrome.runtime.onInstalled.addListener(function () {
       chrome.storage.local.set({ firstOpen: true });
     }
   });
-  chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (changeInfo.status === 'complete') {
-      console.log('Tab is updated');
-      chrome.action.setBadgeText({ text: '' });
-      chrome.storage.local.set({count: 0});
-    }
-  });
+});
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  if (changeInfo.status === 'complete') {
+    console.log('Tab is updated');
+    chrome.action.setBadgeText({ text: '' });
+    chrome.storage.local.set({count: 0});
+  }
+});
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "requestScreenshot") {
     chrome.tabs.captureVisibleTab(null, { format: "png" }, function (dataUrl) {
@@ -41,6 +43,3 @@ function dataURItoBlob(dataURI) {
   }
   return new Blob([ia], { type: mimeString });
 }
-
-
-});

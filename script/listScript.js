@@ -1,16 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const cancelBtn = document.getElementById("cancelBtn");
-  cancelBtn.addEventListener("click", function () {
-    window.location.href = "popup.html";
-  });
-  const apiKey = "AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk";
-
-  const lastListItem = document.getElementById("lastListItem");
-
   const addListForm = document.getElementById("addListForm");
   const listNameInput = document.getElementById("listNameInput");
   const wordsContainer = document.getElementById("wordsContainer");
   const newWordInput = document.getElementById("newWordInput");
+  const cancelBtn = document.getElementById("cancelBtn");
+  const lastListItem = document.getElementById("lastListItem");
+
+  const apiKey = "AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk";
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const listId = urlParams.get("listId");
@@ -112,6 +108,49 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  function saveWordList(wordList) {
+    chrome.storage.local.get("wordLists", function (data) {
+      let lists = data.wordLists || [];
+      lists.push(wordList);
+
+      chrome.storage.local.set({ wordLists: lists });
+    });
+  }
+
+  function addWord(word, enabled = true) {
+    const wordDiv = document.createElement("div");
+    wordDiv.className = "list-wordsItem";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = enabled;
+    checkbox.id = "cbox" + wordsContainer.childElementCount;
+    checkbox.className = "word-checkbox";
+
+    const label = document.createElement("label");
+    label.htmlFor = checkbox.id;
+
+    const wordInput = document.createElement("textarea");
+    wordInput.type = "text";
+    wordInput.value = word;
+    wordInput.className = "word-input";
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.innerHTML =
+      '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
+    deleteBtn.className = "trash-btn";
+    deleteBtn.addEventListener("click", function () {
+      wordDiv.remove();
+    });
+
+    wordDiv.appendChild(checkbox);
+    wordDiv.appendChild(label);
+    wordDiv.appendChild(wordInput);
+    wordDiv.appendChild(deleteBtn);
+
+    wordsContainer.insertBefore(wordDiv, lastListItem);
+  }
+
   addListForm.addEventListener("submit", function (event) {
     event.preventDefault();
     const listName = listNameInput.value.trim();
@@ -154,15 +193,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  function saveWordList(wordList) {
-    chrome.storage.local.get("wordLists", function (data) {
-      let lists = data.wordLists || [];
-      lists.push(wordList);
-
-      chrome.storage.local.set({ wordLists: lists });
-    });
-  }
-
   newWordInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -173,40 +203,6 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     }
   });
-
-  function addWord(word, enabled = true) {
-    const wordDiv = document.createElement("div");
-    wordDiv.className = "list-wordsItem";
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = enabled;
-    checkbox.id = "cbox" + wordsContainer.childElementCount;
-    checkbox.className = "word-checkbox";
-
-    const label = document.createElement("label");
-    label.htmlFor = checkbox.id;
-
-    const wordInput = document.createElement("textarea");
-    wordInput.type = "text";
-    wordInput.value = word;
-    wordInput.className = "word-input";
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.innerHTML =
-      '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
-    deleteBtn.className = "trash-btn";
-    deleteBtn.addEventListener("click", function () {
-      wordDiv.remove();
-    });
-
-    wordDiv.appendChild(checkbox);
-    wordDiv.appendChild(label);
-    wordDiv.appendChild(wordInput);
-    wordDiv.appendChild(deleteBtn);
-
-    wordsContainer.insertBefore(wordDiv, lastListItem);
-  }
 
   /*************************************changeSheets.js********************************************/
 
@@ -267,46 +263,51 @@ document.addEventListener("DOMContentLoaded", function () {
     okButton.textContent = "OK";
 
     okButton.addEventListener("click", function () {
-      fetchListsAndAddToListbox(linkInput.value);
-      linkInput.value = "";
-
-      const hr = document.createElement("hr");
-
-      const h2 = document.createElement("h2");
-      h2.textContent = "Add words from:"
-
-      listBox = document.createElement("select");
-      listBox.id = "listbox";
-
-      toList.id = "toList";
-      toList.innerHTML = '<i class="fa fa-search"></i>';
-
-      wordsToList.id = "wordsToList";
-      wordsToList.textContent = "All document";
-
-      const divRange = document.createElement("div");
-      divRange.id = "divRange";
-
-      rangeStartInput = document.createElement("input");
-      rangeStartInput.type = "text";
-      rangeStartInput.id = "rangeStart";
-      rangeStartInput.placeholder = "A1";
-
-      rangeEndInput = document.createElement("input");
-      rangeEndInput.type = "text";
-      rangeEndInput.id = "rangeEnd";
-      rangeEndInput.placeholder = "B2";
-
-      divWithListImportSettigs.appendChild(hr);
-      divWithListImportSettigs.appendChild(h2);
-
-      divRange.appendChild(listBox);
-      divRange.appendChild(rangeStartInput);
-      divRange.appendChild(rangeEndInput);
-      divRange.appendChild(toList);
-      divWithListImportSettigs.appendChild(divRange);
+      if (linkInput.value.trim()!== "") {
+        fetchListsAndAddToListbox(linkInput.value);
+        linkInput.value = "";
+  
+        const hr = document.createElement("hr");
+  
+        const h2 = document.createElement("h2");
+        h2.textContent = "Add words from:"
+  
+        listBox = document.createElement("select");
+        listBox.id = "listbox";
+  
+        toList.id = "toList";
+        toList.innerHTML = '<i class="fa fa-search"></i>';
+  
+        wordsToList.id = "wordsToList";
+        wordsToList.textContent = "All document";
+  
+        const divRange = document.createElement("div");
+        divRange.id = "divRange";
+  
+        rangeStartInput = document.createElement("input");
+        rangeStartInput.type = "text";
+        rangeStartInput.id = "rangeStart";
+        rangeStartInput.placeholder = "A1";
+  
+        rangeEndInput = document.createElement("input");
+        rangeEndInput.type = "text";
+        rangeEndInput.id = "rangeEnd";
+        rangeEndInput.placeholder = "B2";
+  
+        divWithListImportSettigs.appendChild(hr);
+        divWithListImportSettigs.appendChild(h2);
+  
+        divRange.appendChild(listBox);
+        divRange.appendChild(rangeStartInput);
+        divRange.appendChild(rangeEndInput);
+        divRange.appendChild(toList);
+        divWithListImportSettigs.appendChild(divRange);
+        
+        divWithListImportSettigs.appendChild(wordsToList);
+      } else {
+        alert("Please enter link");
+      }
       
-      divWithListImportSettigs.appendChild(wordsToList);
     });
 
     divWithListImportSettigs.appendChild(linkInput);
@@ -461,15 +462,18 @@ document.addEventListener("DOMContentLoaded", function () {
             addWord(word.trim());
           });
         } catch (error) {
-          console.error("Ошибка при получении данных:", error);
+          console.error("Error while retrieving data:", error);
         }
       }
+      if (csvInput.value.trim()!== "") {
+        const csvLink = csvInput.value.replace("/edit", "/export?format=csv");
 
-      const csvLink = csvInput.value.replace("/edit", "/export?format=csv");
-
-      fetchDataAndProcessWords(csvLink);
-
-      csvInput.value = "";
+        fetchDataAndProcessWords(csvLink);
+  
+        csvInput.value = "";
+      } else {
+        alert("Please enter link");
+      }
     });
 
     var csvh2 = document.createElement("h2");
@@ -525,5 +529,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     divWithListImportSettigs.appendChild(fileInput);
+  });
+
+  cancelBtn.addEventListener("click", function () {
+    window.location.href = "popup.html";
   });
 });
