@@ -217,6 +217,12 @@ document.addEventListener("DOMContentLoaded", function () {
   var sheets = [];
   var spreadsheetId;
 
+  //поставил эти элементы сюда что бы их было легче обновлять, какие то не добавил мне лень было
+  var okButton;
+  var h2;
+  var hr;
+  //var divRange;
+
   var divWithListImportSettigs = document.createElement("div");
   addListForm.lastElementChild.insertBefore(
     divWithListImportSettigs,
@@ -262,18 +268,19 @@ document.addEventListener("DOMContentLoaded", function () {
     linkInput.id = "linkInput";
     linkInput.placeholder = "Paste the link";
 
-    var okButton = document.createElement("button");
+    okButton = document.createElement("button");
     okButton.type = "button";
     okButton.textContent = "OK";
+    
 
     okButton.addEventListener("click", function () {
       if (linkInput.value.trim()!== "") {
         fetchListsAndAddToListbox(linkInput.value);
         linkInput.value = "";
   
-        const hr = document.createElement("hr");
+        hr = document.createElement("hr");
   
-        const h2 = document.createElement("h2");
+        h2 = document.createElement("h2");
         h2.textContent = "Add words from:"
   
         listBox = document.createElement("select");
@@ -308,6 +315,8 @@ document.addEventListener("DOMContentLoaded", function () {
         divWithListImportSettigs.appendChild(divRange);
         
         divWithListImportSettigs.appendChild(wordsToList);
+
+        okButton.disabled = true;
       } else {
         alert("Please enter link");
       }
@@ -319,6 +328,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   toList.addEventListener("click", function () {
+    okButton.disabled = false;
+    
     var selectedSheetName = listBox.options[listBox.selectedIndex].value;
   
     if (selectedSheetName) {
@@ -344,6 +355,10 @@ document.addEventListener("DOMContentLoaded", function () {
           sheetWords.forEach((word) => {
             addWord(word.trim());
           });
+          divWithListImportSettigs.removeChild(divRange);
+          divWithListImportSettigs.removeChild(h2);
+          divWithListImportSettigs.removeChild(hr);
+          divWithListImportSettigs.removeChild(wordsToList);
         })
         .catch((error) => console.error(`Error fetching words from ${range}:`, error));
     } else {
@@ -352,6 +367,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   wordsToList.addEventListener("click", function () {
+    okButton.disabled = false;
     const allWordsArray = [];
 
     if (sheets.length > 0) {
@@ -372,6 +388,10 @@ document.addEventListener("DOMContentLoaded", function () {
           .then((data) => {
             const sheetWords = data.values.flat();
             allWordsArray.push(...sheetWords);
+            divWithListImportSettigs.removeChild(divRange);
+            divWithListImportSettigs.removeChild(h2);
+            divWithListImportSettigs.removeChild(hr);
+            divWithListImportSettigs.removeChild(wordsToList);
           })
           .catch((error) =>
             console.error(
