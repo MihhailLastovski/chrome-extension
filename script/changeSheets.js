@@ -25,13 +25,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       })
       .catch((error) => console.error("Error fetching sheets:", error));
-  };
+  }
 
   function getSpreadsheetIdFromUrl(url) {
     const regex = /\/spreadsheets\/d\/(.+?)\//;
     const match = url.match(regex);
     return match && match[1] ? match[1] : null;
-  };
+  }
 
   button.addEventListener("click", function () {
     fetch(input.value)
