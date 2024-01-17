@@ -267,46 +267,51 @@ document.addEventListener("DOMContentLoaded", function () {
     okButton.textContent = "OK";
 
     okButton.addEventListener("click", function () {
-      fetchListsAndAddToListbox(linkInput.value);
-      linkInput.value = "";
-
-      const hr = document.createElement("hr");
-
-      const h2 = document.createElement("h2");
-      h2.textContent = "Add words from:"
-
-      listBox = document.createElement("select");
-      listBox.id = "listbox";
-
-      toList.id = "toList";
-      toList.innerHTML = '<i class="fa fa-search"></i>';
-
-      wordsToList.id = "wordsToList";
-      wordsToList.textContent = "All document";
-
-      const divRange = document.createElement("div");
-      divRange.id = "divRange";
-
-      rangeStartInput = document.createElement("input");
-      rangeStartInput.type = "text";
-      rangeStartInput.id = "rangeStart";
-      rangeStartInput.placeholder = "A1";
-
-      rangeEndInput = document.createElement("input");
-      rangeEndInput.type = "text";
-      rangeEndInput.id = "rangeEnd";
-      rangeEndInput.placeholder = "B2";
-
-      divWithListImportSettigs.appendChild(hr);
-      divWithListImportSettigs.appendChild(h2);
-
-      divRange.appendChild(listBox);
-      divRange.appendChild(rangeStartInput);
-      divRange.appendChild(rangeEndInput);
-      divRange.appendChild(toList);
-      divWithListImportSettigs.appendChild(divRange);
+      if (linkInput.value.trim()!== "") {
+        fetchListsAndAddToListbox(linkInput.value);
+        linkInput.value = "";
+  
+        const hr = document.createElement("hr");
+  
+        const h2 = document.createElement("h2");
+        h2.textContent = "Add words from:"
+  
+        listBox = document.createElement("select");
+        listBox.id = "listbox";
+  
+        toList.id = "toList";
+        toList.innerHTML = '<i class="fa fa-search"></i>';
+  
+        wordsToList.id = "wordsToList";
+        wordsToList.textContent = "All document";
+  
+        const divRange = document.createElement("div");
+        divRange.id = "divRange";
+  
+        rangeStartInput = document.createElement("input");
+        rangeStartInput.type = "text";
+        rangeStartInput.id = "rangeStart";
+        rangeStartInput.placeholder = "A1";
+  
+        rangeEndInput = document.createElement("input");
+        rangeEndInput.type = "text";
+        rangeEndInput.id = "rangeEnd";
+        rangeEndInput.placeholder = "B2";
+  
+        divWithListImportSettigs.appendChild(hr);
+        divWithListImportSettigs.appendChild(h2);
+  
+        divRange.appendChild(listBox);
+        divRange.appendChild(rangeStartInput);
+        divRange.appendChild(rangeEndInput);
+        divRange.appendChild(toList);
+        divWithListImportSettigs.appendChild(divRange);
+        
+        divWithListImportSettigs.appendChild(wordsToList);
+      } else {
+        alert("Please enter link");
+      }
       
-      divWithListImportSettigs.appendChild(wordsToList);
     });
 
     divWithListImportSettigs.appendChild(linkInput);
@@ -461,15 +466,18 @@ document.addEventListener("DOMContentLoaded", function () {
             addWord(word.trim());
           });
         } catch (error) {
-          console.error("Ошибка при получении данных:", error);
+          console.error("Error while retrieving data:", error);
         }
       }
+      if (csvInput.value.trim()!== "") {
+        const csvLink = csvInput.value.replace("/edit", "/export?format=csv");
 
-      const csvLink = csvInput.value.replace("/edit", "/export?format=csv");
-
-      fetchDataAndProcessWords(csvLink);
-
-      csvInput.value = "";
+        fetchDataAndProcessWords(csvLink);
+  
+        csvInput.value = "";
+      } else {
+        alert("Please enter link");
+      }
     });
 
     var csvh2 = document.createElement("h2");
