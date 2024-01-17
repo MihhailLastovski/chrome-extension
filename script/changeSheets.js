@@ -2,24 +2,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const urlParams = new URLSearchParams(window.location.search);
   const listId = urlParams.get("listId");
   const cancelBtn = document.getElementById("cancelBtn");
-  cancelBtn.addEventListener("click", function () {
-    if(listId) {
-      window.location.href = `list.html?listId=${listId}`;
-    }
-    else {
-      window.location.href = "list.html";
-    }
-  });
-
   const input = document.getElementById("textInput");
   const button = document.getElementById("getSheets");
   const iframe = document.getElementById("googleSheets");
   const apiKey = 'AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk';
+  const guide = document.getElementById("guide");
+  const showGuide = document.getElementById("showGuide");
   let spreadsheetId;
   let sheets = [];
 
   function getListOfSheets(spreadsheetId) {
-
     fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}`)
       .then((response) => response.json())
       .then((data) => {
@@ -33,7 +25,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       })
       .catch((error) => console.error("Error fetching sheets:", error));
-  }
+  };
+
+  function getSpreadsheetIdFromUrl(url) {
+    const regex = /\/spreadsheets\/d\/(.+?)\//;
+    const match = url.match(regex);
+    return match && match[1] ? match[1] : null;
+  };
 
   button.addEventListener("click", function () {
     fetch(input.value)
@@ -52,30 +50,20 @@ document.addEventListener("DOMContentLoaded", function () {
           iframe.src = input.value + "?widget=true&amp;headers=false";
 
           spreadsheetId = getSpreadsheetIdFromUrl(input.value);
-          if (spreadsheetId) {
-            getListOfSheets(spreadsheetId);
-          } else {
-            console.error("Invalid Google Sheets URL.");
-          }
+          spreadsheetId ? getListOfSheets(spreadsheetId) : console.error("Invalid Google Sheets URL.");
         }
       })
       .catch((error) => console.error("Error:", error));
   });
 
-  const guide = document.getElementById("guide");
-  const showGuide = document.getElementById("showGuide");
+  cancelBtn.addEventListener("click", function () {
+    window.location.href = listId ? `list.html?listId=${listId}` : "list.html";
+  });
 
   showGuide.addEventListener("click", function () {
-    console.log("Click")
     const guideDisplay = window
       .getComputedStyle(guide)
       .getPropertyValue("display");
     guide.style.display = guideDisplay === "none" ? "block" : "none";
   });
-
-  function getSpreadsheetIdFromUrl(url) {
-    const regex = /\/spreadsheets\/d\/(.+?)\//;
-    const match = url.match(regex);
-    return match && match[1] ? match[1] : null;
-  }
 });

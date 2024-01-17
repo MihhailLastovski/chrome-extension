@@ -5,11 +5,12 @@ chrome.runtime.onInstalled.addListener(function () {
       chrome.storage.local.set({ firstOpen: true });
     }
   });
-  chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (changeInfo.status === 'complete') {
-      console.log('Tab is updated');
-      chrome.action.setBadgeText({ text: '' });
-      chrome.storage.local.set({count: 0});
-    }
-  });
+});
+
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+  if (changeInfo.status === 'complete') {
+    console.log('Tab is updated');
+    chrome.action.setBadgeText({ text: '' });
+    chrome.storage.local.set({count: 0});
+  }
 });

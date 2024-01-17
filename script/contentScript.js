@@ -8,7 +8,6 @@ async function highlightText(searchText, highlightColor, listId = null) {
 
   if (boolActive && searchText !== "") {
     const searchRegex = new RegExp(searchText, "gi");
-
     const colorStyle = `background-color: ${highlightColor};`;
 
     function highlightTextNode(node) {
@@ -41,8 +40,8 @@ async function highlightText(searchText, highlightColor, listId = null) {
       }
     }
 
+    // Проверка, является ли узел потомком элемента style или script
     function isDescendantOfStyleOrScript(node) {
-      // Проверка, является ли узел потомком элемента style или script
       while (node.parentNode) {
         node = node.parentNode;
         if (node.tagName && (node.tagName.toLowerCase() === "style" || node.tagName.toLowerCase() === "script")) {
