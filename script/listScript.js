@@ -204,7 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  /*************************************changeSheets.js********************************************/
+  /*************************************Google Sheets********************************************/
 
   const googleListBtn = document.getElementById("googleListBtn");
   const csvListBtn = document.getElementById("csvListBtn");
@@ -212,6 +212,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const linkToListBtn = document.getElementById("linkToList");
   var sheets = [];
   var spreadsheetId;
+
+  //поставил эти элементы сюда что бы их было легче обновлять, какие то не добавил мне лень было
+  var okButton;
+  var h2;
+  var hr;
+  //var divRange;
 
   var divWithListImportSettigs = document.createElement("div");
   addListForm.lastElementChild.insertBefore(
@@ -238,7 +244,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var csvh2 = document.createElement("h2");
     csvh2.textContent = "Google Sheets assistant";
     csvh2.style.textAlign = "left";
-    csvh2.style.marginLeft = "17%";
+    csvh2.style.marginLeft = "18%";
 
     var csvp = document.createElement("p");
     csvp.innerHTML = `<p>          
@@ -248,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function () {
       4. Copy the URL.         
     </p>`;
     csvp.style.textAlign = "left";
-    csvp.style.marginLeft = "13%";
+    csvp.style.marginLeft = "14%";
 
     divWithListImportSettigs.appendChild(csvh2);
     divWithListImportSettigs.appendChild(csvp);
@@ -258,18 +264,18 @@ document.addEventListener("DOMContentLoaded", function () {
     linkInput.id = "linkInput";
     linkInput.placeholder = "Paste the link";
 
-    var okButton = document.createElement("button");
+    okButton = document.createElement("button");
     okButton.type = "button";
-    okButton.textContent = "OK";
+    okButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
 
     okButton.addEventListener("click", function () {
       if (linkInput.value.trim()!== "") {
         fetchListsAndAddToListbox(linkInput.value);
         linkInput.value = "";
   
-        const hr = document.createElement("hr");
+        hr = document.createElement("hr");
   
-        const h2 = document.createElement("h2");
+        h2 = document.createElement("h2");
         h2.textContent = "Add words from:"
   
         listBox = document.createElement("select");
@@ -304,6 +310,8 @@ document.addEventListener("DOMContentLoaded", function () {
         divWithListImportSettigs.appendChild(divRange);
         
         divWithListImportSettigs.appendChild(wordsToList);
+
+        okButton.disabled = true;
       } else {
         alert("Please enter link");
       }
@@ -315,6 +323,8 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   toList.addEventListener("click", function () {
+    okButton.disabled = false;
+    
     var selectedSheetName = listBox.options[listBox.selectedIndex].value;
   
     if (selectedSheetName) {
@@ -340,6 +350,10 @@ document.addEventListener("DOMContentLoaded", function () {
           sheetWords.forEach((word) => {
             addWord(word.trim());
           });
+          divWithListImportSettigs.removeChild(divRange);
+          divWithListImportSettigs.removeChild(h2);
+          divWithListImportSettigs.removeChild(hr);
+          divWithListImportSettigs.removeChild(wordsToList);
         })
         .catch((error) => console.error(`Error fetching words from ${range}:`, error));
     } else {
@@ -348,6 +362,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   wordsToList.addEventListener("click", function () {
+    okButton.disabled = false;
     const allWordsArray = [];
 
     if (sheets.length > 0) {
@@ -368,6 +383,10 @@ document.addEventListener("DOMContentLoaded", function () {
           .then((data) => {
             const sheetWords = data.values.flat();
             allWordsArray.push(...sheetWords);
+            divWithListImportSettigs.removeChild(divRange);
+            divWithListImportSettigs.removeChild(h2);
+            divWithListImportSettigs.removeChild(hr);
+            divWithListImportSettigs.removeChild(wordsToList);
           })
           .catch((error) =>
             console.error(
@@ -442,7 +461,7 @@ document.addEventListener("DOMContentLoaded", function () {
     csvInput.placeholder = "Paste the link";
 
     var csvButton = document.createElement("button");
-    csvButton.textContent = "OK";
+    csvButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
     csvButton.type = "button";
 
     csvButton.addEventListener("click", function () {
@@ -479,7 +498,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var csvh2 = document.createElement("h2");
     csvh2.textContent = "Google Sheets assistant";
     csvh2.style.textAlign = "left";
-    csvh2.style.marginLeft = "17%";
+    csvh2.style.marginLeft = "18%";
 
     var csvp = document.createElement("p");
     csvp.innerHTML = `<p>          
@@ -489,7 +508,7 @@ document.addEventListener("DOMContentLoaded", function () {
       4. Copy the URL.          
     </p>`;
     csvp.style.textAlign = "left";
-    csvp.style.marginLeft = "13%";
+    csvp.style.marginLeft = "14%";
 
     divWithListImportSettigs.appendChild(csvh2);
     divWithListImportSettigs.appendChild(csvp);

@@ -73,7 +73,9 @@ button:active {
 }
 
 .divsWithText {
-  margin-top: 5%;
+  margin-top: 9px;
+  margin-left: 10px;
+  margin-right: 10px;
   font-size: 17px;
   font-weight: bold;
 }
