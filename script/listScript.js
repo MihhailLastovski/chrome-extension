@@ -238,7 +238,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var csvh2 = document.createElement("h2");
     csvh2.textContent = "Google Sheets assistant";
     csvh2.style.textAlign = "left";
-    csvh2.style.marginLeft = "17%";
+    csvh2.style.marginLeft = "18%";
 
     var csvp = document.createElement("p");
     csvp.innerHTML = `<p>          
@@ -248,7 +248,7 @@ document.addEventListener("DOMContentLoaded", function () {
       4. Copy the URL.         
     </p>`;
     csvp.style.textAlign = "left";
-    csvp.style.marginLeft = "13%";
+    csvp.style.marginLeft = "14%";
 
     divWithListImportSettigs.appendChild(csvh2);
     divWithListImportSettigs.appendChild(csvp);
@@ -260,7 +260,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var okButton = document.createElement("button");
     okButton.type = "button";
-    okButton.textContent = "OK";
+    okButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
 
     okButton.addEventListener("click", function () {
       if (linkInput.value.trim()!== "") {
@@ -442,7 +442,7 @@ document.addEventListener("DOMContentLoaded", function () {
     csvInput.placeholder = "Paste the link";
 
     var csvButton = document.createElement("button");
-    csvButton.textContent = "OK";
+    csvButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
     csvButton.type = "button";
 
     csvButton.addEventListener("click", function () {
@@ -479,7 +479,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var csvh2 = document.createElement("h2");
     csvh2.textContent = "Google Sheets assistant";
     csvh2.style.textAlign = "left";
-    csvh2.style.marginLeft = "17%";
+    csvh2.style.marginLeft = "18%";
 
     var csvp = document.createElement("p");
     csvp.innerHTML = `<p>          
@@ -489,7 +489,7 @@ document.addEventListener("DOMContentLoaded", function () {
       4. Copy the URL.          
     </p>`;
     csvp.style.textAlign = "left";
-    csvp.style.marginLeft = "13%";
+    csvp.style.marginLeft = "14%";
 
     divWithListImportSettigs.appendChild(csvh2);
     divWithListImportSettigs.appendChild(csvp);
