@@ -43,9 +43,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateUIState() {
         heading.innerText = active ? "Highlight On" : "Highlight Off";
-        if (searchTextInput && highlightBtn) {
-            searchTextInput.disabled = !active;
-            highlightBtn.disabled = !active;
-        }
+        searchTextInput && highlightBtn && (searchTextInput.disabled = highlightBtn.disabled = !active);
     }
 });

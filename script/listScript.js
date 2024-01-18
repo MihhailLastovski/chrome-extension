@@ -1,16 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const cancelBtn = document.getElementById("cancelBtn");
-  cancelBtn.addEventListener("click", function () {
-    window.location.href = "popup.html";
-  });
-  const apiKey = "AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk";
-
-  const lastListItem = document.getElementById("lastListItem");
-
   const addListForm = document.getElementById("addListForm");
   const listNameInput = document.getElementById("listNameInput");
   const wordsContainer = document.getElementById("wordsContainer");
   const newWordInput = document.getElementById("newWordInput");
+  const cancelBtn = document.getElementById("cancelBtn");
+  const lastListItem = document.getElementById("lastListItem");
+
+  const apiKey = "AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk";
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const listId = urlParams.get("listId");
@@ -112,6 +108,49 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  function saveWordList(wordList) {
+    chrome.storage.local.get("wordLists", function (data) {
+      let lists = data.wordLists || [];
+      lists.push(wordList);
+
+      chrome.storage.local.set({ wordLists: lists });
+    });
+  }
+
+  function addWord(word, enabled = true) {
+    const wordDiv = document.createElement("div");
+    wordDiv.className = "list-wordsItem";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = enabled;
+    checkbox.id = "cbox" + wordsContainer.childElementCount;
+    checkbox.className = "word-checkbox";
+
+    const label = document.createElement("label");
+    label.htmlFor = checkbox.id;
+
+    const wordInput = document.createElement("textarea");
+    wordInput.type = "text";
+    wordInput.value = word;
+    wordInput.className = "word-input";
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.innerHTML =
+      '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
+    deleteBtn.className = "trash-btn";
+    deleteBtn.addEventListener("click", function () {
+      wordDiv.remove();
+    });
+
+    wordDiv.appendChild(checkbox);
+    wordDiv.appendChild(label);
+    wordDiv.appendChild(wordInput);
+    wordDiv.appendChild(deleteBtn);
+
+    wordsContainer.insertBefore(wordDiv, lastListItem);
+  }
+
   addListForm.addEventListener("submit", function (event) {
     event.preventDefault();
     const listName = listNameInput.value.trim();
@@ -154,15 +193,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  function saveWordList(wordList) {
-    chrome.storage.local.get("wordLists", function (data) {
-      let lists = data.wordLists || [];
-      lists.push(wordList);
-
-      chrome.storage.local.set({ wordLists: lists });
-    });
-  }
-
   newWordInput.addEventListener("keydown", function (event) {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -174,41 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  function addWord(word, enabled = true) {
-    const wordDiv = document.createElement("div");
-    wordDiv.className = "list-wordsItem";
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = enabled;
-    checkbox.id = "cbox" + wordsContainer.childElementCount;
-    checkbox.className = "word-checkbox";
-
-    const label = document.createElement("label");
-    label.htmlFor = checkbox.id;
-
-    const wordInput = document.createElement("textarea");
-    wordInput.type = "text";
-    wordInput.value = word;
-    wordInput.className = "word-input";
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.innerHTML =
-      '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
-    deleteBtn.className = "trash-btn";
-    deleteBtn.addEventListener("click", function () {
-      wordDiv.remove();
-    });
-
-    wordDiv.appendChild(checkbox);
-    wordDiv.appendChild(label);
-    wordDiv.appendChild(wordInput);
-    wordDiv.appendChild(deleteBtn);
-
-    wordsContainer.insertBefore(wordDiv, lastListItem);
-  }
-
-  /*************************************changeSheets.js********************************************/
+  /*************************************Google Sheets********************************************/
 
   const googleListBtn = document.getElementById("googleListBtn");
   const csvListBtn = document.getElementById("csvListBtn");
@@ -248,7 +244,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var csvh2 = document.createElement("h2");
     csvh2.textContent = "Google Sheets assistant";
     csvh2.style.textAlign = "left";
-    csvh2.style.marginLeft = "17%";
+    csvh2.style.marginLeft = "18%";
 
     var csvp = document.createElement("p");
     csvp.innerHTML = `<p>          
@@ -258,7 +254,7 @@ document.addEventListener("DOMContentLoaded", function () {
       4. Copy the URL.         
     </p>`;
     csvp.style.textAlign = "left";
-    csvp.style.marginLeft = "13%";
+    csvp.style.marginLeft = "14%";
 
     divWithListImportSettigs.appendChild(csvh2);
     divWithListImportSettigs.appendChild(csvp);
@@ -270,8 +266,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     okButton = document.createElement("button");
     okButton.type = "button";
-    okButton.textContent = "OK";
-    
+    okButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
 
     okButton.addEventListener("click", function () {
       if (linkInput.value.trim()!== "") {
@@ -466,7 +461,7 @@ document.addEventListener("DOMContentLoaded", function () {
     csvInput.placeholder = "Paste the link";
 
     var csvButton = document.createElement("button");
-    csvButton.textContent = "OK";
+    csvButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
     csvButton.type = "button";
 
     csvButton.addEventListener("click", function () {
@@ -503,7 +498,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var csvh2 = document.createElement("h2");
     csvh2.textContent = "Google Sheets assistant";
     csvh2.style.textAlign = "left";
-    csvh2.style.marginLeft = "17%";
+    csvh2.style.marginLeft = "18%";
 
     var csvp = document.createElement("p");
     csvp.innerHTML = `<p>          
@@ -513,7 +508,7 @@ document.addEventListener("DOMContentLoaded", function () {
       4. Copy the URL.          
     </p>`;
     csvp.style.textAlign = "left";
-    csvp.style.marginLeft = "13%";
+    csvp.style.marginLeft = "14%";
 
     divWithListImportSettigs.appendChild(csvh2);
     divWithListImportSettigs.appendChild(csvp);
@@ -553,5 +548,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     divWithListImportSettigs.appendChild(fileInput);
+  });
+
+  cancelBtn.addEventListener("click", function () {
+    window.location.href = "popup.html";
   });
 });
