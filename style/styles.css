@@ -392,3 +392,24 @@ select {
 #divRange input {
   width: 25px;
 }
+
+.submenu-container {
+  border: 1px solid #ccc;
+  padding: 5px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+}
+
+.submenu-container button {
+  background-color: #4caf50;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.submenu-container button:hover {
+  background-color: #45a049;
+}
