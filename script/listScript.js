@@ -419,7 +419,13 @@ document.addEventListener("DOMContentLoaded", function () {
       if (!sheetsResponse.ok) {
         console.error(
           "Error fetching sheets. HTTP Status:",
-          sheetsResponse.status
+          sheetsResponse.status,
+          alert("Error while fetching data, please try again."),
+          divWithListImportSettigs.removeChild(divRange),
+          divWithListImportSettigs.removeChild(h2),
+          divWithListImportSettigs.removeChild(hr),
+          divWithListImportSettigs.removeChild(wordsToList),
+          okButton.disabled = false,
         );
         const errorText = await sheetsResponse.text();
         console.error("Error details:", errorText);
@@ -482,6 +488,7 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         } catch (error) {
           console.error("Error while retrieving data:", error);
+          alert("Error while retrieving data, please try again.");
         }
       }
       if (csvInput.value.trim()!== "") {
