@@ -1,35 +1,48 @@
-function createSubmenu(element) {
-  const submenuContainer = document.createElement("div");
-  submenuContainer.className = "submenu-container";
+if (!window.hasRun) {
+  window.hasRun = true;
 
-  const submenuButton = document.createElement("button");
-  submenuButton.innerText = "Show Submenu";
-  submenuButton.onclick = function () {
-    showSubmenu(element);
-  };
+  let submenuContainer;
 
-  submenuContainer.appendChild(submenuButton);
-  document.body.appendChild(submenuContainer);
-  submenuContainer.style.position = "absolute";
-  submenuContainer.style.left = `${element.getBoundingClientRect().left}px`;
-  submenuContainer.style.top = `${element.getBoundingClientRect().top + window.scrollY}px`;
+  function createSubmenu(element) {
+    if (!submenuContainer) {
+      submenuContainer = document.createElement("div");
+      submenuContainer.className = "submenu-container";
+      document.body.appendChild(submenuContainer);
+    }
 
-  submenuContainer.onmouseleave = function () {
-    submenuContainer.remove();
-  };
-}
+    submenuContainer.innerHTML = ""; 
 
-function showSubmenu(element) {
-  const submenuContent = "This is a submenu!";
-  alert(submenuContent);
-}
+    const submenuButton = document.createElement("button");
+    submenuButton.innerText = "Show Submenu";
+    submenuButton.onclick = function () {
+      showSubmenu(element);
+    };
 
-document.addEventListener("mouseover", function (event) {
-  const target = event.target;
-  if (target.classList.contains("highlighted")) {
-    createSubmenu(target);
+    submenuContainer.appendChild(submenuButton);
+    submenuContainer.style.position = "absolute";
+    submenuContainer.style.left = `${element.getBoundingClientRect().left}px`;
+    submenuContainer.style.top = `${
+      element.getBoundingClientRect().top + window.scrollY
+    }px`;
+
+    submenuContainer.onmouseleave = function () {
+      submenuContainer.style.display = "none";
+    };
   }
-});
+
+  function showSubmenu(element) {
+    const submenuContent = "This is a submenu!";
+    alert(submenuContent);
+  }
+
+  document.addEventListener("mouseover", function (event) {
+    const target = event.target;
+    if (target.classList.contains("highlighted")) {
+      createSubmenu(target);
+      submenuContainer.style.display = "block";
+    }
+  });
+}
 
 async function highlightText(searchText, highlightColor, listId = null) {
   const resultOld = await new Promise((resolve, reject) => {
