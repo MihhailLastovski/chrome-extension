@@ -93,7 +93,4 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       });
     }
   }
-  if (request.action === "captureScreenshot") {
-    chrome.runtime.sendMessage({ action: "requestScreenshot" });
-  }
 });

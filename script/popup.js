@@ -210,18 +210,10 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
+  
   const captureScreenshotBtn = document.getElementById("captureScreenshotBtn");
-
   captureScreenshotBtn.addEventListener("click", function () {
-    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-      chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id },
-        files: ["./script/contentScript.js"],
-      }, function() {
-        chrome.tabs.sendMessage(tabs[0].id, { action: "captureScreenshot" });
-      });
-    });
-        
+    chrome.runtime.sendMessage({ action: "requestScreenshot" });
   });
   
   newListBtn.addEventListener("click", function () {
