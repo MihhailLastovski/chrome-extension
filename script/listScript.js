@@ -210,13 +210,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const csvListBtn = document.getElementById("csvListBtn");
   const fileListBtn = document.getElementById("fileListBtn");
   const linkToListBtn = document.getElementById("linkToList");
+  const refreshBtn = document.getElementById("refreshBtn");
+  
   var sheets = [];
   var spreadsheetId;
 
   //поставил эти элементы сюда что бы их было легче обновлять, какие то не добавил мне лень было
-  var okButton;
-  var h2;
-  var hr;
+  var okButton, h2, hr, csvLink;
   //var divRange;
 
   var divWithListImportSettigs = document.createElement("div");
@@ -438,7 +438,12 @@ document.addEventListener("DOMContentLoaded", function () {
       if (sheetsList && sheetsList.length > 0) {
         sheetsList.forEach((sheet) => {
           sheets = sheetsData.sheets;
-          addSheetToListbox(sheet.properties.title);
+
+          const listBox = document.getElementById("listbox");
+          const option = document.createElement("option");
+          option.value = sheet.properties.title;
+          option.text = sheet.properties.title;
+          listBox.add(option);
         });
       } else {
         console.error("No sheets found.");
@@ -446,16 +451,6 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (error) {
       console.error("Error fetching sheets:", error);
     }
-  }
-
-  function addSheetToListbox(sheetName) {
-    const listBox = document.getElementById("listbox");
-
-    const option = document.createElement("option");
-    option.value = sheetName;
-    option.text = sheetName;
-
-    listBox.add(option);
   }
 
   csvListBtn.addEventListener("click", function () {
@@ -471,28 +466,8 @@ document.addEventListener("DOMContentLoaded", function () {
     csvButton.type = "button";
 
     csvButton.addEventListener("click", function () {
-      async function fetchDataAndProcessWords(url) {
-        try {
-          const response = await fetch(url);
-          const csvData = await response.text();
-
-          const rows = csvData.split("\n");
-          const wordsArray = rows.reduce((words, row) => {
-            const columns = row.split(",");
-            const wordsInRow = columns.map((cell) => cell.trim());
-            return words.concat(wordsInRow.filter((word) => word !== ""));
-          }, []);
-
-          wordsArray.forEach((word) => {
-            addWord(word.trim());
-          });
-        } catch (error) {
-          console.error("Error while retrieving data:", error);
-          alert("Error while retrieving data, please try again.");
-        }
-      }
       if (csvInput.value.trim()!== "") {
-        const csvLink = csvInput.value.replace("/edit", "/export?format=csv");
+        csvLink = csvInput.value.replace("/edit", "/export?format=csv");
 
         fetchDataAndProcessWords(csvLink);
   
@@ -522,6 +497,27 @@ document.addEventListener("DOMContentLoaded", function () {
     divWithListImportSettigs.appendChild(csvInput);
     divWithListImportSettigs.appendChild(csvButton);
   });
+
+  async function fetchDataAndProcessWords(url) {
+    try {
+      const response = await fetch(url);
+      const csvData = await response.text();
+
+      const rows = csvData.split("\n");
+      const wordsArray = rows.reduce((words, row) => {
+        const columns = row.split(",");
+        const wordsInRow = columns.map((cell) => cell.trim());
+        return words.concat(wordsInRow.filter((word) => word !== ""));
+      }, []);
+
+      wordsArray.forEach((word) => {
+        addWord(word.trim());
+      });
+    } catch (error) {
+      console.error("Error while retrieving data:", error);
+      alert("Error while retrieving data, please try again.");
+    }
+  }
   
   function getSpreadsheetIdFromUrl(url) {
     const regex = /\/spreadsheets\/d\/(.+?)\//;
@@ -559,5 +555,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   cancelBtn.addEventListener("click", function () {
     window.location.href = "popup.html";
+  });
+
+  refreshBtn.addEventListener("click", function () {
+    while (wordsContainer.firstChild) {
+      wordsContainer.removeChild(wordsContainer.firstChild);
+    }
+    wordsContainer.appendChild(lastListItem);
+    if (csvLink) {
+      fetchDataAndProcessWords(csvLink);
+    }
   });
 });
