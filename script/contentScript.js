@@ -1,4 +1,5 @@
 if (!window.hasRun) {
+  var highlightColorRestore;
   window.hasRun = true;
 
   let submenuContainer;
@@ -12,13 +13,14 @@ if (!window.hasRun) {
 
     submenuContainer.innerHTML = "";
 
-    const submenuButton = document.createElement("button");
-    submenuButton.innerText = "screenshot";
-    submenuButton.onclick = function () {
-      showSubmenu(element);
+    const captureScreenshotBtn = document.createElement("button");
+    captureScreenshotBtn.id = "captureScreenshotBtn";
+    captureScreenshotBtn.innerHTML = 'screenshot';
+    captureScreenshotBtn.onclick = function () {
+      captureScreenshot(element);
     };
 
-    submenuContainer.appendChild(submenuButton);
+    submenuContainer.appendChild(captureScreenshotBtn);
     submenuContainer.style.position = "absolute";
     submenuContainer.style.left = `${element.getBoundingClientRect().left}px`;
     submenuContainer.style.top = `${
@@ -27,13 +29,32 @@ if (!window.hasRun) {
 
     submenuContainer.onmouseleave = function () {
       submenuContainer.style.display = "none";
+      restoreHighlight();
     };
   }
 
-  function showSubmenu(element) {
-    const submenuContent = "This is a submenu!";
-    chrome.runtime.sendMessage({ action: "captureScreenshot" });
-  }
+  function captureScreenshot(element) {
+    document.querySelectorAll(".highlighted").forEach((el) => {
+        if (el !== element) {
+            el.style.backgroundColor = "transparent";
+        }
+    });
+
+    chrome.runtime.sendMessage({ action: "captureScreenshot" }, () => {
+        setTimeout(() => {
+            restoreHighlight();
+        }, 500); 
+    });
+}
+
+  function restoreHighlight() {
+    document.querySelectorAll(".highlighted").forEach((el) => {
+        if (el.style.backgroundColor === "transparent") {
+            el.style.backgroundColor = `${highlightColorRestore}`;
+        }
+    });
+}
+
 
   document.addEventListener("mouseover", function (event) {
     const target = event.target;
@@ -45,6 +66,7 @@ if (!window.hasRun) {
   
 
   async function highlightText(searchText, highlightColor, listId = null) {
+    highlightColorRestore = highlightColor
     const resultOld = await new Promise((resolve, reject) => {
       chrome.storage.local.get("isActive", (result) => {
         resolve(result);
@@ -158,4 +180,3 @@ if (!window.hasRun) {
   });
   
 }
-
