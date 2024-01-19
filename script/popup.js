@@ -210,8 +210,8 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
+  
   const captureScreenshotBtn = document.getElementById("captureScreenshotBtn");
-
   captureScreenshotBtn.addEventListener("click", function () {
     chrome.runtime.sendMessage({ action: "requestScreenshot" });
   });
