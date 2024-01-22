@@ -2,92 +2,48 @@ if (!window.hasRun) {
   var highlightColorRestore;
   window.hasRun = true;
 
-  let submenuContainer;
+  // let submenuContainer;
 
-  function createSubmenu(element) {
-    if (!submenuContainer) {
-      submenuContainer = document.createElement("div");
-      submenuContainer.className = "submenu-container";
-      document.body.appendChild(submenuContainer);
-    }
+  // function createSubmenu(element) {
+    // if (!submenuContainer) {
+    //   submenuContainer = document.createElement("div");
+    //   submenuContainer.className = "submenu-container";
+    //   document.body.appendChild(submenuContainer);
+    // }
 
-    submenuContainer.innerHTML = "";
+    // submenuContainer.innerHTML = "";
 
-    const captureScreenshotBtn = document.createElement("button");
-    captureScreenshotBtn.id = "captureScreenshotBtn";
-    captureScreenshotBtn.innerHTML = "screenshot";
-    captureScreenshotBtn.onclick = function () {
-      captureScreenshot(element);
-    };
+    // const captureScreenshotBtn = document.createElement("button");
+    // captureScreenshotBtn.id = "captureScreenshotBtn";
+    // captureScreenshotBtn.innerHTML = "screenshot";
+    // captureScreenshotBtn.onclick = function () {
+    //   captureScreenshot(element);
+    // };
 
-    submenuContainer.appendChild(captureScreenshotBtn);
-    submenuContainer.style.position = "absolute";
-    submenuContainer.style.left = `${element.getBoundingClientRect().left}px`;
-    submenuContainer.style.top = `${
-      element.getBoundingClientRect().top + window.scrollY
-    }px`;
+    // submenuContainer.appendChild(captureScreenshotBtn);
+    // submenuContainer.style.position = "absolute";
+    // submenuContainer.style.left = `${element.getBoundingClientRect().left}px`;
+    // submenuContainer.style.top = `${
+    //   element.getBoundingClientRect().top + window.scrollY
+    // }px`;
 
-    submenuContainer.onmouseleave = function () {
-      submenuContainer.style.display = "none";
-      restoreHighlight();
-    };
-  }
+    // submenuContainer.onmouseleave = function () {
+    //   submenuContainer.style.display = "none";
+    //   restoreHighlight();
+    // };
+  // }
 
-  function captureScreenshot(element) {
-    document.querySelectorAll(".highlighted").forEach((el) => {
-      if (el !== element) {
-        el.style.backgroundColor = "transparent";
-      }
-    });
 
-    const listId = element.getAttribute("data-list-id");
 
-    chrome.runtime.sendMessage({ action: "captureScreenshot" }, () => {
-      setTimeout(() => {
-        restoreHighlight();
-        if (listId) {
-          removeFromList(element);
-        }
-      }, 500);
-    });
-  }
 
-  function removeFromList(element) {
-    const listId = element.getAttribute("data-list-id");
 
-    chrome.storage.local.get("wordLists", (result) => {
-      const wordLists = result.wordLists || [];
-
-      const textContentToRemove = element.textContent.trim();
-
-      const updatedWordLists = wordLists.map((wordList) => {
-        if (wordList.words && wordList.id === listId) {
-          wordList.words = wordList.words.filter((wordObj) => {
-            return wordObj.word.trim() !== textContentToRemove;
-          });
-        }
-        return wordList;
-      });
-
-      chrome.storage.local.set({ wordLists: updatedWordLists });
-    });
-  }
-
-  function restoreHighlight() {
-    document.querySelectorAll(".highlighted").forEach((el) => {
-      if (el.style.backgroundColor === "transparent") {
-        el.style.backgroundColor = `${highlightColorRestore}`;
-      }
-    });
-  }
-
-  document.addEventListener("mouseover", function (event) {
-    const target = event.target;
-    if (target.classList.contains("highlighted")) {
-      createSubmenu(target);
-      submenuContainer.style.display = "block";
-    }
-  });
+  // document.addEventListener("mouseover", function (event) {
+  //   const target = event.target;
+  //   if (target.classList.contains("highlighted")) {
+  //     createSubmenu(target);
+  //     submenuContainer.style.display = "block";
+  //   }
+  // });
 
   async function highlightText(searchText, highlightColor, listId = null) {
     highlightColorRestore = highlightColor;
@@ -110,11 +66,11 @@ if (!window.hasRun) {
           let text = node.nodeValue;
           if (searchRegex.test(text)) {
             if (node.parentNode.className !== "highlighted") {
-              let replacementText = `<span class="highlighted" style="${colorStyle}" onmouseover="window.showSubmenu(this)">$&</span>`;
+              let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
               let newNode = document.createElement("span");
               newNode.className = "highlightedP";
               if (listId) {
-                replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}" onmouseover="window.showSubmenu(this)">$&</span>`;
+                replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
                 newNode.setAttribute("data-list-id", listId);
               }
               const replacedText = text.replace(searchRegex, replacementText);
