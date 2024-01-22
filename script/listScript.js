@@ -224,11 +224,11 @@ document.addEventListener("DOMContentLoaded", function () {
     divWithListImportSettigs,
     wordsContainer
   );
-
+/* Не нужно
   googleListBtn.addEventListener("click", function () {  
     window.location.href = `changeSheets.html?listId=${listId}`;
   });
-
+*/
   var toList = document.createElement("button");
   toList.type = "button";
 
@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var listBox, rangeEndInput, rangeStartInput;
   
-
+/* Не нужно
   linkToListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
 
@@ -321,7 +321,7 @@ document.addEventListener("DOMContentLoaded", function () {
     divWithListImportSettigs.appendChild(linkInput);
     divWithListImportSettigs.appendChild(okButton);
   });
-
+*/
   toList.addEventListener("click", function () {
     okButton.disabled = false;
     
@@ -524,7 +524,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const match = url.match(regex);
     return match && match[1] ? match[1] : null;
   }
-
+/* Не нужно
   // Выбор файла и перенос значений в список
   fileListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
@@ -552,7 +552,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     divWithListImportSettigs.appendChild(fileInput);
   });
-
+*/
   cancelBtn.addEventListener("click", function () {
     window.location.href = "popup.html";
   });
