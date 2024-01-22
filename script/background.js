@@ -22,29 +22,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     });
   }
 });
-function dataURItoBlob(dataURI) {
-  const byteString = atob(dataURI.split(",")[1]);
-  const mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-  const ab = new ArrayBuffer(byteString.length);
-  const ia = new Uint8Array(ab);
-  for (let i = 0; i < byteString.length; i++) {
-    ia[i] = byteString.charCodeAt(i);
-  }
-  return new Blob([ia], { type: mimeString });
-}
 
 function saveScreenshot(dataUrl) {
-  const blob = dataURItoBlob(dataUrl);
-  const filename = "screenshot.png";
-
+  // Сохранение в Downloads
   chrome.storage.local.get("saveAs", function (data) {
-    const saveAs = data.saveAs || false;
+    const saveAs = data.saveAs || false;  
+    const filename = "screenshot.png";
 
     chrome.downloads.download({
       url: dataUrl,
       filename: filename,
       saveAs: saveAs,
     });
-    return new Blob([ia], { type: mimeString });
   });
 }

@@ -8,7 +8,8 @@
     "scripting",
     "storage",
     "tabs",
-    "downloads"
+    "downloads",
+    "clipboardWrite"
   ],
   "action": {
     "default_popup": "pages/popup.html",
