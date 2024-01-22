@@ -524,7 +524,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const match = url.match(regex);
     return match && match[1] ? match[1] : null;
   }
-/* Не нужно
   // Выбор файла и перенос значений в список
   fileListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
@@ -552,7 +551,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     divWithListImportSettigs.appendChild(fileInput);
   });
-*/
+
   cancelBtn.addEventListener("click", function () {
     window.location.href = "popup.html";
   });
