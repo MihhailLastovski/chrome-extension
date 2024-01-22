@@ -100,7 +100,7 @@ if (!window.hasRun) {
 
     if (boolActive && searchText !== "") {
       const searchRegex = new RegExp(searchText, "gi");
-      const colorStyle = `background-color: ${highlightColor};`;
+      const colorStyle = `border: 2px solid ${highlightColor};`;
 
       function highlightTextNode(node) {
         if (
