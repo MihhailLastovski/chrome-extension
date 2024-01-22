@@ -15,7 +15,7 @@ if (!window.hasRun) {
 
     const captureScreenshotBtn = document.createElement("button");
     captureScreenshotBtn.id = "captureScreenshotBtn";
-    captureScreenshotBtn.innerHTML = 'screenshot';
+    captureScreenshotBtn.innerHTML = "screenshot";
     captureScreenshotBtn.onclick = function () {
       captureScreenshot(element);
     };
@@ -35,26 +35,51 @@ if (!window.hasRun) {
 
   function captureScreenshot(element) {
     document.querySelectorAll(".highlighted").forEach((el) => {
-        if (el !== element) {
-            el.style.backgroundColor = "transparent";
-        }
+      if (el !== element) {
+        el.style.backgroundColor = "transparent";
+      }
     });
 
+    const listId = element.getAttribute("data-list-id");
+
     chrome.runtime.sendMessage({ action: "captureScreenshot" }, () => {
-        setTimeout(() => {
-            restoreHighlight();
-        }, 500); 
+      setTimeout(() => {
+        restoreHighlight();
+        if (listId) {
+          removeFromList(element);
+        }
+      }, 500);
     });
-}
+  }
+
+  function removeFromList(element) {
+    const listId = element.getAttribute("data-list-id");
+
+    chrome.storage.local.get("wordLists", (result) => {
+      const wordLists = result.wordLists || [];
+
+      const textContentToRemove = element.textContent.trim();
+
+      const updatedWordLists = wordLists.map((wordList) => {
+        if (wordList.words && wordList.id === listId) {
+          wordList.words = wordList.words.filter((wordObj) => {
+            return wordObj.word.trim() !== textContentToRemove;
+          });
+        }
+        return wordList;
+      });
+
+      chrome.storage.local.set({ wordLists: updatedWordLists });
+    });
+  }
 
   function restoreHighlight() {
     document.querySelectorAll(".highlighted").forEach((el) => {
-        if (el.style.backgroundColor === "transparent") {
-            el.style.backgroundColor = `${highlightColorRestore}`;
-        }
+      if (el.style.backgroundColor === "transparent") {
+        el.style.backgroundColor = `${highlightColorRestore}`;
+      }
     });
-}
-
+  }
 
   document.addEventListener("mouseover", function (event) {
     const target = event.target;
@@ -63,21 +88,20 @@ if (!window.hasRun) {
       submenuContainer.style.display = "block";
     }
   });
-  
 
   async function highlightText(searchText, highlightColor, listId = null) {
-    highlightColorRestore = highlightColor
+    highlightColorRestore = highlightColor;
     const resultOld = await new Promise((resolve, reject) => {
       chrome.storage.local.get("isActive", (result) => {
         resolve(result);
       });
     });
     const boolActive = resultOld.isActive;
-  
+
     if (boolActive && searchText !== "") {
       const searchRegex = new RegExp(searchText, "gi");
       const colorStyle = `background-color: ${highlightColor};`;
-  
+
       function highlightTextNode(node) {
         if (
           node.nodeType === Node.TEXT_NODE &&
@@ -110,7 +134,7 @@ if (!window.hasRun) {
           });
         }
       }
-  
+
       // Проверка, является ли узел потомком элемента style или script
       function isDescendantOfStyleOrScript(node) {
         while (node.parentNode) {
@@ -125,7 +149,7 @@ if (!window.hasRun) {
         }
         return false;
       }
-  
+
       highlightTextNode(document.body);
     }
     let highlightedCount = document.querySelectorAll("span.highlighted").length;
@@ -135,8 +159,12 @@ if (!window.hasRun) {
       count: highlightedCount,
     });
   }
-  
-  chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+
+  chrome.runtime.onMessage.addListener(function (
+    request,
+    sender,
+    sendResponse
+  ) {
     if (request.action === "highlight") {
       highlightText(
         request.searchText,
@@ -178,5 +206,4 @@ if (!window.hasRun) {
       chrome.runtime.sendMessage({ action: "requestScreenshot" });
     }
   });
-  
 }
