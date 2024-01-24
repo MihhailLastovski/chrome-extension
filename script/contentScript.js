@@ -38,7 +38,7 @@ if (!window.hasRun) {
   function captureScreenshot(element) {
     document.querySelectorAll(".highlighted").forEach((el) => {
       if (el !== element) {
-        el.style.backgroundColor = "transparent";
+        el.style.borderColor = "transparent";
       }
     });
 
@@ -86,8 +86,8 @@ if (!window.hasRun) {
 
   function restoreHighlight() {
     document.querySelectorAll(".highlighted").forEach((el) => {
-      if (el.style.backgroundColor === "transparent") {
-        el.style.backgroundColor = `${highlightColorRestore}`;
+      if (el.style.borderColor  === "transparent") {
+        el.style.borderColor = `${highlightColorRestore}`;
       }
     });
   }
