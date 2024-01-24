@@ -524,8 +524,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const rows = csvData.split("\n");
       const wordsArray = rows.reduce((words, row) => {
-        const columns = row.split(",");
-        const wordsInRow = columns.map((cell) => cell.trim());
+        const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+        const wordsInRow = columns.map((cell) => cell.trim().replace(/"/g, ''));
         return words.concat(wordsInRow.filter((word) => word !== ""));
       }, []);
 
