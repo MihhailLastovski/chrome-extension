@@ -15,7 +15,7 @@ if (!window.hasRun) {
 
     const captureScreenshotBtn = document.createElement("button");
     captureScreenshotBtn.id = "captureScreenshotBtn";
-    captureScreenshotBtn.innerHTML = "screenshot";
+    captureScreenshotBtn.innerHTML = "Capture Screenshot";
     captureScreenshotBtn.onclick = function () {
       captureScreenshot(element);
     };
@@ -29,26 +29,49 @@ if (!window.hasRun) {
 
     submenuContainer.onmouseleave = function () {
       submenuContainer.style.display = "none";
-      restoreHighlight();
     };
+
+    submenuContainer.style.display = "block";
   }
 
-  function captureScreenshot(element) {
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function captureScreenshot(element) {
     document.querySelectorAll(".highlighted").forEach((el) => {
       if (el !== element) {
-        el.style.backgroundColor = "transparent";
+        el.style.borderColor = "transparent";
       }
     });
 
     const listId = element.getAttribute("data-list-id");
 
-    chrome.runtime.sendMessage({ action: "captureScreenshot" }, () => {
-      setTimeout(() => {
-        restoreHighlight();
-        if (listId) {
-          removeFromList(element);
+    await sleep(1000);
+
+    new Promise((resolve) => {
+      chrome.runtime.sendMessage({ action: "captureScreenshot" }, (dataUrl) => {
+        if (dataUrl) {
+          saveScreenshot(dataUrl);
+          resolve();
         }
-      }, 500);
+      });
+    }).then(() => {
+      if (listId) {
+        removeFromList(element);
+      }
+      restoreHighlight(element);
+    });
+  }
+
+  function saveScreenshot(dataUrl) {
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage(
+        { action: "downloadScreenshot", dataUrl: dataUrl },
+        function (response) {
+          resolve();
+        }
+      );
     });
   }
 
@@ -73,10 +96,13 @@ if (!window.hasRun) {
     });
   }
 
-  function restoreHighlight() {
+  function restoreHighlight(element) {
     document.querySelectorAll(".highlighted").forEach((el) => {
-      if (el.style.backgroundColor === "transparent") {
-        el.style.backgroundColor = `${highlightColorRestore}`;
+      if (el.style.borderColor === "transparent") {
+        el.style.borderColor = `${highlightColorRestore}`;
+      }
+      if(el === element){
+        el.style.borderColor = "transparent";
       }
     });
   }
@@ -100,7 +126,7 @@ if (!window.hasRun) {
 
     if (boolActive && searchText !== "") {
       const searchRegex = new RegExp(searchText, "gi");
-      const colorStyle = `border: 2px solid ${highlightColor};`;
+      const colorStyle = `border: 4px solid ${highlightColor};`;
 
       function highlightTextNode(node) {
         if (
@@ -203,7 +229,7 @@ if (!window.hasRun) {
       }
     }
     if (request.action === "captureScreenshot") {
-      chrome.runtime.sendMessage({ action: "requestScreenshot" });
+      chrome.runtime.sendMessage({ action: "captureScreenshot" });
     }
   });
 }
