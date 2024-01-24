@@ -210,7 +210,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const csvListBtn = document.getElementById("csvListBtn");
   const fileListBtn = document.getElementById("fileListBtn");
   const linkToListBtn = document.getElementById("linkToList");
-  const refreshBtn = document.getElementById("refreshBtn");
   
   var sheets = [];
   var spreadsheetId;
@@ -408,50 +407,50 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  async function fetchListsAndAddToListbox(url) {
-    try {
-      spreadsheetId = getSpreadsheetIdFromUrl(url);
+  // async function fetchListsAndAddToListbox(url) {
+  //   try {
+  //     spreadsheetId = getSpreadsheetIdFromUrl(url);
 
-      const sheetsResponse = await fetch(
-        `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}`
-      );
+  //     const sheetsResponse = await fetch(
+  //       `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}`
+  //     );
 
-      if (!sheetsResponse.ok) {
-        console.error(
-          "Error fetching sheets. HTTP Status:",
-          sheetsResponse.status,
-          alert("Error while fetching data, please try again."),
-          divWithListImportSettigs.removeChild(divRange),
-          divWithListImportSettigs.removeChild(h2),
-          divWithListImportSettigs.removeChild(hr),
-          divWithListImportSettigs.removeChild(wordsToList),
-          okButton.disabled = false,
-        );
-        const errorText = await sheetsResponse.text();
-        console.error("Error details:", errorText);
-        return;
-      }
+  //     if (!sheetsResponse.ok) {
+  //       console.error(
+  //         "Error fetching sheets. HTTP Status:",
+  //         sheetsResponse.status,
+  //         alert("Error while fetching data, please try again."),
+  //         divWithListImportSettigs.removeChild(divRange),
+  //         divWithListImportSettigs.removeChild(h2),
+  //         divWithListImportSettigs.removeChild(hr),
+  //         divWithListImportSettigs.removeChild(wordsToList),
+  //         okButton.disabled = false,
+  //       );
+  //       const errorText = await sheetsResponse.text();
+  //       console.error("Error details:", errorText);
+  //       return;
+  //     }
 
-      const sheetsData = await sheetsResponse.json();
-      const sheetsList = sheetsData.sheets;
+  //     const sheetsData = await sheetsResponse.json();
+  //     const sheetsList = sheetsData.sheets;
 
-      if (sheetsList && sheetsList.length > 0) {
-        sheetsList.forEach((sheet) => {
-          sheets = sheetsData.sheets;
+  //     if (sheetsList && sheetsList.length > 0) {
+  //       sheetsList.forEach((sheet) => {
+  //         sheets = sheetsData.sheets;
 
-          const listBox = document.getElementById("listbox");
-          const option = document.createElement("option");
-          option.value = sheet.properties.title;
-          option.text = sheet.properties.title;
-          listBox.add(option);
-        });
-      } else {
-        console.error("No sheets found.");
-      }
-    } catch (error) {
-      console.error("Error fetching sheets:", error);
-    }
-  }
+  //         const listBox = document.getElementById("listbox");
+  //         const option = document.createElement("option");
+  //         option.value = sheet.properties.title;
+  //         option.text = sheet.properties.title;
+  //         listBox.add(option);
+  //       });
+  //     } else {
+  //       console.error("No sheets found.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching sheets:", error);
+  //   }
+  // }
 
   csvListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
@@ -468,7 +467,7 @@ document.addEventListener("DOMContentLoaded", function () {
     csvButton.addEventListener("click", function () {
       if (csvInput.value.trim()!== "") {
         csvLink = csvInput.value.replace("/edit", "/export?format=csv");
-
+        chrome.storage.local.set({ dataURL: csvLink });
         fetchDataAndProcessWords(csvLink);
   
         csvInput.value = "";
@@ -496,6 +495,26 @@ document.addEventListener("DOMContentLoaded", function () {
     divWithListImportSettigs.appendChild(csvp);
     divWithListImportSettigs.appendChild(csvInput);
     divWithListImportSettigs.appendChild(csvButton);
+
+    const refreshBtn = document.createElement("button");
+    refreshBtn.type = "button";
+    refreshBtn.className = "listFormBtn";
+    refreshBtn.innerHTML = '<i class="fa fa-refresh" aria-hidden="true"></i>';
+
+    refreshBtn.addEventListener("click", function () {
+      while (wordsContainer.firstChild) {
+        wordsContainer.removeChild(wordsContainer.firstChild);
+      }
+      wordsContainer.appendChild(lastListItem);
+
+      chrome.storage.local.get("dataURL", (result) => {
+        if (result.dataURL) {
+          fetchDataAndProcessWords(result.dataURL);
+        }
+      });
+    });
+
+    divWithListImportSettigs.appendChild(refreshBtn);
   });
 
   async function fetchDataAndProcessWords(url) {
@@ -519,11 +538,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
   
-  function getSpreadsheetIdFromUrl(url) {
-    const regex = /\/spreadsheets\/d\/(.+?)\//;
-    const match = url.match(regex);
-    return match && match[1] ? match[1] : null;
-  }
+  // function getSpreadsheetIdFromUrl(url) {
+  //   const regex = /\/spreadsheets\/d\/(.+?)\//;
+  //   const match = url.match(regex);
+  //   return match && match[1] ? match[1] : null;
+  // }
+
   // Выбор файла и перенос значений в список
   fileListBtn.addEventListener("click", function () {
     divWithListImportSettigs.innerHTML = "";
@@ -554,15 +574,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
   cancelBtn.addEventListener("click", function () {
     window.location.href = "popup.html";
-  });
-
-  refreshBtn.addEventListener("click", function () {
-    while (wordsContainer.firstChild) {
-      wordsContainer.removeChild(wordsContainer.firstChild);
-    }
-    wordsContainer.appendChild(lastListItem);
-    if (csvLink) {
-      fetchDataAndProcessWords(csvLink);
-    }
   });
 });

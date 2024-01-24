@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 function saveScreenshot(dataUrl) {
   // Сохранение в Downloads
   chrome.storage.local.get("saveAs", function (data) {
-    const saveAs = data.saveAs || false;  
+    const saveAs = true; //data.saveAs || false;
     const filename = "screenshot.png";
 
     chrome.downloads.download({
@@ -60,7 +60,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     chrome.downloads.download({
       url: dataUrl,
       filename: "screenshot.png",
-      saveAs: false, 
+      saveAs: true, // false
     }, function(downloadId) {
       console.log("Download initiated with ID:", downloadId);
     });

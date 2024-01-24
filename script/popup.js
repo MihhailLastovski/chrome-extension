@@ -216,10 +216,10 @@ document.addEventListener("DOMContentLoaded", function () {
     window.location.href = "list.html";
   });
 
-  const settingsBtn = document.getElementById("settingsBtn");
-  settingsBtn.addEventListener("click", function () {
-    window.location.href = "settings.html";
-  });
+  // const settingsBtn = document.getElementById("settingsBtn");
+  // settingsBtn.addEventListener("click", function () {
+  //   window.location.href = "settings.html";
+  // });
 
   async function counterUpdating() {
     const result = await new Promise((resolve, reject) => {
