@@ -5,8 +5,15 @@ chrome.runtime.onInstalled.addListener(function () {
       chrome.storage.local.set({ firstOpen: true });
     }
   });
+
+  // chrome.contextMenus.create({
+  //   id: "myContextMenu",
+  //   title: "Take a screenshot",
+  //   contexts: ["all"]
+  // });
 });
 
+//Обновление иконки
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (changeInfo.status === "complete") {
     console.log("Tab is updated");
@@ -22,6 +29,21 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     });
   }
 });
+
+function saveScreenshot(dataUrl) {
+  // Сохранение в Downloads
+  chrome.storage.local.get("saveAs", function (data) {
+    const saveAs = data.saveAs || false;  
+    const filename = "screenshot.png";
+
+    chrome.downloads.download({
+      url: dataUrl,
+      filename: filename,
+      saveAs: saveAs,
+    });
+  });
+}
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "captureScreenshot") {
     chrome.tabs.captureVisibleTab(null, { format: "png" }, function (dataUrl) {
@@ -30,6 +52,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     return true;
   }
 });
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.action === "downloadScreenshot") {
     const dataUrl = request.dataUrl;
@@ -46,16 +69,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 });
 
-
-function saveScreenshot(dataUrl) {
-  chrome.storage.local.get("saveAs", function (data) {
-    const saveAs = data.saveAs || false;  
-    const filename = "screenshot.png";
-
-    chrome.downloads.download({
-      url: dataUrl,
-      filename: filename,
-      saveAs: saveAs,
-    });
-  });
-}
+//Добавление высплывающего окна
+// chrome.contextMenus.onClicked.addListener(function (info, event) {
+//   if (info.menuItemId === "myContextMenu") {
+//     console.log("Context menu in clicked")
+//   }
+// });
