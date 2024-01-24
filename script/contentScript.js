@@ -52,7 +52,7 @@ if (!window.hasRun) {
           if (listId) {
             removeFromList(element);
           }
-        }, 500);
+        }, 1000);
       }
     });
   }
@@ -113,7 +113,7 @@ if (!window.hasRun) {
 
     if (boolActive && searchText !== "") {
       const searchRegex = new RegExp(searchText, "gi");
-      const colorStyle = `border: 2px solid ${highlightColor};`;
+      const colorStyle = `border: 4px solid ${highlightColor};`;
 
       function highlightTextNode(node) {
         if (
