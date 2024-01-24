@@ -1,119 +1,124 @@
 if (!window.hasRun) {
   var highlightColorRestore;
-  window.hasRun = true;
+window.hasRun = true;
 
-  let submenuContainer;
+let submenuContainer;
 
-  function createSubmenu(element) {
-    if (!submenuContainer) {
-      submenuContainer = document.createElement("div");
-      submenuContainer.className = "submenu-container";
-      document.body.appendChild(submenuContainer);
-    }
-
-    submenuContainer.innerHTML = "";
-
-    const captureScreenshotBtn = document.createElement("button");
-    captureScreenshotBtn.id = "captureScreenshotBtn";
-    captureScreenshotBtn.innerHTML = "Capture Screenshot";
-    captureScreenshotBtn.onclick = function () {
-      captureScreenshot(element);
-    };
-
-    submenuContainer.appendChild(captureScreenshotBtn);
-    submenuContainer.style.position = "absolute";
-    submenuContainer.style.left = `${element.getBoundingClientRect().left}px`;
-    submenuContainer.style.top = `${
-      element.getBoundingClientRect().top + window.scrollY
-    }px`;
-
-    submenuContainer.onmouseleave = function () {
-      submenuContainer.style.display = "none";
-    };
-
-    submenuContainer.style.display = "block";
+function createSubmenu(element) {
+  if (!submenuContainer) {
+    submenuContainer = document.createElement("div");
+    submenuContainer.className = "submenu-container";
+    document.body.appendChild(submenuContainer);
   }
 
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+  submenuContainer.innerHTML = "";
 
-  async function captureScreenshot(element) {
-    document.querySelectorAll(".highlighted").forEach((el) => {
-      if (el !== element) {
-        el.style.borderColor = "transparent";
-      }
-    });
+  const captureScreenshotBtn = document.createElement("button");
+  captureScreenshotBtn.id = "captureScreenshotBtn";
+  captureScreenshotBtn.innerHTML = "Capture Screenshot";
+  captureScreenshotBtn.onclick = function () {
+    captureScreenshot(element);
+  };
 
-    const listId = element.getAttribute("data-list-id");
+  submenuContainer.appendChild(captureScreenshotBtn);
+  submenuContainer.style.position = "absolute";
+  submenuContainer.style.left = `${element.getBoundingClientRect().left}px`;
+  submenuContainer.style.top = `${
+    element.getBoundingClientRect().top + window.scrollY + 30
+  }px`;
 
-    await sleep(1000);
+  submenuContainer.onmouseleave = function () {
+    captureScreenshotBtn.style.display = "none";
+  };
 
-    new Promise((resolve) => {
-      chrome.runtime.sendMessage({ action: "captureScreenshot" }, (dataUrl) => {
-        if (dataUrl) {
-          saveScreenshot(dataUrl);
-          resolve();
-        }
-      });
-    }).then(() => {
-      if (listId) {
-        removeFromList(element);
-      }
-      restoreHighlight(element);
-    });
-  }
+  submenuContainer.style.display = "block";
+}
 
-  function saveScreenshot(dataUrl) {
-    return new Promise((resolve) => {
-      chrome.runtime.sendMessage(
-        { action: "downloadScreenshot", dataUrl: dataUrl },
-        function (response) {
-          resolve();
-        }
-      );
-    });
-  }
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  function removeFromList(element) {
-    const listId = element.getAttribute("data-list-id");
-
-    chrome.storage.local.get("wordLists", (result) => {
-      const wordLists = result.wordLists || [];
-
-      const textContentToRemove = element.textContent.trim();
-
-      const updatedWordLists = wordLists.map((wordList) => {
-        if (wordList.words && wordList.id === listId) {
-          wordList.words = wordList.words.filter((wordObj) => {
-            return wordObj.word.trim() !== textContentToRemove;
-          });
-        }
-        return wordList;
-      });
-
-      chrome.storage.local.set({ wordLists: updatedWordLists });
-    });
-  }
-
-  function restoreHighlight(element) {
-    document.querySelectorAll(".highlighted").forEach((el) => {
-      if (el.style.borderColor === "transparent") {
-        el.style.borderColor = `${highlightColorRestore}`;
-      }
-      if(el === element){
-        el.style.borderColor = "transparent";
-      }
-    });
-  }
-
-  document.addEventListener("mouseover", function (event) {
-    const target = event.target;
-    if (target.classList.contains("highlighted")) {
-      createSubmenu(target);
-      submenuContainer.style.display = "block";
+async function captureScreenshot(element) {
+  document.querySelectorAll(".highlighted").forEach((el) => {
+    if (el !== element) {
+      el.style.borderColor = "transparent";
     }
   });
+
+  const listId = element.getAttribute("data-list-id");
+
+  // Скрыть кнопку submenu во время скриншота
+  captureScreenshotBtn.style.display = "none";
+
+  await sleep(1000);
+
+  new Promise((resolve) => {
+    chrome.runtime.sendMessage({ action: "captureScreenshot" }, (dataUrl) => {
+      if (dataUrl) {
+        saveScreenshot(dataUrl);
+        resolve();
+      }
+    });
+  }).then(() => {
+    if (listId) {
+      removeFromList(element);
+    }
+    restoreHighlight(element);
+    // Восстановить видимость кнопки submenu
+    captureScreenshotBtn.style.display = "block";
+  });
+}
+
+function saveScreenshot(dataUrl) {
+  return new Promise((resolve) => {
+    chrome.runtime.sendMessage(
+      { action: "downloadScreenshot", dataUrl: dataUrl },
+      function (response) {
+        resolve();
+      }
+    );
+  });
+}
+
+function removeFromList(element) {
+  const listId = element.getAttribute("data-list-id");
+
+  chrome.storage.local.get("wordLists", (result) => {
+    const wordLists = result.wordLists || [];
+
+    const textContentToRemove = element.textContent.trim();
+
+    const updatedWordLists = wordLists.map((wordList) => {
+      if (wordList.words && wordList.id === listId) {
+        wordList.words = wordList.words.filter((wordObj) => {
+          return wordObj.word.trim() !== textContentToRemove;
+        });
+      }
+      return wordList;
+    });
+
+    chrome.storage.local.set({ wordLists: updatedWordLists });
+  });
+}
+
+function restoreHighlight(element) {
+  document.querySelectorAll(".highlighted").forEach((el) => {
+    if (el.style.borderColor === "transparent") {
+      el.style.borderColor = `${highlightColorRestore}`;
+    }
+    if (el === element) {
+      el.style.borderColor = "transparent";
+    }
+  });
+}
+
+document.addEventListener("mouseover", function (event) {
+  const target = event.target;
+  if (target.classList.contains("highlighted")) {
+    createSubmenu(target);
+    submenuContainer.style.display = "block";
+  }
+});
 
   async function highlightText(searchText, highlightColor, listId = null) {
     highlightColorRestore = highlightColor;
