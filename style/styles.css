@@ -85,6 +85,17 @@ hr {
   margin: 5%;
 }
 
+.tooltip {
+  position: absolute;
+  background-color: var(--main-black);
+  color: var(--main-white);
+  padding: 8px;
+  border-radius: 4px;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
 /* Header */
 .header {
   margin: -10px -10px 0 -10px;
@@ -103,6 +114,7 @@ hr {
   cursor: pointer;
   margin-left: 5%; 
 }
+
 /* Toggle switch */
 .switch {
   position: relative;

@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
         <label class="switch">
             <input class="toggleSwitch" type="checkbox">
             <span class="slider"></span>
-        </label>`;
+        </label>
+        <div id="toggleSwittchTooltip" class="tooltip">Tooltip</div>`;
 
     var body = document.querySelector("body");
     body.insertBefore(div, body.firstChild);
@@ -45,4 +46,24 @@ document.addEventListener("DOMContentLoaded", function () {
         heading.innerText = active ? "Highlight On" : "Highlight Off";
         searchTextInput && highlightBtn && (searchTextInput.disabled = highlightBtn.disabled = !active);
     }
+
+    const tooltip = document.getElementById('toggleSwittchTooltip');
+
+    heading.addEventListener('mouseover', function() {
+        const rect = heading.getBoundingClientRect();
+        const tooltipX = rect.left + window.pageXOffset;
+        const tooltipY = rect.bottom + window.pageYOffset + 5;
+    
+        tooltip.style.left = `${tooltipX}px`;
+        tooltip.style.top = `${tooltipY}px`;
+    
+        tooltip.style.display = "inline-block";
+        tooltip.style.opacity = 1;
+    });
+    
+    heading.addEventListener('mouseout', function() {
+        tooltip.style.display = "none";
+        tooltip.style.opacity = 0;
+    });
+
 });
