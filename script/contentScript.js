@@ -29,13 +29,16 @@ if (!window.hasRun) {
 
     submenuContainer.onmouseleave = function () {
       submenuContainer.style.display = "none";
-      restoreHighlight();
     };
 
     submenuContainer.style.display = "block";
   }
 
-  function captureScreenshot(element) {
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function captureScreenshot(element) {
     document.querySelectorAll(".highlighted").forEach((el) => {
       if (el !== element) {
         el.style.borderColor = "transparent";
@@ -44,22 +47,31 @@ if (!window.hasRun) {
 
     const listId = element.getAttribute("data-list-id");
 
-    chrome.runtime.sendMessage({ action: "captureScreenshot" }, (dataUrl) => {
-      if (dataUrl) {
-        saveScreenshot(dataUrl);
-        setTimeout(() => {
-          restoreHighlight();
-          if (listId) {
-            removeFromList(element);
-          }
-        }, 1000);
+    await sleep(1000);
+
+    new Promise((resolve) => {
+      chrome.runtime.sendMessage({ action: "captureScreenshot" }, (dataUrl) => {
+        if (dataUrl) {
+          saveScreenshot(dataUrl);
+          resolve();
+        }
+      });
+    }).then(() => {
+      if (listId) {
+        removeFromList(element);
       }
+      restoreHighlight(element);
     });
   }
-  
-  
+
   function saveScreenshot(dataUrl) {
-    chrome.runtime.sendMessage({ action: "downloadScreenshot", dataUrl: dataUrl }, function(response) {
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage(
+        { action: "downloadScreenshot", dataUrl: dataUrl },
+        function (response) {
+          resolve();
+        }
+      );
     });
   }
 
@@ -84,15 +96,16 @@ if (!window.hasRun) {
     });
   }
 
-  function restoreHighlight() {
+  function restoreHighlight(element) {
     document.querySelectorAll(".highlighted").forEach((el) => {
-      if (el.style.borderColor  === "transparent") {
+      if (el.style.borderColor === "transparent") {
         el.style.borderColor = `${highlightColorRestore}`;
+      }
+      if(el === element){
+        el.style.borderColor = "transparent";
       }
     });
   }
-
-
 
   document.addEventListener("mouseover", function (event) {
     const target = event.target;
