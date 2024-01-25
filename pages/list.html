@@ -2,43 +2,42 @@
 <html data-theme="light">
 
 <head>
-<title>List management</title>
-<meta charset="UTF-8">
-<link id="styleLink" rel="stylesheet" type="text/css" href="../style/styles.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<script src="../script/header.js"></script>
-<script src="../script/styleScript.js"></script>
-<script src="../script/listScript.js"></script>
+	<title>List management</title>
+	<meta charset="UTF-8">
+	<link id="styleLink" rel="stylesheet" type="text/css" href="../style/styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="../script/header.js"></script>
+	<script src="../script/styleScript.js"></script>
+	<script src="../script/listScript.js"></script>
 </head>
 
 <body>
-  <form id="addListForm"> 
-    <div class="content"> 
-      <input type="text" id="listNameInput" placeholder="List name" required>
-      <hr>
-       <!--<label>Upload words externally</label>-->
-      <div id="buttonsInLists">
-        <!--
-        <button type="button" id="googleListBtn"><i class="fa fa-chrome" aria-hidden="true"></i></button>
-        -->
-        <button type="button" id="csvListBtn"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>
-       <!--
-        <button type="button" id="linkToList"><i class="fa fa-files-o" aria-hidden="true"></i></button>
-        -->
-        <button type="button" id="fileListBtn"><i class="fa fa-upload" aria-hidden="true"></i></button>
-        
-      </div>
-      <div id="wordsContainer" class="list-words">
-        <div id="lastListItem" class="list-wordsItem">
-          <input id="cbox" type="checkbox" class="word-checkbox">
-          <label for="cbox"></label>
-          <textarea class="word-input" id="newWordInput"></textarea>
-        </div>
-      </div>
-      <!--button type="button" id="refreshBtn" class="listFormBtn"><i class="fa fa-refresh" aria-hidden="true"></i></button-->
-      <button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
-      <button type="submit" id="saveListBtn" class="listFormBtn">Add</button>
-    </div>
-  </form>
+	<form id="addListForm"> 
+		<div class="content"> 
+			<input type="text" id="listNameInput" placeholder="List name" required>
+			<hr>
+			<!--<label>Upload words externally</label>-->
+			<div id="buttonsInLists">
+				<!--
+				<button type="button" id="googleListBtn"><i class="fa fa-chrome" aria-hidden="true"></i></button>
+				-->
+				<button type="button" id="csvListBtn"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>
+				<!--
+				<button type="button" id="linkToList"><i class="fa fa-files-o" aria-hidden="true"></i></button>
+				-->
+				<button type="button" id="fileListBtn"><i class="fa fa-upload" aria-hidden="true"></i></button>				
+			</div>
+			<div id="wordsContainer" class="list-words">
+				<div id="lastListItem" class="list-wordsItem">
+					<input id="cbox" type="checkbox" class="word-checkbox">
+					<label for="cbox"></label>
+					<textarea class="word-input" id="newWordInput"></textarea>
+				</div>
+			</div>
+			<!--button type="button" id="refreshBtn" class="listFormBtn"><i class="fa fa-refresh" aria-hidden="true"></i></button-->
+			<button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
+			<button type="submit" id="saveListBtn" class="listFormBtn">Add</button>
+		</div>
+	</form>
 </body>
 </html>

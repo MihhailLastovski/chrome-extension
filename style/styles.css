@@ -71,7 +71,7 @@ input[type=file]::file-selector-button:active,
 button:active {
   background-color: var(--main-dark-green);
 }
-
+ 
 .divsWithText {
   margin-top: 9px;
   margin-left: 10px;
