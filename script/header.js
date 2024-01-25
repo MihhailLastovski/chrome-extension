@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var body = document.querySelector('body');
     body.insertBefore(div, body.firstChild);
-
     const toggleSwitch = document.querySelector('.toggleSwitch');
     const heading = document.querySelector('.heading');
     const searchTextInput = document.getElementById('searchText');

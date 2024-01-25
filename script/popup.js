@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
         enabledLists = [];
         renderWordLists([]);
     });
+    var currentYear = new Date().getFullYear();
+    document.getElementById("currentYear").textContent = currentYear;
+
     const searchTextInput = document.getElementById('searchText');
     const highlightBtn = document.getElementById('highlightBtn');
     const newListBtn = document.getElementById('newListBtn');
