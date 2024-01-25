@@ -253,36 +253,4 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     counterUpdating();
-
-    // Tooltips
-    const tooltipButtons = [highlightBtn, newListBtn];
-    const tooltipsText = ['Search', 'Add new list'];
-    let tooltipTimer;
-
-    tooltipButtons.forEach((button, index) => {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'tooltip';
-        tooltip.innerText = tooltipsText[index];
-        document.body.appendChild(tooltip);
-
-        button.addEventListener('mouseover', function () {
-            tooltipTimer = setTimeout(function () {
-                const rect = button.getBoundingClientRect();
-                const tooltipX = rect.left + window.pageXOffset;
-                const tooltipY = rect.bottom + window.pageYOffset + 5;
-
-                tooltip.style.left = `${tooltipX}px`;
-                tooltip.style.top = `${tooltipY}px`;
-
-                tooltip.style.display = 'inline-block';
-                tooltip.style.opacity = 1;
-            }, 500);
-        });
-
-        button.addEventListener('mouseout', function () {
-            clearTimeout(tooltipTimer);
-            tooltip.style.display = 'none';
-            tooltip.style.opacity = 0;
-        });
-    });
 });
