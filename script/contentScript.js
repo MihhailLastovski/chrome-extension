@@ -262,8 +262,7 @@ if (!window.hasRun) {
                         element.outerHTML = textContent;
                     });
             }
-        }
-        if (request.action === 'captureScreenshot') {
+        } else if (request.action === 'captureScreenshot') {
             chrome.runtime.sendMessage({ action: 'captureScreenshot' });
         }
     });

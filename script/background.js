@@ -55,15 +55,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         );
 
         return true;
-    } else if (request.action === 'tooltips') {
-        chrome.tabs.captureVisibleTab(
-            null,
-            { format: 'png' },
-            function (dataUrl) {
-                sendResponse(dataUrl);
-            }
-        );
-        return true;
     }
 });
 

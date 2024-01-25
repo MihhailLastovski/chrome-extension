@@ -48,14 +48,52 @@ document.addEventListener('DOMContentLoaded', function () {
             (searchTextInput.disabled = highlightBtn.disabled = !active);
     }
 
-    // Tooltips
+    /*****************************************Tooltips**********************************************/
+
     const slider = document.querySelector('.slider');
     const sun = document.querySelector('.fa.fa-sun-o');
     const moon = document.querySelector('.fa.fa-moon-o');
+    const csvListBtn = document.getElementById('csvListBtn');
 
-    const tooltipButtons = [slider, sun, moon];
-    const tooltipsText = ['Off/On', 'Dark theme', 'Light theme'];
+    let tooltipButtons = [slider, sun, moon];
+    let tooltipsText = ['Off/On', 'Dark theme', 'Light theme'];
     let tooltipTimer;
+
+    if (highlightBtn) {
+        // popup.html
+        const newListBtn = document.getElementById('newListBtn');
+        tooltipButtons.push(highlightBtn);
+        tooltipButtons.push(newListBtn);
+
+        tooltipsText.push('Search');
+        tooltipsText.push('Add new list');
+    } else if (csvListBtn) {
+        // list.html
+        const fileListBtn = document.getElementById('fileListBtn');
+        // const cancelBtn = document.getElementById('cancelBtn');
+        // const addWordBtn = document.getElementById('saveListBtn');
+        tooltipButtons.push(csvListBtn);
+        tooltipButtons.push(fileListBtn);
+        // tooltipButtons.push(cancelBtn);
+        // tooltipButtons.push(addWordBtn);
+        tooltipsText.push('Import Google Sheets');
+        tooltipsText.push('Import file');
+        // tooltipsText.push('Go back');
+        // tooltipsText.push('Add new list');
+        // const csvButton = document.querySelector('.fa.fa-search');
+        // const refreshBtn = document.querySelector('.fa.fa-refresh');
+        // if (csvButton && refreshBtn) {
+        //     tooltipButtons.push(csvButton);
+        //     tooltipButtons.push(refreshBtn);
+        //     tooltipsText.push('Search Google sheets');
+        //     tooltipsText.push('Save changes in list');
+        // }
+        // const saveChangesBtn = document.getElementById('saveChangesBtn');
+        // if (saveChangesBtn) {
+        //     tooltipButtons.push(saveChangesBtn);
+        //     tooltipsText.push('Save changes in list');
+        // }
+    }
 
     tooltipButtons.forEach((button, index) => {
         const tooltip = document.createElement('div');
@@ -68,6 +106,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 const rect = button.getBoundingClientRect();
                 const tooltipX = rect.left + window.pageXOffset;
                 const tooltipY = rect.bottom + window.pageYOffset + 5;
+                // var tooltipY;
+
+                // if (csvListBtn) {
+                //     if (
+                //         button === cancelBtn ||
+                //         button === addWordBtn ||
+                //         button === saveChangesBtn
+                //     ) {
+                //         tooltipY = rect.bottom + window.pageYOffset - 70;
+                //     } else {
+                //         tooltipY = rect.bottom + window.pageYOffset + 5;
+                //     }
+                // } else {
+                //     tooltipY = rect.bottom + window.pageYOffset + 5;
+                // }
 
                 tooltip.style.left = `${tooltipX}px`;
                 tooltip.style.top = `${tooltipY}px`;

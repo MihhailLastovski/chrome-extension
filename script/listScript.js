@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const encodedDataStringList = urlParams.get('dataList');
     const fileData = urlParams.get('dataFile');
 
+    const saveChangesBtn = document.createElement('button');
+
     if (encodedDataString) {
         const dataList = JSON.parse(decodeURIComponent(encodedDataString));
         if (dataList && dataList.length > 0) {
@@ -55,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            const saveChangesBtn = document.createElement('button');
+            saveChangesBtn.id = 'saveChangesBtn';
             saveChangesBtn.type = 'submit';
             saveChangesBtn.textContent = 'Save Changes';
             saveChangesBtn.addEventListener('click', function () {
@@ -214,8 +216,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var sheets = [];
     var spreadsheetId, okButton, h2, hr, csvLink;
+
     const csvButton = document.createElement('button');
+    csvButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
+    csvButton.type = 'button';
+
     const refreshBtn = document.createElement('button');
+    refreshBtn.type = 'button';
+    refreshBtn.className = 'listFormBtn';
+    refreshBtn.innerHTML = '<i class="fa fa-refresh" aria-hidden="true"></i>';
 
     var divWithListImportSettigs = document.createElement('div');
     addListForm.lastElementChild.insertBefore(
@@ -470,8 +479,8 @@ document.addEventListener('DOMContentLoaded', function () {
         csvInput.placeholder = 'Paste the link';
 
         // csvButton = document.createElement('button');
-        csvButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
-        csvButton.type = 'button';
+        // csvButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
+        // csvButton.type = 'button';
 
         csvButton.addEventListener('click', function () {
             if (csvInput.value.trim() !== '') {
@@ -505,10 +514,10 @@ document.addEventListener('DOMContentLoaded', function () {
         divWithListImportSettigs.appendChild(csvInput);
         divWithListImportSettigs.appendChild(csvButton);
 
-        refreshBtn.type = 'button';
-        refreshBtn.className = 'listFormBtn';
-        refreshBtn.innerHTML =
-            '<i class="fa fa-refresh" aria-hidden="true"></i>';
+        // refreshBtn.type = 'button';
+        // refreshBtn.className = 'listFormBtn';
+        // refreshBtn.innerHTML =
+        //     '<i class="fa fa-refresh" aria-hidden="true"></i>';
         refreshBtn.addEventListener('click', function () {
             while (wordsContainer.firstChild) {
                 wordsContainer.removeChild(wordsContainer.firstChild);
@@ -586,23 +595,22 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = 'popup.html';
     });
 
-    // Tooltips
+    /*****************************************Tooltips**********************************************/
+    /* Необходимо оптимизировать */
 
     const tooltipButtons = [
-        csvListBtn,
-        fileListBtn,
-        cancelBtn,
-        addWordBtn,
         csvButton,
         refreshBtn,
+        saveChangesBtn,
+        cancelBtn,
+        addWordBtn,
     ];
     const tooltipsText = [
-        'Import Google Sheets',
-        'Import file',
+        'Search Google sheets',
+        'Synchronize list',
+        'Save changes in list',
         'Go back',
         'Add new list',
-        'Search',
-        'Synchronize list',
     ];
     let tooltipTimer;
 
@@ -616,7 +624,16 @@ document.addEventListener('DOMContentLoaded', function () {
             tooltipTimer = setTimeout(function () {
                 const rect = button.getBoundingClientRect();
                 const tooltipX = rect.left + window.pageXOffset;
-                const tooltipY = rect.bottom + window.pageYOffset + 5;
+                var tooltipY;
+                if (
+                    button === cancelBtn ||
+                    button === addWordBtn ||
+                    button === saveChangesBtn
+                ) {
+                    tooltipY = rect.bottom + window.pageYOffset - 70;
+                } else {
+                    tooltipY = rect.bottom + window.pageYOffset + 5;
+                }
 
                 tooltip.style.left = `${tooltipX}px`;
                 tooltip.style.top = `${tooltipY}px`;
