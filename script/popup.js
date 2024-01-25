@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let enabledLists = data.enabledLists || [];
 
         enabledLists.forEach((listId) => {
-            toggleWordList(listId, false);
+            toggleWordList(listId, true);
         });
 
         enabledLists = [];
