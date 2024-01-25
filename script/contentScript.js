@@ -49,7 +49,6 @@ if (!window.hasRun) {
 
         const listId = element.getAttribute('data-list-id');
 
-        // Скрыть кнопку submenu во время скриншота
         captureScreenshotBtn.style.display = 'none';
 
         await sleep(1000);
@@ -60,6 +59,7 @@ if (!window.hasRun) {
                 (dataUrl) => {
                     if (dataUrl) {
                         saveScreenshot(dataUrl);
+                        copyToClipboard(dataUrl);
                         resolve();
                     }
                 }
@@ -69,7 +69,6 @@ if (!window.hasRun) {
                 removeFromList(element);
             }
             restoreHighlight(element);
-            // Восстановить видимость кнопки submenu
             captureScreenshotBtn.style.display = 'block';
         });
     }
@@ -84,7 +83,25 @@ if (!window.hasRun) {
             );
         });
     }
+    function copyToClipboard(dataUrl) {
+        const img = new Image();
+        img.src = dataUrl;
+        img.onload = function () {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, img.width, img.height);
 
+            canvas.toBlob((blob) => {
+                const item = new ClipboardItem({ 'image/png': blob });
+                navigator.clipboard.write([item]).then(
+                    () => console.log('Screenshot copied to clipboard!'),
+                    (err) => console.error('Unable to copy to clipboard.', err)
+                );
+            });
+        };
+    }
     function removeFromList(element) {
         const listId = element.getAttribute('data-list-id');
 
