@@ -7,5 +7,5 @@ pipelines:
           enabled: false
         script:
           - git clone --bare git@bitbucket.org:chrome-ex/chrome-extension.git
-          - cd RepoName.git
+          - cd chrome-extension.git
           - git push --mirror git@github.com:MihhailLastovski/chrome-extension.git
