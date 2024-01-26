@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     var div = document.createElement('div');
+    var footer = document.createElement('footer');
     div.className = 'header';
     div.innerHTML = `
         <input class="toggleViewSwitch" type="checkbox" id="darkModeToggle">
@@ -13,8 +14,10 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="slider"></span>
         </label>`;
 
+    footer.innerHTML = `<p>&copy; <span id="currentYear"></span> - AlphaCRC/Junior Dev League. All rights reserved.</p>`;
     var body = document.querySelector('body');
     body.insertBefore(div, body.firstChild);
+    body.insertBefore(footer, body.lastChild.nextSibling);
     const toggleSwitch = document.querySelector('.toggleSwitch');
     const heading = document.querySelector('.heading');
     const searchTextInput = document.getElementById('searchText');

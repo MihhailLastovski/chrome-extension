@@ -41,7 +41,7 @@ footer {
   text-align: center;
   position: fixed;
   bottom: 0;
-  width: 100%;
+  width: 110%;
   margin-left: -2%;
 }
 
@@ -287,6 +287,10 @@ input[type=file]::file-selector-button {
   gap: 10px;
 }
 
+#wordLists {
+  margin-bottom: 10%;
+}
+
 /* List.html - adding form */
 #buttonsInLists {
   /*margin-top: -5%;*/
@@ -308,6 +312,7 @@ input[type=file]::file-selector-button {
 
 .listFormBtn {
   margin-top: 5%;
+  margin-bottom: 15%;
 }
 
 .trash-btn {
