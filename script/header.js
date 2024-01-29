@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     var div = document.createElement('div');
+    var footer = document.createElement('div');
+    footer.className = "footerDiv";
     div.className = 'header';
     div.innerHTML = `
         <input class="toggleViewSwitch" type="checkbox" id="darkModeToggle">
@@ -13,9 +15,10 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="slider"></span>
         </label>`;
 
+    footer.innerHTML = `<p>&copy; <span id="currentYear"></span> - AlphaCRC/Junior Dev League. All rights reserved.</p>`;
     var body = document.querySelector('body');
     body.insertBefore(div, body.firstChild);
-
+    body.appendChild(footer);
     const toggleSwitch = document.querySelector('.toggleSwitch');
     const heading = document.querySelector('.heading');
     const searchTextInput = document.getElementById('searchText');
@@ -136,4 +139,8 @@ document.addEventListener('DOMContentLoaded', function () {
             tooltip.style.opacity = 0;
         });
     });
+
+    // Footer
+    var currentYear = new Date().getFullYear();
+    document.getElementById("currentYear").textContent = currentYear;
 });

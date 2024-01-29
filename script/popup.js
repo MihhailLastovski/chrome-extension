@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         enabledLists = [];
         renderWordLists([]);
     });
+
     const searchTextInput = document.getElementById('searchText');
     const highlightBtn = document.getElementById('highlightBtn');
     const newListBtn = document.getElementById('newListBtn');
