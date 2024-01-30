@@ -20,6 +20,14 @@ if (!window.hasRun) {
             captureScreenshot(element);
         };
 
+        const foundBtn = document.createElement('button');
+        foundBtn.id = 'foundBtn';
+        foundBtn.innerHTML = 'Word founded';
+        foundBtn.onclick = function () {
+            changeWordStatus(element);
+        };
+
+        submenuContainer.appendChild(foundBtn);
         submenuContainer.appendChild(captureScreenshotBtn);
         submenuContainer.style.position = 'absolute';
         submenuContainer.style.left = `${
@@ -31,6 +39,7 @@ if (!window.hasRun) {
 
         submenuContainer.onmouseleave = function () {
             captureScreenshotBtn.style.display = 'none';
+            foundBtn.style.display = 'none'
         };
 
         submenuContainer.style.display = 'block';
@@ -38,6 +47,32 @@ if (!window.hasRun) {
 
     function sleep(ms) {
         return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function changeWordStatus(element) {
+        const listId = element.getAttribute('data-list-id');
+
+        document.querySelectorAll('.highlighted').forEach((el) => {
+            if(el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()) {
+                el.style.backgroundColor = 'red';
+                //el.setAttribute('Status', 'found');
+                chrome.storage.local.get('wordLists', (result) => {
+                    const wordLists = result.wordLists || [];
+        
+                    const updatedWordLists = wordLists.map((wordList) => {
+                        if (wordList.words && wordList.id === listId) {
+                            wordList.words.forEach((wordObj) => {
+                                if (wordObj.word.trim().toLowerCase() === el.innerHTML.toLowerCase()) {
+                                    wordObj['status'] = 'Located';
+                                }
+                            });
+                        }
+                        return wordList;
+                    });      
+                    chrome.storage.local.set({ wordLists: updatedWordLists });
+                });
+            }
+        });
     }
 
     async function captureScreenshot(element) {
