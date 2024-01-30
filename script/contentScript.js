@@ -20,7 +20,16 @@ if (!window.hasRun) {
             captureScreenshot(element);
         };
 
+        const addNoteBtn = document.createElement('button');
+        addNoteBtn.id = 'addNoteBtn';
+        addNoteBtn.innerHTML = 'Add Note';
+        addNoteBtn.onclick = function () {
+            addNoteToElement(element);
+        };
+
         submenuContainer.appendChild(captureScreenshotBtn);
+        submenuContainer.appendChild(addNoteBtn);
+
         submenuContainer.style.position = 'absolute';
         submenuContainer.style.left = `${
             element.getBoundingClientRect().left
@@ -30,7 +39,7 @@ if (!window.hasRun) {
         }px`;
 
         submenuContainer.onmouseleave = function () {
-            captureScreenshotBtn.style.display = 'none';
+            submenuContainer.style.display = 'none';
         };
 
         submenuContainer.style.display = 'block';
@@ -48,8 +57,6 @@ if (!window.hasRun) {
         });
 
         const listId = element.getAttribute('data-list-id');
-
-        captureScreenshotBtn.style.display = 'none';
 
         await sleep(1000);
 
@@ -69,7 +76,6 @@ if (!window.hasRun) {
                 removeFromList(element);
             }
             restoreHighlight(element);
-            captureScreenshotBtn.style.display = 'block';
         });
     }
 
@@ -83,6 +89,7 @@ if (!window.hasRun) {
             );
         });
     }
+
     function copyToClipboard(dataUrl) {
         const img = new Image();
         img.src = dataUrl;
@@ -102,6 +109,7 @@ if (!window.hasRun) {
             });
         };
     }
+
     function removeFromList(element) {
         const listId = element.getAttribute('data-list-id');
 
@@ -134,6 +142,13 @@ if (!window.hasRun) {
         });
     }
 
+    function addNoteToElement(element) {
+        const note = prompt('Enter your note:');
+        if (note !== null) {
+            console.log('Note:', note);
+        }
+    }
+
     document.addEventListener('mouseover', function (event) {
         const target = event.target;
         if (target.classList.contains('highlighted')) {
@@ -141,6 +156,8 @@ if (!window.hasRun) {
             submenuContainer.style.display = 'block';
         }
     });
+
+
 
     async function highlightText(searchText, highlightColor, listId = null) {
         highlightColorRestore = highlightColor;
