@@ -40,6 +40,8 @@ if (!window.hasRun) {
 
         submenuContainer.onmouseleave = function () {
             submenuContainer.style.display = 'none';
+            captureScreenshotBtn.style.display = 'none';
+            addNoteBtn.style.display = 'none';
         };
 
         submenuContainer.style.display = 'block';
@@ -57,7 +59,8 @@ if (!window.hasRun) {
         });
 
         const listId = element.getAttribute('data-list-id');
-
+        captureScreenshotBtn.style.display = 'none';
+        addNoteBtn.style.display = 'none';
         await sleep(1000);
 
         new Promise((resolve) => {
@@ -76,6 +79,8 @@ if (!window.hasRun) {
                 removeFromList(element);
             }
             restoreHighlight(element);
+            captureScreenshotBtn.style.display = 'block';
+            addNoteBtn.style.display = 'block';
         });
     }
 
