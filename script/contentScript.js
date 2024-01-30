@@ -32,7 +32,6 @@ if (!window.hasRun) {
         submenuContainer.onmouseleave = function () {
             captureScreenshotBtn.style.display = 'none';
         };
-
         submenuContainer.style.display = 'block';
     }
 
