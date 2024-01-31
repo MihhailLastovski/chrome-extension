@@ -32,5 +32,9 @@
   ],
   "background": {
     "service_worker": "script/background.js"
+  },
+  "oauth2": {
+    "client_id": "59202187170-ek0v1hi22555f5vrpj8nf4468akskip3.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/spreadsheets"]
   }
 }
