@@ -147,13 +147,56 @@ if (!window.hasRun) {
         });
     }
 
+    const SPREADSHEET_ID = '16FHitkvTh76ykBZpjPEGhLhMH2yIzq2X3CuII490MMk';
+
     function addNoteToElement(element) {
         const note = prompt('Enter your note:');
         if (note !== null) {
-            console.log('Note:', note);
+            const range = 'A1'; 
+            const valueInputOption = 'RAW';
+            const insertDataOption = 'INSERT_ROWS';
+            chrome.runtime.sendMessage({ action: 'auth' });
+
+            chrome.identity.getAuthToken(
+                { interactive: true },
+                function (token) {
+                    if (chrome.runtime.lastError) {
+                        console.error(chrome.runtime.lastError);
+                        return;
+                    }
+
+                    const params = {
+                        valueInputOption,
+                        insertDataOption,
+                        range,
+                        spreadsheetId: SPREADSHEET_ID,
+                        resource: {
+                            values: [[note]],
+                        },
+                    };
+
+                    fetch(
+                        `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}:append`,
+                        {
+                            method: 'POST',
+                            headers: {
+                                Authorization: 'Bearer ' + token,
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(params),
+                        }
+                    )
+                        .then((response) => response.json())
+                        .then((data) => {
+                            console.log('Note added successfully:', data);
+                        })
+                        .catch((error) => {
+                            console.error('Error adding note:', error);
+                        });
+                }
+            );
         }
     }
-
     document.addEventListener('mouseover', function (event) {
         const target = event.target;
         if (target.classList.contains('highlighted')) {
@@ -161,8 +204,6 @@ if (!window.hasRun) {
             submenuContainer.style.display = 'block';
         }
     });
-
-
 
     async function highlightText(searchText, highlightColor, listId = null) {
         highlightColorRestore = highlightColor;

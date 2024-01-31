@@ -11,6 +11,12 @@
     "downloads",
     "contextMenus"
   ],
+  "oauth2": {
+    "client_id": "241696042449-fmjki9t6rkm5hmtc6gk7ju1eg4t89dtc.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/spreadsheets"
+    ]
+  },
   "action": {
     "default_popup": "pages/popup.html",
     "default_icon": {
