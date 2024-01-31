@@ -17,15 +17,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const counterElem = document.getElementById('highlightedCount');
     const colorOptions = document.querySelectorAll('.color-option');
+    selectedColor = localStorage.getItem('selectedColor') || 'defaultColor';
+
     colorOptions.forEach((option) => {
-        if (option.checked) {
-            selectedColor = option.value;
+        if (option.value === selectedColor) {
+            option.checked = true;
         }
     });
 
     colorOptions.forEach((option) => {
         option.addEventListener('change', function () {
             selectedColor = this.value;
+
+            localStorage.setItem('selectedColor', selectedColor);
         });
     });
 
