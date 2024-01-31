@@ -139,7 +139,7 @@ if (!window.hasRun) {
 
         const listId = element.getAttribute('data-list-id');
 
-        captureScreenshotBtn.style.display = 'none';
+        //captureScreenshotBtn.style.display = 'none';
 
         await sleep(1000);
 
@@ -159,7 +159,7 @@ if (!window.hasRun) {
                 removeFromList(element);
             }
             restoreHighlight(element);
-            captureScreenshotBtn.style.display = 'block';
+            // captureScreenshotBtn.style.display = 'block';
         });
     }
 
