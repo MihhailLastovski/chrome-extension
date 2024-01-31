@@ -65,7 +65,7 @@ if (!window.hasRun) {
 
         document.querySelectorAll('.highlighted').forEach((el) => {
             if(el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()) {
-                if (el.getAttribute('status') === 'Found') {
+                if (el.getAttribute('status') === 'found') {
                     el.style.backgroundColor = 'transparent';
                     el.removeAttribute('status');
                     chrome.storage.local.get('wordLists', (result) => {
