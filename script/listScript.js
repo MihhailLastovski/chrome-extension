@@ -115,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
         chrome.storage.local.get('wordLists', function (data) {
             let lists = data.wordLists || [];
             lists.push(wordList);
-
             chrome.storage.local.set({ wordLists: lists });
         });
     }
@@ -138,6 +137,9 @@ document.addEventListener('DOMContentLoaded', function () {
         wordInput.value = word;
         wordInput.className = 'word-input';
 
+        const status = document.createElement('a');
+        status.innerHTML = 'lol'
+
         const deleteBtn = document.createElement('button');
         deleteBtn.innerHTML =
             '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
@@ -149,6 +151,7 @@ document.addEventListener('DOMContentLoaded', function () {
         wordDiv.appendChild(checkbox);
         wordDiv.appendChild(label);
         wordDiv.appendChild(wordInput);
+        wordDiv.appendChild(status);
         wordDiv.appendChild(deleteBtn);
 
         wordsContainer.insertBefore(wordDiv, lastListItem);
