@@ -29,6 +29,18 @@ if (!window.hasRun) {
 
         submenuContainer.appendChild(foundBtn);
         submenuContainer.appendChild(captureScreenshotBtn);
+
+        // Дизайн кнопок на внешней странице
+        const buttonStyles = {
+            cursor: 'pointer',
+            padding: '8px 12px',
+            backgroundColor: '#b3ff99',
+            borderRadius: '5px',
+        };
+        for (const childElement of submenuContainer.children) {
+            Object.assign(childElement.style, buttonStyles);
+        }
+
         submenuContainer.style.position = 'absolute';
         submenuContainer.style.left = `${
             element.getBoundingClientRect().left
@@ -39,7 +51,7 @@ if (!window.hasRun) {
 
         submenuContainer.onmouseleave = function () {
             captureScreenshotBtn.style.display = 'none';
-            foundBtn.style.display = 'none'
+            foundBtn.style.display = 'none';
         };
 
         submenuContainer.style.display = 'block';
@@ -53,22 +65,27 @@ if (!window.hasRun) {
         const listId = element.getAttribute('data-list-id');
 
         document.querySelectorAll('.highlighted').forEach((el) => {
-            if(el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()) {
+            if (
+                el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+            ) {
                 el.style.backgroundColor = 'red';
                 //el.setAttribute('Status', 'found');
                 chrome.storage.local.get('wordLists', (result) => {
                     const wordLists = result.wordLists || [];
-        
+
                     const updatedWordLists = wordLists.map((wordList) => {
                         if (wordList.words && wordList.id === listId) {
                             wordList.words.forEach((wordObj) => {
-                                if (wordObj.word.trim().toLowerCase() === el.innerHTML.toLowerCase()) {
+                                if (
+                                    wordObj.word.trim().toLowerCase() ===
+                                    el.innerHTML.toLowerCase()
+                                ) {
                                     wordObj['status'] = 'Located';
                                 }
                             });
                         }
                         return wordList;
-                    });      
+                    });
                     chrome.storage.local.set({ wordLists: updatedWordLists });
                 });
             }
