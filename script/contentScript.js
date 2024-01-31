@@ -313,8 +313,6 @@ if (!window.hasRun) {
                         element.outerHTML = textContent;
                     });
             }
-        } else if (request.action === 'captureScreenshot') {
-            chrome.runtime.sendMessage({ action: 'captureScreenshot' });
         }
     });
 }
