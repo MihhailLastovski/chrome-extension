@@ -64,44 +64,66 @@ if (!window.hasRun) {
         const listId = element.getAttribute('data-list-id');
 
         document.querySelectorAll('.highlighted').forEach((el) => {
-            if(el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()) {
+            if (
+                el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+            ) {
                 if (el.getAttribute('status') === 'found') {
                     el.style.backgroundColor = 'transparent';
                     el.removeAttribute('status');
                     chrome.storage.local.get('wordLists', (result) => {
                         const wordLists = result.wordLists || [];
-            
+
                         const updatedWordLists = wordLists.map((wordList) => {
                             if (wordList.words && wordList.id === listId) {
                                 wordList.words.forEach((wordObj) => {
-                                    if (wordObj.word.trim().toLowerCase() === el.innerHTML.toLowerCase()) {
+                                    if (
+                                        wordObj.word.trim().toLowerCase() ===
+                                        el.innerHTML.toLowerCase()
+                                    ) {
                                         //wordObj['status'] = 'Found';
                                         delete wordObj['status'];
                                     }
                                 });
                             }
                             return wordList;
-                        });      
-                        chrome.storage.local.set({ wordLists: updatedWordLists });
+                        });
+                        chrome.storage.local.set({
+                            wordLists: updatedWordLists,
+                        });
                     });
-                }
-                else {
-                    el.style.backgroundColor = 'red';
+                } else {
+                    const colorMappings = {
+                        '#b3ff99': '#ecffe6',
+                        cyan: '#b3ffff',
+                        yellow: '#ffffb3',
+                        pink: '#ffe6ea',
+                        blueviolet: '#cda5f3',
+                    };
+
+                    el.style.backgroundColor =
+                        colorMappings[highlightColorRestore] ||
+                        highlightColorRestore;
+
                     el.setAttribute('status', 'found');
                     chrome.storage.local.get('wordLists', (result) => {
                         const wordLists = result.wordLists || [];
-            
+
                         const updatedWordLists = wordLists.map((wordList) => {
                             if (wordList.words && wordList.id === listId) {
                                 wordList.words.forEach((wordObj) => {
-                                    if (wordObj.word.trim().toLowerCase() === el.innerHTML.toLowerCase()) {
+                                    if (
+                                        wordObj.word.trim().toLowerCase() ===
+                                        el.innerHTML.toLowerCase()
+                                    ) {
                                         wordObj['status'] = 'Found';
                                     }
                                 });
                             }
                             return wordList;
-                        });      
-                        chrome.storage.local.set({ wordLists: updatedWordLists });
+                        });
+                        chrome.storage.local.set({
+                            wordLists: updatedWordLists,
+                        });
                     });
                 }
             }
