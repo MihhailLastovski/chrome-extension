@@ -134,6 +134,7 @@ if (!window.hasRun) {
         document.querySelectorAll('.highlighted').forEach((el) => {
             if (el !== element) {
                 el.style.borderColor = 'transparent';
+                el.style.backgroundColor = 'transparent';
             }
         });
 
@@ -220,6 +221,7 @@ if (!window.hasRun) {
             }
             if (el === element) {
                 el.style.borderColor = 'transparent';
+                el.style.backgroundColor = 'transparent';
             }
         });
     }
