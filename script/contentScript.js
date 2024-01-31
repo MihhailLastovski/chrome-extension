@@ -210,7 +210,7 @@ if (!window.hasRun) {
         }
     });
 
-    async function highlightText(searchText, highlightColor, listId = null) {
+    async function highlightText(searchText, highlightColor, listId = null) { //,status
         highlightColorRestore = highlightColor;
         const resultOld = await new Promise((resolve, reject) => {
             chrome.storage.local.get('isActive', (result) => {
@@ -221,15 +221,21 @@ if (!window.hasRun) {
 
         if (boolActive && searchText !== '') {
             const searchRegex = new RegExp(searchText, 'gi');
-            const colorStyle = `border: 4px solid ${highlightColor};`;
+            //if(status === )
 
-            function highlightTextNode(node) {
+            async function highlightTextNode(node) {
+                let text = node.nodeValue; ///
+                //const colorStyle = `border: 4px solid ${highlightColor};`;
                 if (
                     node.nodeType === Node.TEXT_NODE &&
                     !isDescendantOfStyleOrScript(node)
                 ) {
-                    let text = node.nodeValue;
                     if (searchRegex.test(text)) {
+                        const foundWord = await findWordInWordLists(text.trim());
+                        const isWordFound = foundWord && foundWord['status'] === 'Found';
+                        console.log(foundWord);
+                        console.log(isWordFound);
+                        const colorStyle = isWordFound ? `background-color: red; border: 4px solid ${highlightColor};` : `border: 4px solid ${highlightColor};`; //`border: 4px solid ${highlightColor};`
                         if (node.parentNode.className !== 'highlighted') {
                             let replacementText = `<span class="highlighted" style="${colorStyle}" onmouseover="window.showSubmenu(this)">$&</span>`;
                             let newNode = document.createElement('span');
@@ -253,10 +259,34 @@ if (!window.hasRun) {
                     node.childNodes &&
                     node.childNodes.length > 0
                 ) {
+                    /*
                     node.childNodes.forEach((childNode) => {
                         highlightTextNode(childNode);
                     });
+                    */
+                    for (const childNode of node.childNodes) {
+                        await highlightTextNode(childNode);
+                    }
                 }
+            }
+            async function findWordInWordLists(word) {
+                const result = await new Promise((resolve) => {
+                    chrome.storage.local.get('wordLists', (data) => {
+                        resolve(data);
+                    });
+                });
+            
+                const wordLists = result.wordLists || [];
+            
+                for (const wordList of wordLists) {
+                    if (wordList.words && wordList.id === listId) {
+                        const foundWord = wordList.words.find((wordObj) => wordObj.word.trim().toLowerCase() === word.toLowerCase());
+                        if (foundWord) {
+                            return foundWord;
+                        }
+                    }
+                }
+                return null;
             }
 
             // Проверка, является ли узел потомком элемента style или script
