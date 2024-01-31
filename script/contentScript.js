@@ -4,6 +4,14 @@ if (!window.hasRun) {
 
     let submenuContainer;
 
+    const colorMappings = {
+        '#b3ff99': '#ecffe6',
+        cyan: '#b3ffff',
+        yellow: '#ffffb3',
+        pink: '#ffe6ea',
+        blueviolet: '#cda5f3',
+    };
+
     function createSubmenu(element) {
         if (!submenuContainer) {
             submenuContainer = document.createElement('div');
@@ -92,13 +100,13 @@ if (!window.hasRun) {
                         });
                     });
                 } else {
-                    const colorMappings = {
-                        '#b3ff99': '#ecffe6',
-                        cyan: '#b3ffff',
-                        yellow: '#ffffb3',
-                        pink: '#ffe6ea',
-                        blueviolet: '#cda5f3',
-                    };
+                    // const colorMappings = {
+                    //     '#b3ff99': '#ecffe6',
+                    //     cyan: '#b3ffff',
+                    //     yellow: '#ffffb3',
+                    //     pink: '#ffe6ea',
+                    //     blueviolet: '#cda5f3',
+                    // };
 
                     el.style.backgroundColor =
                         colorMappings[highlightColorRestore] ||
@@ -234,7 +242,7 @@ if (!window.hasRun) {
         }
     });
 
-    async function highlightText(searchText, highlightColor, listId = null) { //,status
+    async function highlightText(searchText, highlightColor, listId = null) {
         highlightColorRestore = highlightColor;
         const resultOld = await new Promise((resolve, reject) => {
             chrome.storage.local.get('isActive', (result) => {
@@ -243,23 +251,47 @@ if (!window.hasRun) {
         });
         const boolActive = resultOld.isActive;
 
+        const result = await new Promise((resolve) => {
+            chrome.storage.local.get('wordLists', (data) => {
+                resolve(data);
+            });
+        });
+        const wordLists = result.wordLists || [];
+
+        function findWordInWordLists(word) {
+            for (const wordList of wordLists) {
+                if (wordList.words && wordList.id === listId) {
+                    const foundWord = wordList.words.find(
+                        (wordObj) =>
+                            wordObj.word.trim().toLowerCase() ===
+                            word.toLowerCase()
+                    );
+                    if (foundWord) {
+                        return foundWord;
+                    }
+                }
+            }
+            return null;
+        }
+
         if (boolActive && searchText !== '') {
             const searchRegex = new RegExp(searchText, 'gi');
-            //if(status === )
-
-            async function highlightTextNode(node) {
-                let text = node.nodeValue; ///
-                //const colorStyle = `border: 4px solid ${highlightColor};`;
+            function highlightTextNode(node) {
+                let text = node.nodeValue;
                 if (
                     node.nodeType === Node.TEXT_NODE &&
                     !isDescendantOfStyleOrScript(node)
                 ) {
                     if (searchRegex.test(text)) {
-                        const foundWord = await findWordInWordLists(text.trim());
-                        const isWordFound = foundWord && foundWord['status'] === 'Found';
-                        console.log(foundWord);
-                        console.log(isWordFound);
-                        const colorStyle = isWordFound ? `background-color: red; border: 4px solid ${highlightColor};` : `border: 4px solid ${highlightColor};`; //`border: 4px solid ${highlightColor};`
+                        const foundWord = findWordInWordLists(searchText);
+                        const isWordFound =
+                            foundWord && foundWord['status'] === 'Found';
+                        const colorStyle = isWordFound
+                            ? `background-color: ${
+                                  colorMappings[highlightColorRestore] ||
+                                  highlightColorRestore
+                              }; border: 4px solid ${highlightColor};`
+                            : `border: 4px solid ${highlightColor};`;
                         if (node.parentNode.className !== 'highlighted') {
                             let replacementText = `<span class="highlighted" style="${colorStyle}" onmouseover="window.showSubmenu(this)">$&</span>`;
                             let newNode = document.createElement('span');
@@ -283,34 +315,10 @@ if (!window.hasRun) {
                     node.childNodes &&
                     node.childNodes.length > 0
                 ) {
-                    /*
                     node.childNodes.forEach((childNode) => {
                         highlightTextNode(childNode);
                     });
-                    */
-                    for (const childNode of node.childNodes) {
-                        await highlightTextNode(childNode);
-                    }
                 }
-            }
-            async function findWordInWordLists(word) {
-                const result = await new Promise((resolve) => {
-                    chrome.storage.local.get('wordLists', (data) => {
-                        resolve(data);
-                    });
-                });
-            
-                const wordLists = result.wordLists || [];
-            
-                for (const wordList of wordLists) {
-                    if (wordList.words && wordList.id === listId) {
-                        const foundWord = wordList.words.find((wordObj) => wordObj.word.trim().toLowerCase() === word.toLowerCase());
-                        if (foundWord) {
-                            return foundWord;
-                        }
-                    }
-                }
-                return null;
             }
 
             // Проверка, является ли узел потомком элемента style или script
