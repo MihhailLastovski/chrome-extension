@@ -115,7 +115,6 @@ document.addEventListener('DOMContentLoaded', function () {
         chrome.storage.local.get('wordLists', function (data) {
             let lists = data.wordLists || [];
             lists.push(wordList);
-
             chrome.storage.local.set({ wordLists: lists });
         });
     }
@@ -137,6 +136,17 @@ document.addEventListener('DOMContentLoaded', function () {
         wordInput.type = 'text';
         wordInput.value = word;
         wordInput.className = 'word-input';
+
+        chrome.storage.local.get('wordLists', (result) => {
+            const wordLists = result.wordLists || [];
+            const foundWord = wordLists
+                .find((list) => list.id === listId)
+                ?.words.find((w) => w.word === word);
+
+            wordInput.style.textDecoration = foundWord?.status
+                ? 'line-through'
+                : 'none';
+        });
 
         const deleteBtn = document.createElement('button');
         deleteBtn.innerHTML =

@@ -4,6 +4,14 @@ if (!window.hasRun) {
 
     let submenuContainer;
 
+    const colorMappings = {
+        '#b3ff99': '#ecffe6',
+        cyan: '#b3ffff',
+        yellow: '#ffffb3',
+        pink: '#ffe6ea',
+        blueviolet: '#cda5f3',
+    };
+
     function createSubmenu(element) {
         if (!submenuContainer) {
             submenuContainer = document.createElement('div');
@@ -20,7 +28,27 @@ if (!window.hasRun) {
             captureScreenshot(element);
         };
 
+        const foundBtn = document.createElement('button');
+        foundBtn.id = 'foundBtn';
+        foundBtn.innerHTML = 'Word founded';
+        foundBtn.onclick = function () {
+            changeWordStatus(element);
+        };
+
+        submenuContainer.appendChild(foundBtn);
         submenuContainer.appendChild(captureScreenshotBtn);
+
+        // Дизайн кнопок на внешней странице
+        const buttonStyles = {
+            cursor: 'pointer',
+            padding: '8px 12px',
+            backgroundColor: '#b3ff99',
+            borderRadius: '5px',
+        };
+        for (const childElement of submenuContainer.children) {
+            Object.assign(childElement.style, buttonStyles);
+        }
+
         submenuContainer.style.position = 'absolute';
         submenuContainer.style.left = `${
             element.getBoundingClientRect().left
@@ -31,8 +59,8 @@ if (!window.hasRun) {
 
         submenuContainer.onmouseleave = function () {
             captureScreenshotBtn.style.display = 'none';
+            foundBtn.style.display = 'none';
         };
-
         submenuContainer.style.display = 'block';
     }
 
@@ -40,16 +68,87 @@ if (!window.hasRun) {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
+    async function changeWordStatus(element) {
+        const listId = element.getAttribute('data-list-id');
+
+        document.querySelectorAll('.highlighted').forEach((el) => {
+            if (
+                el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+            ) {
+                if (el.getAttribute('status') === 'found') {
+                    el.style.backgroundColor = 'transparent';
+                    el.removeAttribute('status');
+                    chrome.storage.local.get('wordLists', (result) => {
+                        const wordLists = result.wordLists || [];
+
+                        const updatedWordLists = wordLists.map((wordList) => {
+                            if (wordList.words && wordList.id === listId) {
+                                wordList.words.forEach((wordObj) => {
+                                    if (
+                                        wordObj.word.trim().toLowerCase() ===
+                                        el.innerHTML.toLowerCase()
+                                    ) {
+                                        //wordObj['status'] = 'Found';
+                                        delete wordObj['status'];
+                                    }
+                                });
+                            }
+                            return wordList;
+                        });
+                        chrome.storage.local.set({
+                            wordLists: updatedWordLists,
+                        });
+                    });
+                } else {
+                    // const colorMappings = {
+                    //     '#b3ff99': '#ecffe6',
+                    //     cyan: '#b3ffff',
+                    //     yellow: '#ffffb3',
+                    //     pink: '#ffe6ea',
+                    //     blueviolet: '#cda5f3',
+                    // };
+
+                    el.style.backgroundColor =
+                        colorMappings[highlightColorRestore] ||
+                        highlightColorRestore;
+
+                    el.setAttribute('status', 'found');
+                    chrome.storage.local.get('wordLists', (result) => {
+                        const wordLists = result.wordLists || [];
+
+                        const updatedWordLists = wordLists.map((wordList) => {
+                            if (wordList.words && wordList.id === listId) {
+                                wordList.words.forEach((wordObj) => {
+                                    if (
+                                        wordObj.word.trim().toLowerCase() ===
+                                        el.innerHTML.toLowerCase()
+                                    ) {
+                                        wordObj['status'] = 'Found';
+                                    }
+                                });
+                            }
+                            return wordList;
+                        });
+                        chrome.storage.local.set({
+                            wordLists: updatedWordLists,
+                        });
+                    });
+                }
+            }
+        });
+    }
+
     async function captureScreenshot(element) {
         document.querySelectorAll('.highlighted').forEach((el) => {
             if (el !== element) {
                 el.style.borderColor = 'transparent';
+                el.style.backgroundColor = 'transparent';
             }
         });
 
         const listId = element.getAttribute('data-list-id');
 
-        captureScreenshotBtn.style.display = 'none';
+        //captureScreenshotBtn.style.display = 'none';
 
         await sleep(1000);
 
@@ -69,7 +168,7 @@ if (!window.hasRun) {
                 removeFromList(element);
             }
             restoreHighlight(element);
-            captureScreenshotBtn.style.display = 'block';
+            // captureScreenshotBtn.style.display = 'block';
         });
     }
 
@@ -130,6 +229,7 @@ if (!window.hasRun) {
             }
             if (el === element) {
                 el.style.borderColor = 'transparent';
+                el.style.backgroundColor = 'transparent';
             }
         });
     }
@@ -151,17 +251,47 @@ if (!window.hasRun) {
         });
         const boolActive = resultOld.isActive;
 
+        const result = await new Promise((resolve) => {
+            chrome.storage.local.get('wordLists', (data) => {
+                resolve(data);
+            });
+        });
+        const wordLists = result.wordLists || [];
+
+        function findWordInWordLists(word) {
+            for (const wordList of wordLists) {
+                if (wordList.words && wordList.id === listId) {
+                    const foundWord = wordList.words.find(
+                        (wordObj) =>
+                            wordObj.word.trim().toLowerCase() ===
+                            word.toLowerCase()
+                    );
+                    if (foundWord) {
+                        return foundWord;
+                    }
+                }
+            }
+            return null;
+        }
+
         if (boolActive && searchText !== '') {
             const searchRegex = new RegExp(searchText, 'gi');
-            const colorStyle = `border: 4px solid ${highlightColor};`;
-
             function highlightTextNode(node) {
+                let text = node.nodeValue;
                 if (
                     node.nodeType === Node.TEXT_NODE &&
                     !isDescendantOfStyleOrScript(node)
                 ) {
-                    let text = node.nodeValue;
                     if (searchRegex.test(text)) {
+                        const foundWord = findWordInWordLists(searchText);
+                        const isWordFound =
+                            foundWord && foundWord['status'] === 'Found';
+                        const colorStyle = isWordFound
+                            ? `background-color: ${
+                                  colorMappings[highlightColorRestore] ||
+                                  highlightColorRestore
+                              }; border: 4px solid ${highlightColor};`
+                            : `border: 4px solid ${highlightColor};`;
                         if (node.parentNode.className !== 'highlighted') {
                             let replacementText = `<span class="highlighted" style="${colorStyle}" onmouseover="window.showSubmenu(this)">$&</span>`;
                             let newNode = document.createElement('span');
@@ -262,8 +392,6 @@ if (!window.hasRun) {
                         element.outerHTML = textContent;
                     });
             }
-        } else if (request.action === 'captureScreenshot') {
-            chrome.runtime.sendMessage({ action: 'captureScreenshot' });
         }
     });
 }
