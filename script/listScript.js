@@ -137,12 +137,15 @@ document.addEventListener('DOMContentLoaded', function () {
         wordInput.value = word;
         wordInput.className = 'word-input';
 
-        const status = document.createElement('a');
         chrome.storage.local.get('wordLists', (result) => {
             const wordLists = result.wordLists || [];
-            const foundWord = wordLists.find((list) => list.id === listId)?.words.find((w) => w.word === word);
-            const dataCustomValue = foundWord?.['status'] || '';
-            status.innerHTML = dataCustomValue;
+            const foundWord = wordLists
+                .find((list) => list.id === listId)
+                ?.words.find((w) => w.word === word);
+
+            wordInput.style.textDecoration = foundWord?.status
+                ? 'line-through'
+                : 'none';
         });
 
         const deleteBtn = document.createElement('button');
@@ -156,7 +159,6 @@ document.addEventListener('DOMContentLoaded', function () {
         wordDiv.appendChild(checkbox);
         wordDiv.appendChild(label);
         wordDiv.appendChild(wordInput);
-        wordDiv.appendChild(status);
         wordDiv.appendChild(deleteBtn);
 
         wordsContainer.insertBefore(wordDiv, lastListItem);
