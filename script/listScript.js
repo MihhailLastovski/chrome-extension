@@ -140,14 +140,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const status = document.createElement('a');
         chrome.storage.local.get('wordLists', (result) => {
             const wordLists = result.wordLists || [];
-    
-            // Assuming you have a specific list ID and word
             const foundWord = wordLists.find((list) => list.id === listId)?.words.find((w) => w.word === word);
-    
-            // Use the found data-custom value or a default value
             const dataCustomValue = foundWord?.['status'] || '';
-    
-            // Set the innerHTML of the status element
             status.innerHTML = dataCustomValue;
         });
 

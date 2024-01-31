@@ -65,23 +65,45 @@ if (!window.hasRun) {
 
         document.querySelectorAll('.highlighted').forEach((el) => {
             if(el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()) {
-                el.style.backgroundColor = 'red';
-                //el.setAttribute('Status', 'found');
-                chrome.storage.local.get('wordLists', (result) => {
-                    const wordLists = result.wordLists || [];
-        
-                    const updatedWordLists = wordLists.map((wordList) => {
-                        if (wordList.words && wordList.id === listId) {
-                            wordList.words.forEach((wordObj) => {
-                                if (wordObj.word.trim().toLowerCase() === el.innerHTML.toLowerCase()) {
-                                    wordObj['status'] = 'Located';
-                                }
-                            });
-                        }
-                        return wordList;
-                    });      
-                    chrome.storage.local.set({ wordLists: updatedWordLists });
-                });
+                if (el.getAttribute('status') === 'Found') {
+                    el.style.backgroundColor = 'transparent';
+                    el.removeAttribute('status');
+                    chrome.storage.local.get('wordLists', (result) => {
+                        const wordLists = result.wordLists || [];
+            
+                        const updatedWordLists = wordLists.map((wordList) => {
+                            if (wordList.words && wordList.id === listId) {
+                                wordList.words.forEach((wordObj) => {
+                                    if (wordObj.word.trim().toLowerCase() === el.innerHTML.toLowerCase()) {
+                                        //wordObj['status'] = 'Found';
+                                        delete wordObj['status'];
+                                    }
+                                });
+                            }
+                            return wordList;
+                        });      
+                        chrome.storage.local.set({ wordLists: updatedWordLists });
+                    });
+                }
+                else {
+                    el.style.backgroundColor = 'red';
+                    el.setAttribute('status', 'found');
+                    chrome.storage.local.get('wordLists', (result) => {
+                        const wordLists = result.wordLists || [];
+            
+                        const updatedWordLists = wordLists.map((wordList) => {
+                            if (wordList.words && wordList.id === listId) {
+                                wordList.words.forEach((wordObj) => {
+                                    if (wordObj.word.trim().toLowerCase() === el.innerHTML.toLowerCase()) {
+                                        wordObj['status'] = 'Found';
+                                    }
+                                });
+                            }
+                            return wordList;
+                        });      
+                        chrome.storage.local.set({ wordLists: updatedWordLists });
+                    });
+                }
             }
         });
     }
