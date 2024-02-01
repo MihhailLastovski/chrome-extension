@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const buttonPost = document.getElementById('postBtn');
     const link =
         'https://script.google.com/macros/s/AKfycbz0TmU4rxu16UNNgbprlkECYqyidcBrBMQH3KiyHhl0KMXwLgow3IcJW5hKuZi5zCMS/exec';
-    const secondLink =
-        'https://script.googleusercontent.com/macros/echo?user_content_key=OzWGOLPTAJcE05w0014KyLw-VR4lgmRd5Z6iylKlWo4uEF35xxaz82hww8fzGNDJy4Bko3xyOgZmHpyAfIRsoY8yRvwQZ03dm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnDrdJ5uDykFEKYqWcR28rLiF_kEjQsQypGqtK6kaiXA298HaEKO051t9xx3mbECFqQwcUbPzoAwhOSQvK9hNjstwserHrJdTyg&lib=MuZlqU9EQJ-4lYu6F7Q7mio4pNs2vI3IF';
 
     buttonGet.addEventListener('click', function () {
         // Создаем таблицу
@@ -71,34 +69,62 @@ document.addEventListener('DOMContentLoaded', function () {
         sendDataToGoogleAppsScript(updatedData);
     });
 });
-/*
-    Гайд откуда брать ссылку:
+
+/*Гайд откуда брать ссылку:
     1. Google таблицы >>> Расширения >>> Apps Script
     2. Вставить следующий код:
 
-    function doGet(req) {
-        // Получаем активную таблицу
-        var activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+function doGet(req) {
+    // Получаем активную таблицу
+    var activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
-        // Получаем все данные в виде 2D массива
-        var data = activeSheet.getDataRange().getValues();
+    // Получаем все данные в виде 2D массива
+    var data = activeSheet.getDataRange().getValues();
 
-        // Преобразуем данные в JSON
-        var jsonData = [];
+    // Преобразуем данные в JSON
+    var jsonData = [];
 
-        for (var i = 0; i < data.length; i++) {
-            var row = {};
-            for (var j = 0; j < data[i].length; j++) {
-                row['col' + (j + 1)] = data[i][j];
-            }
-            jsonData.push(row);
+    for (var i = 0; i < data.length; i++) {
+        var row = {};
+        for (var j = 0; j < data[i].length; j++) {
+            row['col' + (j + 1)] = data[i][j];
         }
-
-        // Возвращаем JSON
-        return ContentService.createTextOutput(
-            JSON.stringify(jsonData)
-        ).setMimeType(ContentService.MimeType.JSON);
+        jsonData.push(row);
     }
+
+    // Возвращаем JSON
+    return ContentService.createTextOutput(
+        JSON.stringify(jsonData)
+    ).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+    // Получаем данные из запроса
+    var jsonData = JSON.parse(e.postData.contents);
+
+    // Идентификатор вашей таблицы (замените на свой)
+    var spreadsheetId = '1Lmb7UlEsSvbu-xVm6rKrrKcAzt31NtFhwUYhmWrqhmY';
+    // Имя вашего листа (замените на свое)
+    var sheetName = 'sheet';
+
+    // Открываем таблицу
+    var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+    var sheet = spreadsheet.getSheetByName(sheetName);
+
+    // Определяем, с какой строки начинать вставку данных
+    var startRow = sheet.getLastRow() + 1;
+
+    // Вставляем данные в таблицу
+    for (var i = 0; i < jsonData.length; i++) {
+        var rowData = Object.values(jsonData[i]);
+        sheet.getRange(startRow + i, 1, 1, rowData.length).setValues([rowData]);
+    }
+
+    // Возвращаем успешный ответ
+    return ContentService.createTextOutput(
+        'Данные успешно добавлены в таблицу.'
+    ).setMimeType(ContentService.MimeType.TEXT);
+}
 
     3. Сохранить >>> Выполнить >>> Проверить разрешения
     4. В окне "Эксперты Google не проверяли это приложение" выбрать:
