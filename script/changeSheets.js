@@ -1,81 +1,77 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    const listId = urlParams.get('listId');
-    const cancelBtn = document.getElementById('cancelBtn');
-    const input = document.getElementById('textInput');
-    const button = document.getElementById('getSheets');
-    const iframe = document.getElementById('googleSheets');
-    const apiKey = 'AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk';
-    const guide = document.getElementById('guide');
-    const showGuide = document.getElementById('showGuide');
-    let spreadsheetId;
-    let sheets = [];
+    // Создаем таблицу
+    var table = document.createElement('table');
+    table.border = '1';
 
-    function getListOfSheets(spreadsheetId) {
-        fetch(
-            `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}`
-        )
-            .then((response) => response.json())
-            .then((data) => {
-                sheets = data.sheets;
+    // Добавляем заголовок
+    var thead = table.createTHead();
+    var headerRow = thead.insertRow();
+    headerRow.insertCell(0).textContent = 'Column 1';
+    headerRow.insertCell(1).textContent = 'Column 2';
+    // Добавьте заголовки столбцов по мере необходимости
 
-                if (sheets) {
-                    console.log('List of Sheets:');
-                    sheets.forEach((sheet) =>
-                        console.log(sheet.properties.title)
-                    );
-                } else {
-                    console.error('No sheets found.');
-                }
-            })
-            .catch((error) => console.error('Error fetching sheets:', error));
-    }
+    // Добавляем тело таблицы
+    var tbody = table.createTBody();
 
-    function getSpreadsheetIdFromUrl(url) {
-        const regex = /\/spreadsheets\/d\/(.+?)\//;
-        const match = url.match(regex);
-        return match && match[1] ? match[1] : null;
-    }
+    // Выполняем AJAX-запрос к API Google Apps Script
+    fetch(
+        'https://script.googleusercontent.com/macros/echo?user_content_key=IVOD4_OFUPTRr1ltcN1a4Ic79BDRIUsC9uwwEjV8ftRTrVVU6nFOnHKOnJr1X5Ez3qYUkJ8YoW3r3PcJ9XPBAZxZbgpLUVK8m5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnAbujWUr6FOaopzYQlb7PaAeijhVkNuVqNeaVXZpHQQQWkz4MDJV83KPw05TPOQ7SQnNtWxHIc3ZYGgjGDGfMr3JfGqm2FsIPA&lib=MuZlqU9EQJ-4lYu6F7Q7mio4pNs2vI3IF'
+    )
+        .then((response) => response.json())
+        .then((data) => {
+            // Заполняем таблицу данными
+            data.forEach((rowData) => {
+                var row = tbody.insertRow();
+                Object.values(rowData).forEach((value) => {
+                    var cell = row.insertCell();
+                    cell.textContent = value;
+                });
+            });
 
-    button.addEventListener('click', function () {
-        fetch(input.value)
-            .then((response) => response.text())
-            .then((data) => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(data, 'text/html');
-                const table = doc.querySelector('.waffle');
-                if (table) {
-                    const rows = Array.from(table.querySelectorAll('tr'));
-                    wordsArray = rows.reduce((words, row) => {
-                        const cells = Array.from(row.querySelectorAll('td'));
-                        const wordsInRow = cells.map((cell) =>
-                            cell.textContent.trim()
-                        );
-                        return words.concat(
-                            wordsInRow.filter((word) => word !== '')
-                        );
-                    }, []);
-                    iframe.src = input.value + '?widget=true&amp;headers=false';
-
-                    spreadsheetId = getSpreadsheetIdFromUrl(input.value);
-                    spreadsheetId
-                        ? getListOfSheets(spreadsheetId)
-                        : console.error('Invalid Google Sheets URL.');
-                }
-            })
-            .catch((error) => console.error('Error:', error));
-    });
-
-    cancelBtn.addEventListener('click', function () {
-        window.location.href = listId
-            ? `list.html?listId=${listId}`
-            : 'list.html';
-    });
-
-    showGuide.addEventListener('click', function () {
-        const guideDisplay = window
-            .getComputedStyle(guide)
-            .getPropertyValue('display');
-        guide.style.display = guideDisplay === 'none' ? 'block' : 'none';
-    });
+            // Добавляем таблицу на страницу
+            document.body.appendChild(table);
+        })
+        .catch((error) => console.error('Ошибка при получении данных:', error));
 });
+/*
+    Гайд откуда брать ссылку:
+    1. Google таблицы >>> Расширения >>> Apps Script
+    2. Вставить следующий код:
+
+    function doGet(req) {
+        // Получаем активную таблицу
+        var activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+        // Получаем все данные в виде 2D массива
+        var data = activeSheet.getDataRange().getValues();
+
+        // Преобразуем данные в JSON
+        var jsonData = [];
+
+        for (var i = 0; i < data.length; i++) {
+            var row = {};
+            for (var j = 0; j < data[i].length; j++) {
+                row['col' + (j + 1)] = data[i][j];
+            }
+            jsonData.push(row);
+        }
+
+        // Возвращаем JSON
+        // return JSON.stringify(jsonData);
+        return ContentService.createTextOutput(
+            JSON.stringify(jsonData)
+        ).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    3. Сохранить >>> Выполнить >>> Проверить разрешения
+    4. В окне "Эксперты Google не проверяли это приложение" выбрать:
+        "Дополнительные настройки" >>>
+        "Перейти на страницу "Проект без названия" (небезопасно)"
+    5. Разрешить доступ
+    6. Начать развертывание >>> Новое развертывание
+    7. Выберите тип - Веб-приложение
+    8. Конфигурация >>> "У кого есть доступ" поставить "все"
+    9. Начать развертывание
+    10. Опять предоставить разрешения
+    11. Скопировать ссылку
+*/
