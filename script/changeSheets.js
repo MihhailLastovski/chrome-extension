@@ -1,37 +1,75 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Создаем таблицу
-    var table = document.createElement('table');
-    table.border = '1';
+    const buttonGet = document.getElementById('getBtn');
+    const buttonPost = document.getElementById('postBtn');
+    const link =
+        'https://script.google.com/macros/s/AKfycbz0TmU4rxu16UNNgbprlkECYqyidcBrBMQH3KiyHhl0KMXwLgow3IcJW5hKuZi5zCMS/exec';
+    const secondLink =
+        'https://script.googleusercontent.com/macros/echo?user_content_key=OzWGOLPTAJcE05w0014KyLw-VR4lgmRd5Z6iylKlWo4uEF35xxaz82hww8fzGNDJy4Bko3xyOgZmHpyAfIRsoY8yRvwQZ03dm5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnDrdJ5uDykFEKYqWcR28rLiF_kEjQsQypGqtK6kaiXA298HaEKO051t9xx3mbECFqQwcUbPzoAwhOSQvK9hNjstwserHrJdTyg&lib=MuZlqU9EQJ-4lYu6F7Q7mio4pNs2vI3IF';
 
-    // Добавляем заголовок
-    var thead = table.createTHead();
-    var headerRow = thead.insertRow();
-    headerRow.insertCell(0).textContent = 'Column 1';
-    headerRow.insertCell(1).textContent = 'Column 2';
-    // Добавьте заголовки столбцов по мере необходимости
+    buttonGet.addEventListener('click', function () {
+        // Создаем таблицу
+        var table = document.createElement('table');
+        table.border = '1';
 
-    // Добавляем тело таблицы
-    var tbody = table.createTBody();
+        // Добавляем заголовок
+        var thead = table.createTHead();
+        var headerRow = thead.insertRow();
+        headerRow.insertCell(0).textContent = 'Column 1';
+        headerRow.insertCell(1).textContent = 'Column 2';
+        // Добавьте заголовки столбцов по мере необходимости
 
-    // Выполняем AJAX-запрос к API Google Apps Script
-    fetch(
-        'https://script.googleusercontent.com/macros/echo?user_content_key=IVOD4_OFUPTRr1ltcN1a4Ic79BDRIUsC9uwwEjV8ftRTrVVU6nFOnHKOnJr1X5Ez3qYUkJ8YoW3r3PcJ9XPBAZxZbgpLUVK8m5_BxDlH2jW0nuo2oDemN9CCS2h10ox_1xSncGQajx_ryfhECjZEnAbujWUr6FOaopzYQlb7PaAeijhVkNuVqNeaVXZpHQQQWkz4MDJV83KPw05TPOQ7SQnNtWxHIc3ZYGgjGDGfMr3JfGqm2FsIPA&lib=MuZlqU9EQJ-4lYu6F7Q7mio4pNs2vI3IF'
-    )
-        .then((response) => response.json())
-        .then((data) => {
-            // Заполняем таблицу данными
-            data.forEach((rowData) => {
-                var row = tbody.insertRow();
-                Object.values(rowData).forEach((value) => {
-                    var cell = row.insertCell();
-                    cell.textContent = value;
+        // Добавляем тело таблицы
+        var tbody = table.createTBody();
+
+        // Выполняем AJAX-запрос к API Google Apps Script
+        fetch(`${link}`)
+            .then((response) => response.json())
+            .then((data) => {
+                // Заполняем таблицу данными
+                data.forEach((rowData) => {
+                    var row = tbody.insertRow();
+                    Object.values(rowData).forEach((value) => {
+                        var cell = row.insertCell();
+                        cell.textContent = value;
+                    });
                 });
-            });
 
-            // Добавляем таблицу на страницу
-            document.body.appendChild(table);
-        })
-        .catch((error) => console.error('Ошибка при получении данных:', error));
+                // Добавляем таблицу на страницу
+                document.body.appendChild(table);
+            })
+            .catch((error) =>
+                console.error('Ошибка при получении данных:', error)
+            );
+    });
+
+    buttonPost.addEventListener('click', function () {
+        // Ваш код на стороне клиента
+        function sendDataToGoogleAppsScript(data) {
+            fetch(`${link}`, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => response.text())
+                .then((result) => {
+                    console.log(result); // Результат выполнения запроса
+                })
+                .catch((error) =>
+                    console.error('Ошибка при отправке данных:', error)
+                );
+        }
+
+        var updatedData = [
+            { col1: 'updated words' },
+            { col1: 'to' },
+            { col1: 'find' },
+        ];
+
+        sendDataToGoogleAppsScript(updatedData);
+    });
 });
 /*
     Гайд откуда брать ссылку:
@@ -57,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Возвращаем JSON
-        // return JSON.stringify(jsonData);
         return ContentService.createTextOutput(
             JSON.stringify(jsonData)
         ).setMimeType(ContentService.MimeType.JSON);
