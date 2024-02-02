@@ -147,56 +147,127 @@ if (!window.hasRun) {
         });
     }
 
-    const SPREADSHEET_ID = '16FHitkvTh76ykBZpjPEGhLhMH2yIzq2X3CuII490MMk';
-
     function addNoteToElement(element) {
         const note = prompt('Enter your note:');
-        if (note !== null) {
-            const range = 'A1'; 
-            const valueInputOption = 'RAW';
-            const insertDataOption = 'INSERT_ROWS';
-            chrome.runtime.sendMessage({ action: 'auth' });
-
-            chrome.identity.getAuthToken(
-                { interactive: true },
-                function (token) {
-                    if (chrome.runtime.lastError) {
-                        console.error(chrome.runtime.lastError);
-                        return;
-                    }
-
-                    const params = {
-                        valueInputOption,
-                        insertDataOption,
-                        range,
-                        spreadsheetId: SPREADSHEET_ID,
-                        resource: {
-                            values: [[note]],
-                        },
-                    };
-
-                    fetch(
-                        `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values/${range}:append`,
-                        {
-                            method: 'POST',
-                            headers: {
-                                Authorization: 'Bearer ' + token,
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify(params),
-                        }
-                    )
-                        .then((response) => response.json())
-                        .then((data) => {
-                            console.log('Note added successfully:', data);
-                        })
-                        .catch((error) => {
-                            console.error('Error adding note:', error);
-                        });
-                }
-            );
-        }
+        console.log(note)
+        
+        fetch('https://script.google.com/macros/s/AKfycbyb9Lo2orVJ9UrILwN0BKgHhOQ1pBI1WDWWAZYCXSETR7hpR8OByQGN9Wh6GyuX5LS4/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ action: 'addNoteToElement', note: note }),
+        })
+        .then((response) => response.text())
+        .then((result) => {
+            console.log(result); 
+        })
+        .catch((error) => console.error('Ошибка при отправке заметки:', error));
     }
+    /*
+    appscript
+    function addNoteToElement() {
+  try {
+    // Идентификатор вашей таблицы (замените на свой)
+    var spreadsheetId = '16FHitkvTh76ykBZpjPEGhLhMH2yIzq2X3CuII490MMk';
+
+    // Имя вашего листа (замените на свое)
+    var sheetName = 'zxc';
+
+    // Открываем таблицу
+    var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+    var sheet = spreadsheet.getSheetByName(sheetName);
+
+    // Получаем активную ячейку в выделенном элементе
+    var activeCell = sheet.getActiveCell();
+
+    // Присваиваем значение заметки
+    var note = 'zxc';  // Замените на ваше значение
+
+    // Добавляем заметку в ячейку
+    activeCell.setNote(note);
+
+    // Дополнительно логируем значение заметки
+    Logger.log('Note added successfully:', note);
+
+  } catch (error) {
+    Logger.log('Error adding note:', error);
+  }
+}
+
+
+
+// Добавьте эту функцию для принятия данных из fetch
+function doAddNoteToElement(requestData) {
+  try {
+    var note = requestData.note;
+    addNoteToElement(note);
+  } catch (error) {
+    Logger.log('Error in doAddNoteToElement:', error);
+  }
+}
+
+function doGet(req) {
+  try {
+    // Получаем активную таблицу
+    var activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+    // Получаем все данные в виде 2D массива
+    var data = activeSheet.getDataRange().getValues();
+
+    // Преобразуем данные в JSON
+    var jsonData = [];
+
+    for (var i = 0; i < data.length; i++) {
+      var row = {};
+      for (var j = 0; j < data[i].length; j++) {
+        row['col' + (j + 1)] = data[i][j];
+      }
+      jsonData.push(row);
+    }
+
+    Logger.log('JSON data retrieved successfully:', jsonData);
+
+    // Возвращаем JSON
+    return ContentService.createTextOutput(
+      JSON.stringify(jsonData)
+    ).setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    Logger.log('Error in doGet:', error);
+    return ContentService.createTextOutput('Error in doGet.').setStatusCode(500);
+  }
+}
+
+function doPost(e) {
+  try {
+    // Получаем данные из запроса
+    var requestData = JSON.parse(e.postData.contents);
+
+    // Проверяем, какое действие нужно выполнить
+    if (requestData.action === 'addNoteToElement') {
+      // Вызываем функцию добавления заметки
+      addNoteToElement(requestData.note);
+
+      Logger.log('Note added via doPost:', requestData.note);
+
+      // Возвращаем успешный ответ
+      return ContentService.createTextOutput(
+        'Заметка успешно добавлена в таблицу.'
+      ).setMimeType(ContentService.MimeType.TEXT);
+    }
+
+    // Если неизвестное действие, возвращаем ошибку
+    Logger.log('Unknown action in doPost:', requestData.action);
+    return ContentService.createTextOutput('Неизвестное действие.').setStatusCode(400);
+  } catch (error) {
+    Logger.log('Error in doPost:', error);
+    return ContentService.createTextOutput('Error in doPost.').setStatusCode(500);
+  }
+}
+
+    */
+    
     document.addEventListener('mouseover', function (event) {
         const target = event.target;
         if (target.classList.contains('highlighted')) {
