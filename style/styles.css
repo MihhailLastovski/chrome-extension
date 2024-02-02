@@ -386,3 +386,15 @@ input[type=file]::file-selector-button {
 .word-input:focus {
   outline: none;
 }
+
+/* guide.html */
+
+.code-block {
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.language-javascript {
+  color: #333;
+}
