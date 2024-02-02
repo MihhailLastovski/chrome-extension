@@ -278,6 +278,10 @@ document.addEventListener('DOMContentLoaded', function () {
         csvh2.style.textAlign = 'left';
         csvh2.style.marginLeft = '13%'; //'18%'
 
+        csvh2.addEventListener('click', function () {
+            window.location.href = `guide.html?listId=${listId}`;
+        });
+
         // var csvp = document.createElement('p');
         // csvp.innerHTML = `<p>
         //     1. File > Share > Publish to web.<br>
