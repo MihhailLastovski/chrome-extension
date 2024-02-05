@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const cancelBtn = document.getElementById('cancelBtn');
     const lastListItem = document.getElementById('lastListItem');
     const addWordBtn = document.getElementById('saveListBtn');
+    const colorPicker = document.getElementById('colorPicker');
 
     const apiKey = 'AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk';
     const queryString = window.location.search;
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const fileData = urlParams.get('dataFile');
 
     const saveChangesBtn = document.createElement('button');
+    var highlightingColor;
 
     if (encodedDataString) {
         const dataList = JSON.parse(decodeURIComponent(encodedDataString));
@@ -42,6 +44,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    colorPicker.addEventListener('input', function () {
+        highlightingColor = colorPicker.value;
+    });
+
     chrome.storage.local.get('wordLists', function (data) {
         let lists = data.wordLists || [];
         const listIndex = lists.findIndex((list) => list.id === listId);
@@ -50,6 +56,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const listToEdit = lists[listIndex];
 
             listNameInput.value = listToEdit.name;
+            colorPicker.value = listToEdit.color;
+            highlightingColor = listToEdit.color;
 
             listToEdit.words.forEach((wordObj) => {
                 if (wordObj.word.trim() !== '') {
@@ -103,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (listName && editedWords.length > 0) {
             lists[index].name = listName;
+            lists[index].color = highlightingColor;
             lists[index].words = editedWords;
 
             chrome.storage.local.set({ wordLists: lists }, function () {});
@@ -190,16 +199,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 const newList = {
                     id: Date.now().toString(),
                     name: listName,
+                    color: highlightingColor || '#b3ff99',
                     words: words,
-                    ...(encodedDataString && { icon: 'fa-sheet-plastic' }),
                 };
 
                 saveWordList(newList);
-            } else {
             }
-
-            listNameInput.value = '';
-            wordsContainer.innerHTML = '';
             window.location.href = 'popup.html';
         } else {
             alert('Enter list name or words');
@@ -239,6 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
         wordsContainer
     );
 
+    // Чтение слов из CSV файла
     csvListBtn.addEventListener('click', function () {
         divWithListImportSettigs.innerHTML = '';
 
@@ -295,6 +301,7 @@ document.addEventListener('DOMContentLoaded', function () {
         divWithListImportSettigs.appendChild(refreshBtn);
     });
 
+    // Изменение Google Sheets через Apps Script
     exportListBtn.addEventListener('click', function () {
         divWithListImportSettigs.innerHTML = '';
 

@@ -282,6 +282,7 @@ input[type=file]::file-selector-button {
 }
 
 /* List.html - adding form */
+
 #buttonsInLists {
   margin-bottom: 5%;
 }
@@ -307,6 +308,23 @@ input[type=file]::file-selector-button {
 .trash-btn {
   border: none;
   padding: 2px;
+}
+
+/* List.html - Color picker */
+
+#colorPicker {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 48px;
+  height: 50px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+#colorPicker::-webkit-color-swatch {
+  border-radius: 5px;
+  border: none;
 }
 
 /* List.html - Checkboxes */
