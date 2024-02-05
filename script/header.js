@@ -73,13 +73,16 @@ document.addEventListener('DOMContentLoaded', function () {
     } else if (csvListBtn) {
         // list.html
         const fileListBtn = document.getElementById('fileListBtn');
+        const exportListBtn = document.getElementById('exportListBtn');
         // const cancelBtn = document.getElementById('cancelBtn');
         // const addWordBtn = document.getElementById('saveListBtn');
         tooltipButtons.push(csvListBtn);
+        tooltipButtons.push(exportListBtn);
         tooltipButtons.push(fileListBtn);
         // tooltipButtons.push(cancelBtn);
         // tooltipButtons.push(addWordBtn);
         tooltipsText.push('Import Google Sheets');
+        tooltipsText.push('Export Google Sheets');
         tooltipsText.push('Import file');
         // tooltipsText.push('Go back');
         // tooltipsText.push('Add new list');

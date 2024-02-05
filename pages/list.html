@@ -16,16 +16,10 @@
 		<div class="content"> 
 			<input type="text" id="listNameInput" placeholder="List name" required>
 			<hr>
-			<!--<label>Upload words externally</label>-->
 			<div id="buttonsInLists">
-				<!--
-				<button type="button" id="googleListBtn"><i class="fa fa-chrome" aria-hidden="true"></i></button>
-				-->
-				<button type="button" id="csvListBtn"><i class="fa fa-file-excel-o" aria-hidden="true"></i></button>
-				<!--
-				<button type="button" id="linkToList"><i class="fa fa-files-o" aria-hidden="true"></i></button>
-				-->
-				<button type="button" id="fileListBtn"><i class="fa fa-upload" aria-hidden="true"></i></button>				
+				<button type="button" id="csvListBtn"><i class="fa-2x fa fa-cloud-download" aria-hidden="true"></i></button>
+				<button type="button" id="exportListBtn"><i class="fa-2x fa fa-cloud-upload" aria-hidden="true"></i></button>
+				<button type="button" id="fileListBtn"><i class="fa-2x fa fa-download" aria-hidden="true"></i></button>				
 			</div>
 			<div id="wordsContainer" class="list-words">
 				<div id="lastListItem" class="list-wordsItem">
@@ -34,7 +28,6 @@
 					<textarea class="word-input" id="newWordInput"></textarea>
 				</div>
 			</div>
-			<!--button type="button" id="refreshBtn" class="listFormBtn"><i class="fa fa-refresh" aria-hidden="true"></i></button-->
 			<button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
 			<button type="submit" id="saveListBtn" class="listFormBtn">Add</button>
 		</div>
