@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     var div = document.createElement('div');
     var footer = document.createElement('div');
-    footer.className = "footerDiv";
+    footer.className = 'footerDiv';
     div.className = 'header';
     div.innerHTML = `
         <input class="toggleViewSwitch" type="checkbox" id="darkModeToggle">
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const csvListBtn = document.getElementById('csvListBtn');
 
     let tooltipButtons = [slider, sun, moon];
-    let tooltipsText = ['Off/On', 'Dark theme', 'Light theme'];
+    let tooltipsText = ['Off/On', 'Change theme', 'Change theme'];
     let tooltipTimer;
 
     if (highlightBtn) {
@@ -142,5 +142,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Footer
     var currentYear = new Date().getFullYear();
-    document.getElementById("currentYear").textContent = currentYear;
+    document.getElementById('currentYear').textContent = currentYear;
 });

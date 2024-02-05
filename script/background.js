@@ -53,7 +53,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             {
                 url: dataUrl,
                 filename: 'screenshot.png',
-                saveAs: true, // false
+                saveAs: false, // false
             },
             function (downloadId) {
                 console.log('Download initiated with ID:', downloadId);
@@ -73,7 +73,7 @@ function saveScreenshot(dataUrl) {
         chrome.downloads.download({
             url: dataUrl,
             filename: filename,
-            saveAs: saveAs,
+            saveAs: false,
         });
     });
 }
