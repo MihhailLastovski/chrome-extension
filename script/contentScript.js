@@ -149,41 +149,61 @@ if (!window.hasRun) {
 
     function addNoteToElement(element) {
         const note = prompt('Enter your note:');
-        console.log(note)
-        
-        fetch('https://script.google.com/macros/s/AKfycbyb9Lo2orVJ9UrILwN0BKgHhOQ1pBI1WDWWAZYCXSETR7hpR8OByQGN9Wh6GyuX5LS4/exec', {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ action: 'addNoteToElement', note: note }),
-        })
-        .then((response) => response.text())
-        .then((result) => {
-            console.log(result); 
-        })
-        .catch((error) => console.error('Ошибка при отправке заметки:', error));
+
+        fetch(
+            'https://script.google.com/macros/s/AKfycbyb9Lo2orVJ9UrILwN0BKgHhOQ1pBI1WDWWAZYCXSETR7hpR8OByQGN9Wh6GyuX5LS4/exec',
+            {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'addNoteToElement',
+                    note: note,
+                }),
+            }
+        )
+            .then((response) => response.text())
+            .then((result) => {
+                console.log(result);
+                // Добавить вызов функции отправки заметки в Google Sheets
+                sendNoteToGoogleSheets(note);
+            })
+            .catch((error) =>
+                console.error('Ошибка при отправке заметки:', error)
+            );
     }
-    /*
-    appscript
-    function addNoteToElement() {
+    function sendNoteToGoogleSheets(note) {
+        chrome.runtime.sendMessage(
+            { action: 'sendNoteToGoogleSheets', note: note },
+            (response) => {
+                console.log(response);
+            }
+        );
+    }
+
+    /* appscript
+    
+
+
+    var SPREADSHEET_ID = '16FHitkvTh76ykBZpjPEGhLhMH2yIzq2X3CuII490MMk';
+
+function addNoteToElement(note) {
   try {
     // Идентификатор вашей таблицы (замените на свой)
-    var spreadsheetId = '16FHitkvTh76ykBZpjPEGhLhMH2yIzq2X3CuII490MMk';
-
+    
     // Имя вашего листа (замените на свое)
     var sheetName = 'zxc';
 
     // Открываем таблицу
-    var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+    var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
     var sheet = spreadsheet.getSheetByName(sheetName);
 
     // Получаем активную ячейку в выделенном элементе
     var activeCell = sheet.getActiveCell();
 
     // Присваиваем значение заметки
-    var note = 'zxc';  // Замените на ваше значение
 
     // Добавляем заметку в ячейку
     activeCell.setNote(note);
@@ -267,7 +287,7 @@ function doPost(e) {
 }
 
     */
-    
+
     document.addEventListener('mouseover', function (event) {
         const target = event.target;
         if (target.classList.contains('highlighted')) {
