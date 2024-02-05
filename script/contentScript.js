@@ -259,7 +259,7 @@
             console.log('Sending data:', data);
         
             fetch(
-                'https://script.google.com/macros/s/AKfycbwR_oeeeXocj4zastuK7JBOYEIdtqWjzRUpaNT-ZS-IcYbn3GCnUS2OaNSOhLJN3xE/exec',
+                'https://script.google.com/macros/s/AKfycbxB72J3slVLg1JU8UOIstzN1qgzL09YG1rHDSABJMJHR3B634PPrezYIZtWUz-DlNC1/exec',
                 {
                     method: 'POST',
                     mode: 'no-cors',
@@ -280,110 +280,120 @@
         
 
         /* appscript
+            var SPREADSHEET_ID = '16FHitkvTh76ykBZpjPEGhLhMH2yIzq2X3CuII490MMk';
+var sheetName = 'zxc'
+function addNoteToElement(note, textContent) {
+  try {
+    // Открываем таблицу
+    var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    var sheet = spreadsheet.getSheetByName(sheetName);
+
+    // Приводим textContent к нижнему регистру и удаляем пробелы
+    var cleanedTextContent = textContent.toLowerCase().trim();
+
+    // Получаем все данные в виде 2D массива
+    var data = sheet.getDataRange().getValues();
+
+    // Ищем ячейку с полным совпадением значения
+    for (var i = 0; i < data.length; i++) {
+      for (var j = 0; j < data[i].length; j++) {
+        var cellValue = String(data[i][j]).toLowerCase().trim();
+        Logger.log('Comparing:', cellValue, 'with', cleanedTextContent);
+
+        // Используем регулярное выражение для точного совпадения по слову
+        var regex = new RegExp("(^|\\s)" + cleanedTextContent + "($|\\s)", "g");
+
+        if (cellValue.match(regex)) {
+          // Нашли значение, добавляем заметку
+          var cell = sheet.getRange(i + 1, j + 1);
+          cell.setNote(note);
+          Logger.log('Note added successfully.');
+          return;
+        }
+      }
+    }
+
+    // Если значение не найдено
+    Logger.log('Value not found in the table:', cleanedTextContent);
+
+  } catch (error) {
+    Logger.log('Error adding note:', error);
+  }
+}
+
+
+
+function doGet(req) {
+  try {
+    // Получаем активную таблицу
+    var activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+
+    // Получаем все данные в виде 2D массива
+    var data = activeSheet.getDataRange().getValues();
+
+    // Преобразуем данные в JSON
+    var jsonData = [];
+
+    for (var i = 0; i < data.length; i++) {
+      var row = {};
+      for (var j = 0; j < data[i].length; j++) {
+        row['col' + (j + 1)] = data[i][j];
+      }
+      jsonData.push(row);
+    }
+
+    Logger.log('JSON data retrieved successfully:', jsonData);
+
+    // Возвращаем JSON
+    return ContentService.createTextOutput(
+      JSON.stringify(jsonData)
+    ).setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    Logger.log('Error in doGet:', error);
+    return ContentService.createTextOutput('Error in doGet.').setStatusCode(500);
+  }
+}
+
+function doPost(e) {
+    try {
+        // Получаем данные из запроса
+        var requestData = JSON.parse(e.postData.contents);
+         console.log('Received request data:', e.postData.contents);
+
+        // Проверяем, какое действие нужно выполнить
+        if (requestData.action === 'addNoteToElement') {
+            // Вызываем функцию добавления заметки
+            addNoteToElement(requestData.note, requestData.textContent);
+
+            Logger.log('Note added via doPost:', requestData.note);
+
+            // Возвращаем успешный ответ
+            return ContentService.createTextOutput(
+                'Заметка успешно добавлена в таблицу.'
+            ).setMimeType(ContentService.MimeType.TEXT);
+        } else {
+          var spreadsheet = 
+          SpreadsheetApp.openById(SPREADSHEET_ID);
+            var sheet = spreadsheet.getSheetByName(sheetName);
+
+            // Define from which line to start data insertion
+            var startRow = sheet.getLastRow() + 1;
+
+            // Inserting data into the table
+            for (var i = 0; i < requestData.length; i++) {
+              var rowData = Object.values(requestData[i]);
+              sheet.getRange(startRow + i, 1, 1, rowData.length)
+                .setValues([rowData]);
+            }
+        }
+
         
-
-
-        var SPREADSHEET_ID = '16FHitkvTh76ykBZpjPEGhLhMH2yIzq2X3CuII490MMk';
-
-    function addNoteToElement(note, textContent) {
-    try {
-        // Открываем таблицу
-        var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-        var sheet = spreadsheet.getSheetByName('zxc');
-
-        // Приводим textContent к нижнему регистру и удаляем пробелы
-        var cleanedTextContent = textContent.toLowerCase().trim();
-
-        // Получаем все данные в виде 2D массива
-        var data = sheet.getDataRange().getValues();
-
-        // Ищем ячейку с полным совпадением значения
-        for (var i = 0; i < data.length; i++) {
-        for (var j = 0; j < data[i].length; j++) {
-            var cellValue = String(data[i][j]).toLowerCase().trim();
-            Logger.log('Comparing:', cellValue, 'with', cleanedTextContent);
-
-            // Используем регулярное выражение для точного совпадения по слову
-            var regex = new RegExp("\\b" + cleanedTextContent + "\\b", "g");
-
-            if (cellValue.match(regex)) {
-            // Нашли значение, добавляем заметку
-            var cell = sheet.getRange(i + 1, j + 1);
-            cell.setNote(note);
-            Logger.log('Note added successfully.');
-            return;
-            }
-        }
-        }
-
-        // Если значение не найдено
-        Logger.log('Value not found in the table:', cleanedTextContent);
-
     } catch (error) {
-        Logger.log('Error adding note:', error);
+        console.error('Error in doPost:', error);
+        return ContentService.createTextOutput('Error in doPost: ' + error.message).setStatusCode(500);
     }
-    }
+}
 
-
-
-    function doGet(req) {
-    try {
-        // Получаем активную таблицу
-        var activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-
-        // Получаем все данные в виде 2D массива
-        var data = activeSheet.getDataRange().getValues();
-
-        // Преобразуем данные в JSON
-        var jsonData = [];
-
-        for (var i = 0; i < data.length; i++) {
-        var row = {};
-        for (var j = 0; j < data[i].length; j++) {
-            row['col' + (j + 1)] = data[i][j];
-        }
-        jsonData.push(row);
-        }
-
-        Logger.log('JSON data retrieved successfully:', jsonData);
-
-        // Возвращаем JSON
-        return ContentService.createTextOutput(
-        JSON.stringify(jsonData)
-        ).setMimeType(ContentService.MimeType.JSON);
-    } catch (error) {
-        Logger.log('Error in doGet:', error);
-        return ContentService.createTextOutput('Error in doGet.').setStatusCode(500);
-    }
-    }
-
-    function doPost(e) {
-        try {
-            // Получаем данные из запроса
-            var requestData = JSON.parse(e.postData.contents);
-            console.log('Received request data:', e.postData.contents);
-
-            // Проверяем, какое действие нужно выполнить
-            if (requestData.action === 'addNoteToElement') {
-                // Вызываем функцию добавления заметки
-                addNoteToElement(requestData.note, requestData.textContent);
-
-                Logger.log('Note added via doPost:', requestData.note);
-
-                // Возвращаем успешный ответ
-                return ContentService.createTextOutput(
-                    'Заметка успешно добавлена в таблицу.'
-                ).setMimeType(ContentService.MimeType.TEXT);
-            }
-
-            // Если неизвестное действие, возвращаем ошибку
-            Logger.log('Unknown action in doPost:', requestData.action);
-            return ContentService.createTextOutput('Неизвестное действие.').setStatusCode(400);
-        } catch (error) {
-            console.error('Error in doPost:', error);
-            return ContentService.createTextOutput('Error in doPost: ' + error.message).setStatusCode(500);
-        }
-    }
 
         */
 
