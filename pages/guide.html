@@ -12,20 +12,22 @@
 </head>
 
 <body>  
-    <h2>Гайд как использовать Apps Script</h2> 
-    <p>1. Google таблицы >>> Расширения >>> Apps Script</p>
-    <img src="../images/guide/step1.png">
-    <p>2. Вставить следующий код:</p>
+    <h2>How to use Apps Script</h2> 
+    <p class="guideText">1. <strong>Google Sheets</strong> >>> <strong>Extensions</strong> >>> <strong>Apps Script</strong></p>
+    <img src="../images/guide/step1.png" class="guideImage" width="90%" alt="img1">
+    <hr>
+    <p class="guideText">2. Paste the following code:</p>
     <pre class="code-block">
         <code class="language-javascript">
 function doGet(req) {
-  // Получаем активную таблицу
-  var activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  // Get the active table
+  var activeSheet = SpreadsheetApp.getActiveSpreadsheet()
+    .getActiveSheet();
 
-  // Получаем все данные в виде 2D массива
+  // Get all data as a 2D array
   var data = activeSheet.getDataRange().getValues();
 
-  // Преобразуем данные в JSON
+  // Convert data to JSON
   var jsonData = [];
 
   for (var i = 0; i < data.length; i++) {
@@ -36,71 +38,69 @@ function doGet(req) {
     jsonData.push(row);
   }
 
-  // Возвращаем JSON
+  // Return JSON
   return ContentService.createTextOutput(
     JSON.stringify(jsonData)
   ).setMimeType(ContentService.MimeType.JSON);
 }
 
 function doPost(e) {
-  // Получаем данные из запроса
+  // Get data from a query
   var jsonData = JSON.parse(e.postData.contents);
 
-  // Идентификатор вашей таблицы (замените на свой)
+  // Your table identifier (replace with your own)
   var spreadsheetId = '';
 
-  // Имя вашего листа (замените на свое)
+  // Your sheet name (replace with your own)
   var sheetName = '';
 
-  // Открываем таблицу
-  var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+  // Open table
+  var spreadsheet = 
+    SpreadsheetApp.openById(spreadsheetId);
   var sheet = spreadsheet.getSheetByName(sheetName);
 
-  // Определяем, с какой строки начинать вставку данных
+  // Define from which line to start data insertion
   var startRow = sheet.getLastRow() + 1;
 
-  // Вставляем данные в таблицу
+  // Inserting data into the table
   for (var i = 0; i < jsonData.length; i++) {
     var rowData = Object.values(jsonData[i]);
-    sheet.getRange(startRow + i, 1, 1, rowData.length).setValues([rowData]);
+    sheet.getRange(startRow + i, 1, 1, rowData.length)
+      .setValues([rowData]);
   }
 
-  // Возвращаем успешный ответ
+  // Returning a successful response
   return ContentService.createTextOutput(
-    'Данные успешно добавлены в таблицу.'
+    'The data has been successfully added to the list.'
   ).setMimeType(ContentService.MimeType.TEXT);
 }</code>
     </pre>
-    <p>3. <strong>Сохранить</strong> >>> <strong>Выполнить</strong> >>> <strong>Выдать разрешения</strong></p>
-    <img src="../images/guide/step2.png">
-    <img src="../images/guide/step3.png">
-  
-    <p>4. В окне "Эксперты Google не проверяли это приложение" выбрать:
-        <blockquote>
-        <strong>"Дополнительные настройки" >>> "Перейти на страницу "Проект без названия" (небезопасно)"</strong>
-        </blockquote>
+    <hr>
+    <p class="guideText">3. Click on <strong>Save</strong> >>> <strong>Run</strong> >>> <strong>Review permissions</strong></p>
+    <img src="../images/guide/step2.png" class="guideImage" alt="img2">
+    <img src="../images/guide/step3.png" class="guideImage" width="90%" alt="img3">
+    <hr>
+    <p class="guideText">4. In window <strong>Google hasn't verified this app</strong> click on:
+      <strong>Advanced</strong> >>> <strong>Go to Untitled project (unsafe)</strong>
     </p>
-    <img src="../images/guide/step4.png">
-    <img src="../images/guide/step5.png">
-
-    <p>5. <strong>Разрешить доступ</strong></p>
-
-    <p>6. <strong>Начать развертывание</strong> >>> <strong>Новое развертывание</strong></p>
-    <img src="../images/guide/step6.png">
-
-    <p>7. Выберите тип - <strong>Веб-приложение</strong></p>
-
-    <p>8. Конфигурация >>> <strong>"У кого есть доступ"</strong> поставить "<strong>все</strong>"</p>
-    <img src="../images/guide/step7.png">
-
-    <p>9. <strong>Начать развертывание</strong></p>
-
-    <p>10. <strong>Опять предоставить разрешения</strong></p>
-
-    <p>11. <strong>Скопировать ссылку</strong></p>
-    <img src="../images/guide/step8.png">
-
-    
-    <button id="cancelBtn" class="listFormBtn">Cancel</button>
+    <img src="../images/guide/step4.png" class="guideImage" width="90%" alt="img4">
+    <img src="../images/guide/step5.png" class="guideImage" width="90%" alt="img5">
+    <hr>
+    <p class="guideText">5. Allow access</p>
+    <hr>
+    <p class="guideText">6. Click on <strong>Deploy</strong> >>> <strong>New deployment</strong></p>
+    <img src="../images/guide/step6.png" class="guideImage" alt="img6">
+    <hr>
+    <p class="guideText">7. Click on <strong>Select type</strong> >>> <strong>Web app</strong></p>
+    <p class="guideText">8. In <strong>Configuration</strong> >>> <strong>Who has access</strong> select <strong>Anyone</strong></p>
+    <img src="../images/guide/step7.png" class="guideImage" width="90%" alt="img7">
+    <hr>
+    <p class="guideText">9. Click on <strong>Deploy</strong></p>
+    <hr>
+    <p class="guideText">10. Allow access again</p>
+    <hr>
+    <p class="guideText">11. Copy the link</p>
+    <img src="../images/guide/step8.png" class="guideImage" width="90%" alt="img8">
+    <button id="cancelBtn" class="listFormBtn" style="margin-left: 5%;">Go back</button>
 </body>
 </html>
