@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const cancelBtn = document.getElementById('cancelBtn');
     const lastListItem = document.getElementById('lastListItem');
     const addWordBtn = document.getElementById('saveListBtn');
+    const colorPicker = document.getElementById('colorPicker');
 
     const apiKey = 'AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk';
     const queryString = window.location.search;
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const fileData = urlParams.get('dataFile');
 
     const saveChangesBtn = document.createElement('button');
+    var highlightingColor;
 
     if (encodedDataString) {
         const dataList = JSON.parse(decodeURIComponent(encodedDataString));
@@ -42,6 +44,10 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    colorPicker.addEventListener('input', function () {
+        highlightingColor = colorPicker.value;
+    });
+
     chrome.storage.local.get('wordLists', function (data) {
         let lists = data.wordLists || [];
         const listIndex = lists.findIndex((list) => list.id === listId);
@@ -50,6 +56,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const listToEdit = lists[listIndex];
 
             listNameInput.value = listToEdit.name;
+            colorPicker.value = listToEdit.color;
+            highlightingColor = listToEdit.color;
 
             listToEdit.words.forEach((wordObj) => {
                 if (wordObj.word.trim() !== '') {
@@ -103,6 +111,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (listName && editedWords.length > 0) {
             lists[index].name = listName;
+            lists[index].color = highlightingColor;
             lists[index].words = editedWords;
 
             chrome.storage.local.set({ wordLists: lists }, function () {});
@@ -190,16 +199,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 const newList = {
                     id: Date.now().toString(),
                     name: listName,
+                    color: highlightingColor || '#b3ff99',
                     words: words,
-                    ...(encodedDataString && { icon: 'fa-sheet-plastic' }),
                 };
 
                 saveWordList(newList);
-            } else {
             }
-
-            listNameInput.value = '';
-            wordsContainer.innerHTML = '';
             window.location.href = 'popup.html';
         } else {
             alert('Enter list name or words');
@@ -219,13 +224,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*************************************Google Sheets********************************************/
 
-    const googleListBtn = document.getElementById('googleListBtn');
     const csvListBtn = document.getElementById('csvListBtn');
+    const exportListBtn = document.getElementById('exportListBtn');
     const fileListBtn = document.getElementById('fileListBtn');
-    const linkToListBtn = document.getElementById('linkToList');
 
-    var sheets = [];
-    var spreadsheetId, okButton, h2, hr, csvLink;
+    var csvLink;
 
     const csvButton = document.createElement('button');
     csvButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
@@ -233,7 +236,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const refreshBtn = document.createElement('button');
     refreshBtn.type = 'button';
-    refreshBtn.className = 'listFormBtn';
     refreshBtn.innerHTML = '<i class="fa fa-refresh" aria-hidden="true"></i>';
 
     var divWithListImportSettigs = document.createElement('div');
@@ -241,245 +243,8 @@ document.addEventListener('DOMContentLoaded', function () {
         divWithListImportSettigs,
         wordsContainer
     );
-    /* Не нужно
-    googleListBtn.addEventListener("click", function () {  
-        window.location.href = `changeSheets.html?listId=${listId}`;
-    });
-    */
-    var toList = document.createElement('button');
-    toList.type = 'button';
 
-    var wordsToList = document.createElement('button');
-    wordsToList.type = 'button';
-
-    var listBox, rangeEndInput, rangeStartInput;
-
-    /* Не нужно
-  linkToListBtn.addEventListener("click", function () {
-    divWithListImportSettigs.innerHTML = "";
-
-    var csvh2 = document.createElement("h2");
-    csvh2.textContent = "Google Sheets assistant";
-    csvh2.style.textAlign = "left";
-    csvh2.style.marginLeft = "18%";
-
-    var csvp = document.createElement("p");
-    csvp.innerHTML = `<p>          
-      1. Access settings.<br>
-      2. Under “General access” click the Down arrow.<br>
-      3. Choose Anyone with the link.<br>
-      4. Copy the URL.         
-    </p>`;
-    csvp.style.textAlign = "left";
-    csvp.style.marginLeft = "14%";
-
-    divWithListImportSettigs.appendChild(csvh2);
-    divWithListImportSettigs.appendChild(csvp);
-
-    var linkInput = document.createElement("input");
-    linkInput.type = "text";
-    linkInput.id = "linkInput";
-    linkInput.placeholder = "Paste the link";
-
-    okButton = document.createElement("button");
-    okButton.type = "button";
-    okButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
-
-    okButton.addEventListener("click", function () {
-      if (linkInput.value.trim()!== "") {
-        fetchListsAndAddToListbox(linkInput.value);
-        linkInput.value = "";
-  
-        hr = document.createElement("hr");
-  
-        h2 = document.createElement("h2");
-        h2.textContent = "Add words from:"
-  
-        listBox = document.createElement("select");
-        listBox.id = "listbox";
-  
-        toList.id = "toList";
-        toList.innerHTML = '<i class="fa fa-search"></i>';
-  
-        wordsToList.id = "wordsToList";
-        wordsToList.textContent = "All document";
-  
-        const divRange = document.createElement("div");
-        divRange.id = "divRange";
-  
-        rangeStartInput = document.createElement("input");
-        rangeStartInput.type = "text";
-        rangeStartInput.id = "rangeStart";
-        rangeStartInput.placeholder = "A1";
-  
-        rangeEndInput = document.createElement("input");
-        rangeEndInput.type = "text";
-        rangeEndInput.id = "rangeEnd";
-        rangeEndInput.placeholder = "B2";
-  
-        divWithListImportSettigs.appendChild(hr);
-        divWithListImportSettigs.appendChild(h2);
-  
-        divRange.appendChild(listBox);
-        divRange.appendChild(rangeStartInput);
-        divRange.appendChild(rangeEndInput);
-        divRange.appendChild(toList);
-        divWithListImportSettigs.appendChild(divRange);
-        
-        divWithListImportSettigs.appendChild(wordsToList);
-
-        okButton.disabled = true;
-      } else {
-        alert("Please enter link");
-      }
-      
-    });
-
-    divWithListImportSettigs.appendChild(linkInput);
-    divWithListImportSettigs.appendChild(okButton);
-  });
-*/
-    toList.addEventListener('click', function () {
-        okButton.disabled = false;
-
-        var selectedSheetName = listBox.options[listBox.selectedIndex].value;
-
-        if (selectedSheetName) {
-            const rangeStart = document.getElementById('rangeStart').value;
-            const rangeEnd = document.getElementById('rangeEnd').value;
-
-            let range = selectedSheetName;
-
-            if (rangeStart && rangeEnd) {
-                range += `!${rangeStart}:${rangeEnd}`;
-            }
-
-            fetch(
-                `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(
-                    range
-                )}?key=${apiKey}`
-            )
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error(
-                            `Network response was not ok: ${response.statusText}`
-                        );
-                    }
-                    return response.json();
-                })
-                .then((data) => {
-                    const sheetWords = data.values.flat();
-
-                    sheetWords.forEach((word) => {
-                        addWord(word.trim());
-                    });
-                    divWithListImportSettigs.removeChild(divRange);
-                    divWithListImportSettigs.removeChild(h2);
-                    divWithListImportSettigs.removeChild(hr);
-                    divWithListImportSettigs.removeChild(wordsToList);
-                })
-                .catch((error) =>
-                    console.error(`Error fetching words from ${range}:`, error)
-                );
-        } else {
-            console.error('No sheet selected.');
-        }
-    });
-
-    wordsToList.addEventListener('click', function () {
-        okButton.disabled = false;
-        const allWordsArray = [];
-
-        if (sheets.length > 0) {
-            const fetchPromises = sheets.map((sheet) => {
-                return fetch(
-                    `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(
-                        sheet.properties.title
-                    )}?key=${apiKey}`
-                )
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(
-                                `Network response was not ok: ${response.statusText}`
-                            );
-                        }
-                        return response.json();
-                    })
-                    .then((data) => {
-                        const sheetWords = data.values.flat();
-                        allWordsArray.push(...sheetWords);
-                        divWithListImportSettigs.removeChild(divRange);
-                        divWithListImportSettigs.removeChild(h2);
-                        divWithListImportSettigs.removeChild(hr);
-                        divWithListImportSettigs.removeChild(wordsToList);
-                    })
-                    .catch((error) =>
-                        console.error(
-                            `Error fetching words from ${sheet.properties.title}:`,
-                            error
-                        )
-                    );
-            });
-
-            Promise.all(fetchPromises)
-                .then(() => {
-                    allWordsArray.forEach((word) => {
-                        addWord(word.trim());
-                    });
-                })
-                .catch((error) =>
-                    console.error('Error during fetching:', error)
-                );
-        } else {
-            console.error('No sheets available.');
-        }
-    });
-
-    // async function fetchListsAndAddToListbox(url) {
-    //   try {
-    //     spreadsheetId = getSpreadsheetIdFromUrl(url);
-
-    //     const sheetsResponse = await fetch(
-    //       `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}?key=${apiKey}`
-    //     );
-
-    //     if (!sheetsResponse.ok) {
-    //       console.error(
-    //         "Error fetching sheets. HTTP Status:",
-    //         sheetsResponse.status,
-    //         alert("Error while fetching data, please try again."),
-    //         divWithListImportSettigs.removeChild(divRange),
-    //         divWithListImportSettigs.removeChild(h2),
-    //         divWithListImportSettigs.removeChild(hr),
-    //         divWithListImportSettigs.removeChild(wordsToList),
-    //         okButton.disabled = false,
-    //       );
-    //       const errorText = await sheetsResponse.text();
-    //       console.error("Error details:", errorText);
-    //       return;
-    //     }
-
-    //     const sheetsData = await sheetsResponse.json();
-    //     const sheetsList = sheetsData.sheets;
-
-    //     if (sheetsList && sheetsList.length > 0) {
-    //       sheetsList.forEach((sheet) => {
-    //         sheets = sheetsData.sheets;
-
-    //         const listBox = document.getElementById("listbox");
-    //         const option = document.createElement("option");
-    //         option.value = sheet.properties.title;
-    //         option.text = sheet.properties.title;
-    //         listBox.add(option);
-    //       });
-    //     } else {
-    //       console.error("No sheets found.");
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching sheets:", error);
-    //   }
-    // }
-
+    // Чтение слов из CSV файла
     csvListBtn.addEventListener('click', function () {
         divWithListImportSettigs.innerHTML = '';
 
@@ -488,15 +253,11 @@ document.addEventListener('DOMContentLoaded', function () {
         csvInput.id = 'textInput';
         csvInput.placeholder = 'Paste the link';
 
-        // csvButton = document.createElement('button');
-        // csvButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
-        // csvButton.type = 'button';
-
         csvButton.addEventListener('click', function () {
             if (csvInput.value.trim() !== '') {
                 csvLink = csvInput.value.replace('/edit', '/export?format=csv');
                 chrome.storage.local.set({ dataURL: csvLink });
-                fetchDataAndProcessWords(csvLink);
+                fetchDataAndProcessWords(csvLink, true);
 
                 csvInput.value = '';
             } else {
@@ -507,7 +268,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var csvh2 = document.createElement('h2');
         csvh2.textContent = 'Google Sheets assistant';
         csvh2.style.textAlign = 'left';
-        csvh2.style.marginLeft = '18%';
+        csvh2.style.marginLeft = '13%';
 
         var csvp = document.createElement('p');
         csvp.innerHTML = `<p>          
@@ -517,17 +278,13 @@ document.addEventListener('DOMContentLoaded', function () {
             4. Copy the URL.          
         </p>`;
         csvp.style.textAlign = 'left';
-        csvp.style.marginLeft = '14%';
+        csvp.style.marginLeft = '9%';
 
         divWithListImportSettigs.appendChild(csvh2);
         divWithListImportSettigs.appendChild(csvp);
         divWithListImportSettigs.appendChild(csvInput);
         divWithListImportSettigs.appendChild(csvButton);
 
-        // refreshBtn.type = 'button';
-        // refreshBtn.className = 'listFormBtn';
-        // refreshBtn.innerHTML =
-        //     '<i class="fa fa-refresh" aria-hidden="true"></i>';
         refreshBtn.addEventListener('click', function () {
             while (wordsContainer.firstChild) {
                 wordsContainer.removeChild(wordsContainer.firstChild);
@@ -536,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             chrome.storage.local.get('dataURL', (result) => {
                 if (result.dataURL) {
-                    fetchDataAndProcessWords(result.dataURL);
+                    fetchDataAndProcessWords(result.dataURL, true);
                 }
             });
         });
@@ -544,34 +301,141 @@ document.addEventListener('DOMContentLoaded', function () {
         divWithListImportSettigs.appendChild(refreshBtn);
     });
 
-    async function fetchDataAndProcessWords(url) {
-        try {
-            const response = await fetch(url);
-            const csvData = await response.text();
+    // Изменение Google Sheets через Apps Script
+    exportListBtn.addEventListener('click', function () {
+        divWithListImportSettigs.innerHTML = '';
 
-            const rows = csvData.split('\n');
-            const wordsArray = rows.reduce((words, row) => {
-                const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                const wordsInRow = columns.map((cell) =>
-                    cell.trim().replace(/"/g, '')
-                );
-                return words.concat(wordsInRow.filter((word) => word !== ''));
-            }, []);
+        var csvInput = document.createElement('input');
+        csvInput.type = 'text';
+        csvInput.id = 'textInput';
+        csvInput.placeholder = 'Paste the link';
 
-            wordsArray.forEach((word) => {
-                addWord(word.trim());
+        csvButton.addEventListener('click', function () {
+            if (csvInput.value.trim() !== '') {
+                csvLink = csvInput.value;
+
+                chrome.storage.local.set({ dataURL: csvLink });
+                fetchDataAndProcessWords(csvLink);
+
+                csvInput.value = '';
+            } else {
+                alert('Please enter link');
+            }
+        });
+
+        // refreshBtn.addEventListener('click', function () {
+        //     while (wordsContainer.firstChild) {
+        //         wordsContainer.removeChild(wordsContainer.firstChild);
+        //     }
+        //     wordsContainer.appendChild(lastListItem);
+
+        //     chrome.storage.local.get('dataURL', (result) => {
+        //         if (result.dataURL) {
+        //             fetchDataAndProcessWords(result.dataURL);
+        //         }
+        //     });
+        // });
+
+        var csvh2 = document.createElement('h2');
+        csvh2.textContent = 'Google Sheets assistant';
+        csvh2.style.textAlign = 'left';
+        csvh2.style.marginLeft = '13%'; //'18%'
+
+        csvh2.addEventListener('click', function () {
+            window.location.href = `guide.html?listId=${listId}`;
+        });
+
+        divWithListImportSettigs.appendChild(csvh2);
+        divWithListImportSettigs.appendChild(csvInput);
+        divWithListImportSettigs.appendChild(csvButton);
+        // divWithListImportSettigs.appendChild(refreshBtn);
+
+        const postBtn = document.createElement('button');
+        postBtn.innerHTML = 'Update Google Sheet';
+        postBtn.type = 'button';
+        divWithListImportSettigs.appendChild(postBtn);
+
+        postBtn.addEventListener('click', function () {
+            const wordsArray = [];
+
+            const wordDivs = document.querySelectorAll('#wordsContainer > div');
+            wordDivs.forEach((wordDiv) => {
+                const wordInput = wordDiv.querySelector('.word-input');
+                const word = wordInput.value.trim();
+
+                if (word !== '') {
+                    wordsArray.push(word);
+                }
             });
-        } catch (error) {
-            console.error('Error while retrieving data:', error);
-            alert('Error while retrieving data, please try again.');
+
+            const updatedData = wordsArray.map((word) => ({ col1: word }));
+            console.log(updatedData);
+
+            if (csvInput.value.trim() !== '') {
+                sendDataToGoogleAppsScript(csvInput.value, updatedData);
+                csvInput.value = '';
+            }
+        });
+    });
+
+    async function fetchDataAndProcessWords(url, readOnly) {
+        if (readOnly) {
+            try {
+                const response = await fetch(url);
+                const csvData = await response.text();
+
+                const rows = csvData.split('\n');
+                const wordsArray = rows.reduce((words, row) => {
+                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const wordsInRow = columns.map((cell) =>
+                        cell.trim().replace(/"/g, '')
+                    );
+                    return words.concat(
+                        wordsInRow.filter((word) => word !== '')
+                    );
+                }, []);
+
+                wordsArray.forEach((word) => {
+                    addWord(word.trim());
+                });
+            } catch (error) {
+                console.error('Error while retrieving data:', error);
+                alert('Error while retrieving data, please try again.');
+            }
+        } else {
+            try {
+                const response = await fetch(url);
+                const csvData = await response.json();
+
+                const wordsArray = csvData.map((rowData) => rowData.col1);
+
+                wordsArray.forEach((word) => {
+                    addWord(word.trim());
+                });
+            } catch (error) {
+                console.error('Ошибка при получении данных:', error);
+                alert('Ошибка при получении данных');
+            }
         }
     }
 
-    // function getSpreadsheetIdFromUrl(url) {
-    //   const regex = /\/spreadsheets\/d\/(.+?)\//;
-    //   const match = url.match(regex);
-    //   return match && match[1] ? match[1] : null;
-    // }
+    function sendDataToGoogleAppsScript(url, data) {
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+            .then((response) => response.text())
+            .then((result) => {
+                console.log(result); // Результат выполнения запроса
+                alert('Данные обновлены.');
+            })
+            .catch((error) =>
+                console.error('Ошибка при отправке данных:', error)
+            );
+    }
 
     // Выбор файла и перенос значений в список
     fileListBtn.addEventListener('click', function () {

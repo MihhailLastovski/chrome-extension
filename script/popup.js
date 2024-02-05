@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 chrome.tabs.sendMessage(tabs[0].id, {
                                     action: 'highlight',
                                     searchText: searchText,
-                                    highlightColor: selectedColor,
+                                    highlightColor: listToHighlight.color,
                                     listId: listId,
                                 });
                             }

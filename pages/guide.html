@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html data-theme="light">
+
+<head>
+    <title>Highlight Text Extension</title>
+    <meta charset="UTF-8">
+    <link id="styleLink" rel="stylesheet" type="text/css" href="../style/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="../script/header.js"></script>
+    <script src="../script/styleScript.js"></script>
+    <script src="../script/guide.js"></script>
+</head>
+
+<body>  
+    <h2>How to use Apps Script</h2> 
+    <p class="guideText">1. <strong>Google Sheets</strong> >>> <strong>Extensions</strong> >>> <strong>Apps Script</strong></p>
+    <img src="../images/guide/step1.png" class="guideImage" width="90%" alt="img1">
+    <hr>
+    <p class="guideText">2. Paste the following code:</p>
+    <pre class="code-block">
+        <code class="language-javascript">
+function doGet(req) {
+  // Get the active table
+  var activeSheet = SpreadsheetApp.getActiveSpreadsheet()
+    .getActiveSheet();
+
+  // Get all data as a 2D array
+  var data = activeSheet.getDataRange().getValues();
+
+  // Convert data to JSON
+  var jsonData = [];
+
+  for (var i = 0; i < data.length; i++) {
+    var row = {};
+    for (var j = 0; j < data[i].length; j++) {
+      row['col' + (j + 1)] = data[i][j];
+    }
+    jsonData.push(row);
+  }
+
+  // Return JSON
+  return ContentService.createTextOutput(
+    JSON.stringify(jsonData)
+  ).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  // Get data from a query
+  var jsonData = JSON.parse(e.postData.contents);
+
+  // Your table identifier (replace with your own)
+  var spreadsheetId = '';
+
+  // Your sheet name (replace with your own)
+  var sheetName = '';
+
+  // Open table
+  var spreadsheet = 
+    SpreadsheetApp.openById(spreadsheetId);
+  var sheet = spreadsheet.getSheetByName(sheetName);
+
+  // Define from which line to start data insertion
+  var startRow = sheet.getLastRow() + 1;
+
+  // Inserting data into the table
+  for (var i = 0; i < jsonData.length; i++) {
+    var rowData = Object.values(jsonData[i]);
+    sheet.getRange(startRow + i, 1, 1, rowData.length)
+      .setValues([rowData]);
+  }
+
+  // Returning a successful response
+  return ContentService.createTextOutput(
+    'The data has been successfully added to the list.'
+  ).setMimeType(ContentService.MimeType.TEXT);
+}</code>
+    </pre>
+    <hr>
+    <p class="guideText">3. Click on <strong>Save</strong> >>> <strong>Run</strong> >>> <strong>Review permissions</strong></p>
+    <img src="../images/guide/step2.png" class="guideImage" alt="img2">
+    <img src="../images/guide/step3.png" class="guideImage" width="90%" alt="img3">
+    <hr>
+    <p class="guideText">4. In window <strong>Google hasn't verified this app</strong> click on:
+      	<strong>Advanced</strong> >>> <strong>Go to Untitled project (unsafe)</strong>
+    </p>
+    <img src="../images/guide/step4.png" class="guideImage" width="90%" alt="img4">
+    <img src="../images/guide/step5.png" class="guideImage" width="90%" alt="img5">
+    <hr>
+    <p class="guideText">5. Allow access</p>
+    <hr>
+    <p class="guideText">6. Click on <strong>Deploy</strong> >>> <strong>New deployment</strong></p>
+    <img src="../images/guide/step6.png" class="guideImage" alt="img6">
+    <hr>
+    <p class="guideText">7. Click on <strong>Select type</strong> >>> <strong>Web app</strong></p>
+    <p class="guideText">8. In <strong>Configuration</strong> >>> <strong>Who has access</strong> select <strong>Anyone</strong></p>
+    <img src="../images/guide/step7.png" class="guideImage" width="90%" alt="img7">
+    <hr>
+    <p class="guideText">9. Click on <strong>Deploy</strong></p>
+    <hr>
+    <p class="guideText">10. Allow access again</p>
+    <hr>
+    <p class="guideText">11. Copy the link</p>
+    <img src="../images/guide/step8.png" class="guideImage" width="90%" alt="img8">
+    <button id="cancelBtn" class="listFormBtn" style="margin-left: 5%;">Go back</button>
+</body>
+</html>
