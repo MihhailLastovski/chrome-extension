@@ -390,11 +390,23 @@ input[type=file]::file-selector-button {
 /* guide.html */
 
 .code-block {
-  background-color: #f4f4f4;
+  background-color: var(--main-black);
   padding: 10px;
   border-radius: 5px;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
 .language-javascript {
-  color: #333;
+  color: var(--main-white);
+  font-size: 11px;
+} 
+
+.guideImage {
+  margin-left: 5%;
+  border-radius: 5px;
+}
+
+.guideText {
+  font-size: 14px;
 }
