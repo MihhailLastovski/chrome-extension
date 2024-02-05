@@ -210,6 +210,18 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Enter list name or words');
         }
     });
+    
+    newWordInput.addEventListener('paste', function (event) {
+        event.preventDefault();
+        const pastedText = (event.clipboardData || window.clipboardData).getData('text');
+        const wordsArray = pastedText.split('\n').map(word => word.trim());
+    
+        wordsArray.forEach(word => {
+            if (word !== '') {
+                addWord(word);
+            }
+        });
+    });
 
     newWordInput.addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
