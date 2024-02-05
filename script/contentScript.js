@@ -149,39 +149,35 @@ if (!window.hasRun) {
 
     function addNoteToElement(element) {
         const note = prompt('Enter your note:');
-
+    
+        const data = {
+            action: 'addNoteToElement',
+            note: note,
+            textContent: element.textContent,
+        };
+    
+        console.log('Sending data:', data);
+    
         fetch(
-            'https://script.google.com/macros/s/AKfycbyb9Lo2orVJ9UrILwN0BKgHhOQ1pBI1WDWWAZYCXSETR7hpR8OByQGN9Wh6GyuX5LS4/exec',
+            'https://script.google.com/macros/s/AKfycbxoEkvzXQMMM90amXyKQc5c9LEM8OUVLyqmpzMrLWJTP4XvmOeXmdrHDXtt0gbwmnQa/exec',
             {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    action: 'addNoteToElement',
-                    note: note,
-                }),
+                body: JSON.stringify(data),
             }
         )
-            .then((response) => response.text())
-            .then((result) => {
-                console.log(result);
-                // Добавить вызов функции отправки заметки в Google Sheets
-                sendNoteToGoogleSheets(note);
-            })
-            .catch((error) =>
-                console.error('Ошибка при отправке заметки:', error)
-            );
+        .then((response) => response.text())
+        .then((result) => {
+            console.log('Response from server:', result);
+        })
+        .catch((error) => console.error('Error sending note:', error));
+        console.log(JSON.stringify(data))
+
     }
-    function sendNoteToGoogleSheets(note) {
-        chrome.runtime.sendMessage(
-            { action: 'sendNoteToGoogleSheets', note: note },
-            (response) => {
-                console.log(response);
-            }
-        );
-    }
+    
 
     /* appscript
     
@@ -189,27 +185,39 @@ if (!window.hasRun) {
 
     var SPREADSHEET_ID = '16FHitkvTh76ykBZpjPEGhLhMH2yIzq2X3CuII490MMk';
 
-function addNoteToElement(note) {
+function addNoteToElement(note, textContent) {
   try {
-    // Идентификатор вашей таблицы (замените на свой)
-    
-    // Имя вашего листа (замените на свое)
-    var sheetName = 'zxc';
-
     // Открываем таблицу
     var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-    var sheet = spreadsheet.getSheetByName(sheetName);
+    var sheet = spreadsheet.getSheetByName('zxc');
 
-    // Получаем активную ячейку в выделенном элементе
-    var activeCell = sheet.getActiveCell();
+    // Приводим textContent к нижнему регистру и удаляем пробелы
+    var cleanedTextContent = textContent.toLowerCase().trim();
 
-    // Присваиваем значение заметки
+    // Получаем все данные в виде 2D массива
+    var data = sheet.getDataRange().getValues();
 
-    // Добавляем заметку в ячейку
-    activeCell.setNote(note);
+    // Ищем ячейку с полным совпадением значения
+    for (var i = 0; i < data.length; i++) {
+      for (var j = 0; j < data[i].length; j++) {
+        var cellValue = String(data[i][j]).toLowerCase().trim();
+        Logger.log('Comparing:', cellValue, 'with', cleanedTextContent);
 
-    // Дополнительно логируем значение заметки
-    Logger.log('Note added successfully:', note);
+        // Используем регулярное выражение для точного совпадения по слову
+        var regex = new RegExp("\\b" + cleanedTextContent + "\\b", "g");
+
+        if (cellValue.match(regex)) {
+          // Нашли значение, добавляем заметку
+          var cell = sheet.getRange(i + 1, j + 1);
+          cell.setNote(note);
+          Logger.log('Note added successfully.');
+          return;
+        }
+      }
+    }
+
+    // Если значение не найдено
+    Logger.log('Value not found in the table:', cleanedTextContent);
 
   } catch (error) {
     Logger.log('Error adding note:', error);
@@ -217,16 +225,6 @@ function addNoteToElement(note) {
 }
 
 
-
-// Добавьте эту функцию для принятия данных из fetch
-function doAddNoteToElement(requestData) {
-  try {
-    var note = requestData.note;
-    addNoteToElement(note);
-  } catch (error) {
-    Logger.log('Error in doAddNoteToElement:', error);
-  }
-}
 
 function doGet(req) {
   try {
@@ -260,30 +258,31 @@ function doGet(req) {
 }
 
 function doPost(e) {
-  try {
-    // Получаем данные из запроса
-    var requestData = JSON.parse(e.postData.contents);
+    try {
+        // Получаем данные из запроса
+        var requestData = JSON.parse(e.postData.contents);
+         console.log('Received request data:', e.postData.contents);
 
-    // Проверяем, какое действие нужно выполнить
-    if (requestData.action === 'addNoteToElement') {
-      // Вызываем функцию добавления заметки
-      addNoteToElement(requestData.note);
+        // Проверяем, какое действие нужно выполнить
+        if (requestData.action === 'addNoteToElement') {
+            // Вызываем функцию добавления заметки
+            addNoteToElement(requestData.note, requestData.textContent);
 
-      Logger.log('Note added via doPost:', requestData.note);
+            Logger.log('Note added via doPost:', requestData.note);
 
-      // Возвращаем успешный ответ
-      return ContentService.createTextOutput(
-        'Заметка успешно добавлена в таблицу.'
-      ).setMimeType(ContentService.MimeType.TEXT);
+            // Возвращаем успешный ответ
+            return ContentService.createTextOutput(
+                'Заметка успешно добавлена в таблицу.'
+            ).setMimeType(ContentService.MimeType.TEXT);
+        }
+
+        // Если неизвестное действие, возвращаем ошибку
+        Logger.log('Unknown action in doPost:', requestData.action);
+        return ContentService.createTextOutput('Неизвестное действие.').setStatusCode(400);
+    } catch (error) {
+        console.error('Error in doPost:', error);
+        return ContentService.createTextOutput('Error in doPost: ' + error.message).setStatusCode(500);
     }
-
-    // Если неизвестное действие, возвращаем ошибку
-    Logger.log('Unknown action in doPost:', requestData.action);
-    return ContentService.createTextOutput('Неизвестное действие.').setStatusCode(400);
-  } catch (error) {
-    Logger.log('Error in doPost:', error);
-    return ContentService.createTextOutput('Error in doPost.').setStatusCode(500);
-  }
 }
 
     */
