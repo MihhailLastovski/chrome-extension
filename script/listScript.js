@@ -220,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
     /*************************************Google Sheets********************************************/
 
     const csvListBtn = document.getElementById('csvListBtn');
+    const exportListBtn = document.getElementById('exportListBtn');
     const fileListBtn = document.getElementById('fileListBtn');
 
     var csvLink;
@@ -248,7 +249,62 @@ document.addEventListener('DOMContentLoaded', function () {
 
         csvButton.addEventListener('click', function () {
             if (csvInput.value.trim() !== '') {
-                // csvLink = csvInput.value.replace('/edit', '/export?format=csv');
+                csvLink = csvInput.value.replace('/edit', '/export?format=csv');
+                chrome.storage.local.set({ dataURL: csvLink });
+                fetchDataAndProcessWords(csvLink, true);
+
+                csvInput.value = '';
+            } else {
+                alert('Please enter link');
+            }
+        });
+
+        var csvh2 = document.createElement('h2');
+        csvh2.textContent = 'Google Sheets assistant';
+        csvh2.style.textAlign = 'left';
+        csvh2.style.marginLeft = '13%';
+
+        var csvp = document.createElement('p');
+        csvp.innerHTML = `<p>          
+            1. File > Share > Publish to web.<br>
+            2. Click Publish.<br>
+            3. Choose format csv.<br>
+            4. Copy the URL.          
+        </p>`;
+        csvp.style.textAlign = 'left';
+        csvp.style.marginLeft = '9%';
+
+        divWithListImportSettigs.appendChild(csvh2);
+        divWithListImportSettigs.appendChild(csvp);
+        divWithListImportSettigs.appendChild(csvInput);
+        divWithListImportSettigs.appendChild(csvButton);
+
+        refreshBtn.addEventListener('click', function () {
+            while (wordsContainer.firstChild) {
+                wordsContainer.removeChild(wordsContainer.firstChild);
+            }
+            wordsContainer.appendChild(lastListItem);
+
+            chrome.storage.local.get('dataURL', (result) => {
+                if (result.dataURL) {
+                    fetchDataAndProcessWords(result.dataURL, true);
+                }
+            });
+        });
+
+        divWithListImportSettigs.appendChild(refreshBtn);
+    });
+
+    exportListBtn.addEventListener('click', function () {
+        divWithListImportSettigs.innerHTML = '';
+
+        var csvInput = document.createElement('input');
+        csvInput.type = 'text';
+        csvInput.id = 'textInput';
+        csvInput.placeholder = 'Paste the link';
+
+        csvButton.addEventListener('click', function () {
+            if (csvInput.value.trim() !== '') {
                 csvLink = csvInput.value;
 
                 chrome.storage.local.set({ dataURL: csvLink });
@@ -260,18 +316,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        refreshBtn.addEventListener('click', function () {
-            while (wordsContainer.firstChild) {
-                wordsContainer.removeChild(wordsContainer.firstChild);
-            }
-            wordsContainer.appendChild(lastListItem);
+        // refreshBtn.addEventListener('click', function () {
+        //     while (wordsContainer.firstChild) {
+        //         wordsContainer.removeChild(wordsContainer.firstChild);
+        //     }
+        //     wordsContainer.appendChild(lastListItem);
 
-            chrome.storage.local.get('dataURL', (result) => {
-                if (result.dataURL) {
-                    fetchDataAndProcessWords(result.dataURL);
-                }
-            });
-        });
+        //     chrome.storage.local.get('dataURL', (result) => {
+        //         if (result.dataURL) {
+        //             fetchDataAndProcessWords(result.dataURL);
+        //         }
+        //     });
+        // });
 
         var csvh2 = document.createElement('h2');
         csvh2.textContent = 'Google Sheets assistant';
@@ -282,21 +338,10 @@ document.addEventListener('DOMContentLoaded', function () {
             window.location.href = `guide.html?listId=${listId}`;
         });
 
-        // var csvp = document.createElement('p');
-        // csvp.innerHTML = `<p>
-        //     1. File > Share > Publish to web.<br>
-        //     2. Click Publish.<br>
-        //     3. Choose format csv.<br>
-        //     4. Copy the URL.
-        // </p>`;
-        // csvp.style.textAlign = 'left';
-        // csvp.style.marginLeft = '14%';
-
         divWithListImportSettigs.appendChild(csvh2);
-        // divWithListImportSettigs.appendChild(csvp);
         divWithListImportSettigs.appendChild(csvInput);
         divWithListImportSettigs.appendChild(csvButton);
-        divWithListImportSettigs.appendChild(refreshBtn);
+        // divWithListImportSettigs.appendChild(refreshBtn);
 
         const postBtn = document.createElement('button');
         postBtn.innerHTML = 'Update Google Sheet';
@@ -304,55 +349,66 @@ document.addEventListener('DOMContentLoaded', function () {
         divWithListImportSettigs.appendChild(postBtn);
 
         postBtn.addEventListener('click', function () {
-            var updatedData = [
-                { col1: 'updated words' },
-                { col1: 'to' },
-                { col1: 'find' },
-            ];
+            const wordsArray = [];
 
-            // Временно для удобства
-            chrome.storage.local.get('dataURL', (result) => {
-                if (result.dataURL) {
-                    sendDataToGoogleAppsScript(result.dataURL, updatedData);
+            const wordDivs = document.querySelectorAll('#wordsContainer > div');
+            wordDivs.forEach((wordDiv) => {
+                const wordInput = wordDiv.querySelector('.word-input');
+                const word = wordInput.value.trim();
+
+                if (word !== '') {
+                    wordsArray.push(word);
                 }
             });
+
+            const updatedData = wordsArray.map((word) => ({ col1: word }));
+            console.log(updatedData);
+
+            if (csvInput.value.trim() !== '') {
+                sendDataToGoogleAppsScript(csvInput.value, updatedData);
+                csvInput.value = '';
+            }
         });
     });
 
-    async function fetchDataAndProcessWords(url) {
-        // try {
-        //     const response = await fetch(url);
-        //     const csvData = await response.text();
+    async function fetchDataAndProcessWords(url, readOnly) {
+        if (readOnly) {
+            try {
+                const response = await fetch(url);
+                const csvData = await response.text();
 
-        //     const rows = csvData.split('\n');
-        //     const wordsArray = rows.reduce((words, row) => {
-        //         const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-        //         const wordsInRow = columns.map((cell) =>
-        //             cell.trim().replace(/"/g, '')
-        //         );
-        //         return words.concat(wordsInRow.filter((word) => word !== ''));
-        //     }, []);
+                const rows = csvData.split('\n');
+                const wordsArray = rows.reduce((words, row) => {
+                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const wordsInRow = columns.map((cell) =>
+                        cell.trim().replace(/"/g, '')
+                    );
+                    return words.concat(
+                        wordsInRow.filter((word) => word !== '')
+                    );
+                }, []);
 
-        //     wordsArray.forEach((word) => {
-        //         addWord(word.trim());
-        //     });
-        // } catch (error) {
-        //     console.error('Error while retrieving data:', error);
-        //     alert('Error while retrieving data, please try again.');
-        // }
+                wordsArray.forEach((word) => {
+                    addWord(word.trim());
+                });
+            } catch (error) {
+                console.error('Error while retrieving data:', error);
+                alert('Error while retrieving data, please try again.');
+            }
+        } else {
+            try {
+                const response = await fetch(url);
+                const csvData = await response.json();
 
-        try {
-            const response = await fetch(url);
-            const csvData = await response.json();
+                const wordsArray = csvData.map((rowData) => rowData.col1);
 
-            const wordsArray = csvData.map((rowData) => rowData.col1);
-
-            wordsArray.forEach((word) => {
-                addWord(word.trim());
-            });
-        } catch (error) {
-            console.error('Ошибка при получении данных:', error);
-            alert('Ошибка при получении данных');
+                wordsArray.forEach((word) => {
+                    addWord(word.trim());
+                });
+            } catch (error) {
+                console.error('Ошибка при получении данных:', error);
+                alert('Ошибка при получении данных');
+            }
         }
     }
 
@@ -367,6 +423,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then((response) => response.text())
             .then((result) => {
                 console.log(result); // Результат выполнения запроса
+                alert('Данные обновлены.');
             })
             .catch((error) =>
                 console.error('Ошибка при отправке данных:', error)
