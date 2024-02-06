@@ -5,11 +5,13 @@ document.addEventListener('DOMContentLoaded', function () {
     div.className = 'header';
     div.innerHTML = `
         <div class="dropdown">
-            <span class="burger-icon">&#9776;</span>
+            <!--span class="burger-icon">&#9776;</span-->
+            <i class="fa-2x fa fa-bars" aria-hidden="true"></i>
             <div class="dropdown-content">
-                <a href="popup.html">Home</a>
-                <a href="list.html">List</a>
-                <a href="#">Link 3</a>
+                <a href="popup.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+                <a href="guide.html"><i class="fa fa-file-text" aria-hidden="true"></i> Apps Script guide</a>
+                <a href="settings.html"><i class="fa fa-cog" aria-hidden="true"></i> Settings</a>
+                <a href="#"><i class="fa fa-info-circle" aria-hidden="true"></i> About</a>
             </div>
         </div>
         <!--input class="toggleViewSwitch" type="checkbox" id="darkModeToggle">
@@ -23,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="slider"></span>
         </label>`;
 
-    footer.innerHTML = `<p>&copy; <span id="currentYear"></span> - AlphaCRC/Junior Dev League. All rights reserved.</p>`;
+    footer.innerHTML = `<p>&copy; <span id="currentYear"></span> - AlphaCRC. All rights reserved.</p>`;
     var body = document.querySelector('body');
     body.insertBefore(div, body.firstChild);
     body.appendChild(footer);
@@ -62,13 +64,13 @@ document.addEventListener('DOMContentLoaded', function () {
     /*******************************************Menu************************************************/
 
     document
-        .querySelector('.burger-icon')
+        .querySelector('.fa-2x.fa.fa-bars')
         .addEventListener('click', function () {
-            const navbar = document.getElementById('myNavbar');
-            if (navbar.style.display === 'block') {
-                navbar.style.display = 'none';
+            const menu = document.querySelector('.dropdown-content');
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
             } else {
-                navbar.style.display = 'block';
+                menu.style.display = 'block';
             }
         });
 
