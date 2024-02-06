@@ -1,24 +1,25 @@
 document.addEventListener('DOMContentLoaded', function () {
     var div = document.createElement('div');
-    var footer = document.createElement('div');
-    footer.className = 'footerDiv';
     div.className = 'header';
     div.innerHTML = `
-        <input class="toggleViewSwitch" type="checkbox" id="darkModeToggle">
-        <label for="darkModeToggle">
-            <i class="fa fa-sun-o fa-3x" aria-hidden="true"></i>
-            <i class="fa fa-moon-o fa-3x" aria-hidden="true"></i>
-        </label>
+        <div class="dropdown">
+            <i class="fa-2x fa fa-bars" aria-hidden="true"></i>
+            <div class="dropdown-content">
+                <a href="popup.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+                <a href="guide.html"><i class="fa fa-file-text" aria-hidden="true"></i> Apps Script guide</a>
+                <a href="settings.html"><i class="fa fa-cog" aria-hidden="true"></i> Settings</a>
+                <a href="about.html"><i class="fa fa-info-circle" aria-hidden="true"></i> About</a>
+            </div>
+        </div>        
         <h1 class="heading">Highlight Off</h1>
         <label class="switch">
             <input class="toggleSwitch" type="checkbox">
             <span class="slider"></span>
         </label>`;
 
-    footer.innerHTML = `<p>&copy; <span id="currentYear"></span> - AlphaCRC/Junior Dev League. All rights reserved.</p>`;
     var body = document.querySelector('body');
     body.insertBefore(div, body.firstChild);
-    body.appendChild(footer);
+
     const toggleSwitch = document.querySelector('.toggleSwitch');
     const heading = document.querySelector('.heading');
     const searchTextInput = document.getElementById('searchText');
@@ -51,15 +52,32 @@ document.addEventListener('DOMContentLoaded', function () {
             (searchTextInput.disabled = highlightBtn.disabled = !active);
     }
 
+    const footerDate = document.getElementById('currentYear');
+    if (footerDate) {
+        var currentYear = new Date().getFullYear();
+        footerDate.textContent = currentYear;
+    }
+
+    /*******************************************Menu************************************************/
+
+    document
+        .querySelector('.fa-2x.fa.fa-bars')
+        .addEventListener('click', function () {
+            const menu = document.querySelector('.dropdown-content');
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'block';
+            }
+        });
+
     /*****************************************Tooltips**********************************************/
 
     const slider = document.querySelector('.slider');
-    const sun = document.querySelector('.fa.fa-sun-o');
-    const moon = document.querySelector('.fa.fa-moon-o');
     const csvListBtn = document.getElementById('csvListBtn');
 
-    let tooltipButtons = [slider, sun, moon];
-    let tooltipsText = ['Off/On', 'Change theme', 'Change theme'];
+    let tooltipButtons = [slider];
+    let tooltipsText = ['Off/On'];
     let tooltipTimer;
 
     if (highlightBtn) {
@@ -142,8 +160,4 @@ document.addEventListener('DOMContentLoaded', function () {
             tooltip.style.opacity = 0;
         });
     });
-
-    // Footer
-    var currentYear = new Date().getFullYear();
-    document.getElementById('currentYear').textContent = currentYear;
 });

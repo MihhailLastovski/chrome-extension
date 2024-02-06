@@ -32,15 +32,17 @@ document.addEventListener('DOMContentLoaded', function () {
         updateThemeOnHtmlEl({ theme: currentThemeSetting });
 
         //меняет тему
-        darkModeToggle.addEventListener('change', function () {
-            const newTheme = darkModeToggle.checked ? 'dark' : 'light';
+        if (darkModeToggle) {
+            darkModeToggle.addEventListener('change', function () {
+                const newTheme = darkModeToggle.checked ? 'dark' : 'light';
 
-            chrome.storage.local.set({ theme: newTheme });
-            updateThemeOnHtmlEl({ theme: newTheme });
+                chrome.storage.local.set({ theme: newTheme });
+                updateThemeOnHtmlEl({ theme: newTheme });
 
-            currentThemeSetting = newTheme;
-        });
+                currentThemeSetting = newTheme;
+            });
 
-        darkModeToggle.checked = currentThemeSetting === 'dark';
+            darkModeToggle.checked = currentThemeSetting === 'dark';
+        }
     });
 });
