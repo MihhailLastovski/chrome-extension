@@ -23,12 +23,6 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.action === "auth"){
-        chrome.identity.getAuthToken({ 'interactive': true }, function(token) {
-            // Use the token.
-            console.log(token); 
-                });
-    }
     if (request.action === 'requestScreenshot') {
         chrome.tabs.captureVisibleTab(
             null,
@@ -77,9 +71,6 @@ function saveScreenshot(dataUrl) {
         });
     });
 }
-
-
-
 
 //Добавление высплывающего окна
 // chrome.contextMenus.onClicked.addListener(function (info, event) {

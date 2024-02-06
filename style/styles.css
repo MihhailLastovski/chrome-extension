@@ -33,18 +33,6 @@ body {
   max-height: 500px;
 }
 
-.footerDiv {
-  background-color: var(--main-light-green);
-  color: var(--main-black);
-  padding: 1%;
-  text-align: center;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  margin-top: auto;
-  margin-left: -8px;
-}
-
 input {
   padding: 8px;
   font-size: 14px;
@@ -108,7 +96,7 @@ hr {
   transition: opacity 0.3s;
 }
 
-/* Header */
+/* Header.js */
 .header {
   margin: -10px -10px 0 -10px;
   display: flex;
@@ -125,6 +113,39 @@ hr {
   display: inline-block;
   cursor: pointer;
   margin-left: 5%; 
+}
+
+/* Menu */
+.dropdown {
+  margin-left: 5%;
+}
+
+.dropdown-content {
+  margin-left: -5%;
+  margin-top: 18px;
+  min-width: 150px;
+  height: 505px;
+  display: none;
+  position: absolute;
+  background-color: var(--main-light-green); 
+  box-shadow: 0px 4px 8px 0px var(--main-black);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: var(--main-black);
+  padding: 12px 16px;
+  font-size: 15px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: var(--main-dark-green);
+}
+
+.fa-2x.fa.fa-bars {
+  cursor: pointer;
 }
 
 /* Toggle switch */
@@ -182,6 +203,19 @@ hr {
   -webkit-transform: translateX(20px);
   -ms-transform: translateX(20px);
   transform: translateX(20px);
+}
+
+/* Popup.html */
+.footerDiv {
+  background-color: var(--main-light-green);
+  color: var(--main-black);
+  padding: 1%;
+  text-align: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  margin-top: auto;
+  margin-left: -8px;
 }
 
 /* Content */
@@ -427,35 +461,4 @@ input[type=file]::file-selector-button {
 
 .guideText {
   font-size: 14px;
-}
-
-
-/* Menu */
-/* Скрытый выпадающий список */
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
-  z-index: 1;
-}
-
-/* Стили для ссылок в выпадающем списке */
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-/* При наведении на элемент меню */
-.dropdown:hover .dropdown-content {
-  display: block;
-}
-
-/* Бургер-иконка */
-.burger-icon {
-  /*display: none;*/
-  cursor: pointer;
 }
