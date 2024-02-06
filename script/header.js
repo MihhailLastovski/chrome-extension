@@ -12,12 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <a href="settings.html"><i class="fa fa-cog" aria-hidden="true"></i> Settings</a>
                 <a href="#"><i class="fa fa-info-circle" aria-hidden="true"></i> About</a>
             </div>
-        </div>
-        <!--input class="toggleViewSwitch" type="checkbox" id="darkModeToggle">
-        <label for="darkModeToggle">
-            <i class="fa fa-sun-o fa-3x" aria-hidden="true"></i>
-            <i class="fa fa-moon-o fa-3x" aria-hidden="true"></i>
-        </label-->
+        </div>        
         <h1 class="heading">Highlight Off</h1>
         <label class="switch">
             <input class="toggleSwitch" type="checkbox">
@@ -76,14 +71,10 @@ document.addEventListener('DOMContentLoaded', function () {
     /*****************************************Tooltips**********************************************/
 
     const slider = document.querySelector('.slider');
-    // const sun = document.querySelector('.fa.fa-sun-o');
-    // const moon = document.querySelector('.fa.fa-moon-o');
     const csvListBtn = document.getElementById('csvListBtn');
 
     let tooltipButtons = [slider];
-    // let tooltipButtons = [slider, sun, moon];
     let tooltipsText = ['Off/On'];
-    // let tooltipsText = ['Off/On', 'Change theme', 'Change theme'];
     let tooltipTimer;
 
     if (highlightBtn) {
