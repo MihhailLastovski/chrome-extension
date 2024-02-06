@@ -9,8 +9,4 @@ document.addEventListener('DOMContentLoaded', function () {
         const saveAs = saveAsCheckbox.checked;
         chrome.storage.local.set({ saveAs: saveAs });
     });
-    const cancelBtn = document.getElementById('cancelBtn');
-    cancelBtn.addEventListener('click', function () {
-        window.location.href = 'popup.html';
-    });
 });
