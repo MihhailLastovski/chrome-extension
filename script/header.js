@@ -1,7 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
     var div = document.createElement('div');
-    var footer = document.createElement('div');
-    footer.className = 'footerDiv';
     div.className = 'header';
     div.innerHTML = `
         <div class="dropdown">
@@ -10,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <a href="popup.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
                 <a href="guide.html"><i class="fa fa-file-text" aria-hidden="true"></i> Apps Script guide</a>
                 <a href="settings.html"><i class="fa fa-cog" aria-hidden="true"></i> Settings</a>
-                <a href="#"><i class="fa fa-info-circle" aria-hidden="true"></i> About</a>
+                <a href="about.html"><i class="fa fa-info-circle" aria-hidden="true"></i> About</a>
             </div>
         </div>        
         <h1 class="heading">Highlight Off</h1>
@@ -19,10 +17,9 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="slider"></span>
         </label>`;
 
-    footer.innerHTML = `<p>&copy; <span id="currentYear"></span> - AlphaCRC. All rights reserved.</p>`;
     var body = document.querySelector('body');
     body.insertBefore(div, body.firstChild);
-    body.appendChild(footer);
+
     const toggleSwitch = document.querySelector('.toggleSwitch');
     const heading = document.querySelector('.heading');
     const searchTextInput = document.getElementById('searchText');
@@ -53,6 +50,12 @@ document.addEventListener('DOMContentLoaded', function () {
         searchTextInput &&
             highlightBtn &&
             (searchTextInput.disabled = highlightBtn.disabled = !active);
+    }
+
+    const footerDate = document.getElementById('currentYear');
+    if (footerDate) {
+        var currentYear = new Date().getFullYear();
+        footerDate.textContent = currentYear;
     }
 
     /*******************************************Menu************************************************/
@@ -157,8 +160,4 @@ document.addEventListener('DOMContentLoaded', function () {
             tooltip.style.opacity = 0;
         });
     });
-
-    // Footer
-    var currentYear = new Date().getFullYear();
-    document.getElementById('currentYear').textContent = currentYear;
 });
