@@ -116,7 +116,6 @@ hr {
 }
 
 /* Menu */
-
 .dropdown {
   margin-left: 5%;
 }
@@ -139,6 +138,10 @@ hr {
   font-size: 15px;
   text-decoration: none;
   display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: var(--main-dark-green);
 }
 
 .fa-2x.fa.fa-bars {

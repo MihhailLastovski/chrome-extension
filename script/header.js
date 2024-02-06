@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
     div.className = 'header';
     div.innerHTML = `
         <div class="dropdown">
-            <!--span class="burger-icon">&#9776;</span-->
             <i class="fa-2x fa fa-bars" aria-hidden="true"></i>
             <div class="dropdown-content">
                 <a href="popup.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
@@ -81,8 +80,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // const moon = document.querySelector('.fa.fa-moon-o');
     const csvListBtn = document.getElementById('csvListBtn');
 
-    let tooltipButtons = [slider]; //, sun, moon];
-    let tooltipsText = ['Off/On']; //, 'Change theme', 'Change theme'];
+    let tooltipButtons = [slider];
+    // let tooltipButtons = [slider, sun, moon];
+    let tooltipsText = ['Off/On'];
+    // let tooltipsText = ['Off/On', 'Change theme', 'Change theme'];
     let tooltipTimer;
 
     if (highlightBtn) {
