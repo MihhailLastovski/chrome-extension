@@ -4,11 +4,19 @@ document.addEventListener('DOMContentLoaded', function () {
     footer.className = 'footerDiv';
     div.className = 'header';
     div.innerHTML = `
-        <input class="toggleViewSwitch" type="checkbox" id="darkModeToggle">
+        <div class="dropdown">
+            <span class="burger-icon">&#9776;</span>
+            <div class="dropdown-content">
+                <a href="popup.html">Home</a>
+                <a href="list.html">List</a>
+                <a href="#">Link 3</a>
+            </div>
+        </div>
+        <!--input class="toggleViewSwitch" type="checkbox" id="darkModeToggle">
         <label for="darkModeToggle">
             <i class="fa fa-sun-o fa-3x" aria-hidden="true"></i>
             <i class="fa fa-moon-o fa-3x" aria-hidden="true"></i>
-        </label>
+        </label-->
         <h1 class="heading">Highlight Off</h1>
         <label class="switch">
             <input class="toggleSwitch" type="checkbox">
@@ -51,15 +59,28 @@ document.addEventListener('DOMContentLoaded', function () {
             (searchTextInput.disabled = highlightBtn.disabled = !active);
     }
 
+    /*******************************************Menu************************************************/
+
+    document
+        .querySelector('.burger-icon')
+        .addEventListener('click', function () {
+            const navbar = document.getElementById('myNavbar');
+            if (navbar.style.display === 'block') {
+                navbar.style.display = 'none';
+            } else {
+                navbar.style.display = 'block';
+            }
+        });
+
     /*****************************************Tooltips**********************************************/
 
     const slider = document.querySelector('.slider');
-    const sun = document.querySelector('.fa.fa-sun-o');
-    const moon = document.querySelector('.fa.fa-moon-o');
+    // const sun = document.querySelector('.fa.fa-sun-o');
+    // const moon = document.querySelector('.fa.fa-moon-o');
     const csvListBtn = document.getElementById('csvListBtn');
 
-    let tooltipButtons = [slider, sun, moon];
-    let tooltipsText = ['Off/On', 'Change theme', 'Change theme'];
+    let tooltipButtons = [slider]; //, sun, moon];
+    let tooltipsText = ['Off/On']; //, 'Change theme', 'Change theme'];
     let tooltipTimer;
 
     if (highlightBtn) {
