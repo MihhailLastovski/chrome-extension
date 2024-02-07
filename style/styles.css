@@ -423,10 +423,10 @@ input[type=file]::file-selector-button {
   resize: none;
   height: 22px;
   width: 100%;
-  border: none;
+  border: 2pt solid var(--main-light-green);
+  border-radius: 5px;
   padding: 8px;
   font-size: 14px;
-  border-radius: 4px;
   color: var(--main-black);
   background-color: var(--main-white);
 }
@@ -437,6 +437,16 @@ input[type=file]::file-selector-button {
 
 .word-input:focus {
   outline: none;
+}
+
+.word-label {
+  margin-left: 10px;
+  font-size: 14px;
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* guide.html */

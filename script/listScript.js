@@ -8,13 +8,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const addWordBtn = document.getElementById('saveListBtn');
     const colorPicker = document.getElementById('colorPicker');
 
-    const apiKey = 'AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk';
+    // const apiKey = 'AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk';
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const listId = urlParams.get('listId');
     const encodedDataString = urlParams.get('data');
     const encodedDataStringList = urlParams.get('dataList');
     const fileData = urlParams.get('dataFile');
+
+    const tooltipButtonsRightVersion = [];
+    const tooltipsTextRightVersion = [];
 
     const saveChangesBtn = document.createElement('button');
     var highlightingColor;
@@ -86,6 +89,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             });
+
+            createTooltips();
         }
     });
 
@@ -96,16 +101,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const wordDivs = document.querySelectorAll('#wordsContainer > div');
         wordDivs.forEach((wordDiv) => {
             const checkbox = wordDiv.querySelector('.word-checkbox');
-            const wordInput = wordDiv.querySelector('.word-input');
+            const wordLabel = wordDiv.querySelector('.word-label');
 
-            const word = wordInput.value.trim();
-            const enabled = checkbox.checked;
+            if (wordLabel) {
+                const word = wordLabel.textContent;
+                const enabled = checkbox.checked;
 
-            if (word !== '') {
-                editedWords.push({
-                    word: word,
-                    enabled: enabled,
-                });
+                if (word !== '') {
+                    editedWords.push({
+                        word: word,
+                        enabled: enabled,
+                    });
+                }
             }
         });
 
@@ -141,6 +148,13 @@ document.addEventListener('DOMContentLoaded', function () {
         const label = document.createElement('label');
         label.htmlFor = checkbox.id;
 
+        const wordLabel = document.createElement('label');
+        wordLabel.textContent = word;
+        wordLabel.className = 'word-label';
+
+        tooltipButtonsRightVersion.push(wordLabel);
+        tooltipsTextRightVersion.push(wordLabel.textContent);
+
         const wordInput = document.createElement('textarea');
         wordInput.type = 'text';
         wordInput.value = word;
@@ -152,12 +166,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 .find((list) => list.id === listId)
                 ?.words.find((w) => w.word === word);
 
-            wordInput.style.textDecoration = foundWord?.status
+            wordLabel.style.textDecoration = foundWord?.status
                 ? 'line-through'
                 : 'none';
         });
 
+        const updateBtn = document.createElement('button');
+        updateBtn.type = 'button';
+        updateBtn.innerHTML =
+            '<i class="fa-2x fa fa-pencil" aria-hidden="true"></i>';
+        updateBtn.className = 'trash-btn';
+        updateBtn.addEventListener('click', function () {
+            if (wordDiv.contains(wordInput)) {
+                wordLabel.textContent = wordInput.value.trim();
+                wordDiv.replaceChild(wordLabel, wordInput);
+            } else {
+                wordDiv.replaceChild(wordInput, wordLabel);
+            }
+        });
+
         const deleteBtn = document.createElement('button');
+        deleteBtn.type = 'button';
         deleteBtn.innerHTML =
             '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
         deleteBtn.className = 'trash-btn';
@@ -167,7 +196,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         wordDiv.appendChild(checkbox);
         wordDiv.appendChild(label);
-        wordDiv.appendChild(wordInput);
+        wordDiv.appendChild(wordLabel);
+        wordDiv.appendChild(updateBtn);
         wordDiv.appendChild(deleteBtn);
 
         wordsContainer.insertBefore(wordDiv, lastListItem);
@@ -181,16 +211,18 @@ document.addEventListener('DOMContentLoaded', function () {
         const wordDivs = document.querySelectorAll('#wordsContainer > div');
         wordDivs.forEach((wordDiv) => {
             const checkbox = wordDiv.querySelector('.word-checkbox');
-            const wordInput = wordDiv.querySelector('.word-input');
+            const wordLabel = wordDiv.querySelector('.word-label');
 
-            const word = wordInput.value.trim();
-            const enabled = checkbox.checked;
+            if (wordLabel) {
+                const word = wordLabel.textContent;
+                const enabled = checkbox.checked;
 
-            if (word !== '') {
-                words.push({
-                    word: word,
-                    enabled: enabled,
-                });
+                if (word !== '') {
+                    words.push({
+                        word: word,
+                        enabled: enabled,
+                    });
+                }
             }
         });
 
@@ -210,13 +242,15 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Enter list name or words');
         }
     });
-    
+
     newWordInput.addEventListener('paste', function (event) {
         event.preventDefault();
-        const pastedText = (event.clipboardData || window.clipboardData).getData('text');
-        const wordsArray = pastedText.split('\n').map(word => word.trim());
-    
-        wordsArray.forEach(word => {
+        const pastedText = (
+            event.clipboardData || window.clipboardData
+        ).getData('text');
+        const wordsArray = pastedText.split('\n').map((word) => word.trim());
+
+        wordsArray.forEach((word) => {
             if (word !== '') {
                 addWord(word);
             }
@@ -372,11 +406,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const wordDivs = document.querySelectorAll('#wordsContainer > div');
             wordDivs.forEach((wordDiv) => {
-                const wordInput = wordDiv.querySelector('.word-input');
-                const word = wordInput.value.trim();
+                const wordLabel = wordDiv.querySelector('.word-label');
 
-                if (word !== '') {
-                    wordsArray.push(word);
+                if (wordLabel) {
+                    const word = wordLabel.textContent;
+                    if (word !== '') {
+                        wordsArray.push(word);
+                    }
                 }
             });
 
@@ -483,56 +519,101 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*****************************************Tooltips**********************************************/
     /* Необходимо оптимизировать */
+    function createTooltips() {
+        const tooltipButtons = [
+            csvButton,
+            refreshBtn,
+            saveChangesBtn,
+            cancelBtn,
+            addWordBtn,
+        ];
+        const tooltipsText = [
+            'Search Google sheets',
+            'Synchronize list',
+            'Save changes in list',
+            'Go back',
+            'Add new list',
+        ];
 
-    const tooltipButtons = [
-        csvButton,
-        refreshBtn,
-        saveChangesBtn,
-        cancelBtn,
-        addWordBtn,
-    ];
-    const tooltipsText = [
-        'Search Google sheets',
-        'Synchronize list',
-        'Save changes in list',
-        'Go back',
-        'Add new list',
-    ];
-    let tooltipTimer;
+        while (tooltipsText.length > 0) {
+            tooltipButtonsRightVersion.push(tooltipButtons.shift());
+            tooltipsTextRightVersion.push(tooltipsText.shift());
+        }
 
-    tooltipButtons.forEach((button, index) => {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'tooltip';
-        tooltip.innerText = tooltipsText[index];
-        document.body.appendChild(tooltip);
+        // console.log(tooltipButtonsRightVersion);
+        console.log(tooltipsTextRightVersion);
+        let tooltipTimer;
 
-        button.addEventListener('mouseover', function () {
-            tooltipTimer = setTimeout(function () {
-                const rect = button.getBoundingClientRect();
-                const tooltipX = rect.left + window.pageXOffset;
-                var tooltipY;
-                if (
-                    button === cancelBtn ||
-                    button === addWordBtn ||
-                    button === saveChangesBtn
-                ) {
-                    tooltipY = rect.bottom + window.pageYOffset - 70;
-                } else {
-                    tooltipY = rect.bottom + window.pageYOffset + 5;
-                }
+        // tooltipButtons.forEach((button, index) => {
+        //     const tooltip = document.createElement('div');
+        //     tooltip.className = 'tooltip';
+        //     tooltip.innerText = tooltipsText[index];
+        //     document.body.appendChild(tooltip);
 
-                tooltip.style.left = `${tooltipX}px`;
-                tooltip.style.top = `${tooltipY}px`;
+        //     button.addEventListener('mouseover', function () {
+        //         tooltipTimer = setTimeout(function () {
+        //             const rect = button.getBoundingClientRect();
+        //             const tooltipX = rect.left + window.pageXOffset;
+        //             var tooltipY;
+        //             if (
+        //                 button === cancelBtn ||
+        //                 button === addWordBtn ||
+        //                 button === saveChangesBtn
+        //             ) {
+        //                 tooltipY = rect.bottom + window.pageYOffset - 70;
+        //             } else {
+        //                 tooltipY = rect.bottom + window.pageYOffset + 5;
+        //             }
 
-                tooltip.style.display = 'inline-block';
-                tooltip.style.opacity = 1;
-            }, 500);
+        //             tooltip.style.left = `${tooltipX}px`;
+        //             tooltip.style.top = `${tooltipY}px`;
+
+        //             tooltip.style.display = 'inline-block';
+        //             tooltip.style.opacity = 1;
+        //         }, 500);
+        //     });
+
+        //     button.addEventListener('mouseout', function () {
+        //         clearTimeout(tooltipTimer);
+        //         tooltip.style.display = 'none';
+        //         tooltip.style.opacity = 0;
+        //     });
+        // });
+
+        tooltipButtonsRightVersion.forEach((button, index) => {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.innerText = tooltipsTextRightVersion[index];
+            document.body.appendChild(tooltip);
+
+            button.addEventListener('mouseover', function () {
+                tooltipTimer = setTimeout(function () {
+                    const rect = button.getBoundingClientRect();
+                    const tooltipX = rect.left + window.pageXOffset;
+                    var tooltipY;
+                    if (
+                        button === cancelBtn ||
+                        button === addWordBtn ||
+                        button === saveChangesBtn
+                    ) {
+                        tooltipY = rect.bottom + window.pageYOffset - 70;
+                    } else {
+                        tooltipY = rect.bottom + window.pageYOffset + 5;
+                    }
+
+                    tooltip.style.left = `${tooltipX}px`;
+                    tooltip.style.top = `${tooltipY}px`;
+
+                    tooltip.style.display = 'inline-block';
+                    tooltip.style.opacity = 1;
+                }, 500);
+            });
+
+            button.addEventListener('mouseout', function () {
+                clearTimeout(tooltipTimer);
+                tooltip.style.display = 'none';
+                tooltip.style.opacity = 0;
+            });
         });
-
-        button.addEventListener('mouseout', function () {
-            clearTimeout(tooltipTimer);
-            tooltip.style.display = 'none';
-            tooltip.style.opacity = 0;
-        });
-    });
+    }
 });
