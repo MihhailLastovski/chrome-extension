@@ -44,7 +44,22 @@
                 changeWordStatus(element);
             };
 
+            const dropdown = document.createElement('select');
+            dropdown.id = 'statusDropdown';
+
+            // Retrieve statuses from local storage and populate the dropdown
+            chrome.storage.local.get('customStatuses', function (result) {
+                const customStatuses = result.customStatuses || [];
+                customStatuses.forEach(status => {
+                    const option = document.createElement('option');
+                    option.value = status;
+                    option.text = status;
+                    dropdown.appendChild(option);
+                });
+            });
+
             submenuContainer.appendChild(foundBtn);
+            submenuContainer.appendChild(dropdown);
             submenuContainer.appendChild(captureScreenshotBtn);
 
             // Дизайн кнопок на внешней странице
@@ -79,14 +94,17 @@
             return new Promise((resolve) => setTimeout(resolve, ms));
         }
 
+
+        //var selectedStatus;
         async function changeWordStatus(element) {
             const listId = element.getAttribute('data-list-id');
+            const selectedStatus = document.getElementById('statusDropdown').value
 
             document.querySelectorAll('.highlighted').forEach((el) => {
                 if (
                     el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
                 ) {
-                    if (el.getAttribute('status') === 'found') {
+                    if (el.hasAttribute('status')) {
                         el.style.backgroundColor = 'transparent';
                         el.removeAttribute('status');
                         chrome.storage.local.get('wordLists', (result) => {
@@ -123,7 +141,7 @@
                             colorMappings[highlightColorRestore] ||
                             highlightColorRestore;
 
-                        el.setAttribute('status', 'found');
+                        el.setAttribute('status', selectedStatus);
                         chrome.storage.local.get('wordLists', (result) => {
                             const wordLists = result.wordLists || [];
 
@@ -134,7 +152,7 @@
                                             wordObj.word.trim().toLowerCase() ===
                                             el.innerHTML.toLowerCase()
                                         ) {
-                                            wordObj['status'] = 'Found';
+                                            wordObj['status'] = selectedStatus;
                                         }
                                     });
                                 }
@@ -421,6 +439,13 @@ function doPost(e) {
             });
             const wordLists = result.wordLists || [];
 
+            const statusesResult = await new Promise((resolve) => {
+                chrome.storage.local.get('customStatuses', (data) => {
+                    resolve(data);
+                });
+            });
+            const statusesLists = statusesResult.customStatuses || [];
+
             function findWordInWordLists(word) {
                 for (const wordList of wordLists) {
                     if (wordList.words && wordList.id === listId) {
@@ -447,9 +472,16 @@ function doPost(e) {
                     ) {
                         if (searchRegex.test(text)) {
                             const foundWord = findWordInWordLists(searchText);
-                            const isWordFound =
-                                foundWord && foundWord['status'] === 'Found';
-                            const colorStyle = isWordFound
+                            const status = foundWord.status;
+                            /*
+                            console.log(foundWord, status);
+                            console.log(statusesLists);
+                            */
+                            const isValid = statusesLists.includes(status);
+                            /*const isWordFound =
+                                console.log(status)
+                                foundWord && foundWord['status'] === status;*/
+                            const colorStyle = isValid
                                 ? `background-color: ${
                                     colorMappings[highlightColorRestore] ||
                                     highlightColorRestore
@@ -482,6 +514,17 @@ function doPost(e) {
                             highlightTextNode(childNode);
                         });
                     }
+                }
+
+                async function isValidStatus(status) {
+                    return new Promise((resolve) => {
+                        chrome.storage.local.get('customStatuses', (result) => {
+                            const customStatuses = result.customStatuses || [];
+                            // Check if the status exists in the list of custom statuses
+                            const isValid = customStatuses.includes(status);
+                            resolve(isValid);
+                        });
+                    });
                 }
 
                 // Проверка, является ли узел потомком элемента style или script

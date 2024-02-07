@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="dropdown-content">
                 <a href="popup.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
                 <a href="guide.html"><i class="fa fa-file-text" aria-hidden="true"></i> Apps Script guide</a>
+                <a href="statuses.html"><i class="fa fa-book" aria-hidden="true"></i> Statuses</a>
                 <a href="settings.html"><i class="fa fa-cog" aria-hidden="true"></i> Settings</a>
                 <a href="about.html"><i class="fa fa-info-circle" aria-hidden="true"></i> About</a>
             </div>

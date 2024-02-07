@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link id="styleLink" rel="stylesheet" type="text/css" href="../style/styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="../script/header.js"></script>
+    <script src="../script/styleScript.js"></script>
+    <script src="../script/statusesScript.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <h2>Create Custom Statuses</h2>
+
+    <form id="customStatusForm">
+        <label for="status">Custom Status:</label>
+        <input type="text" id="status" name="status" required>
+        <button type="button" id="addButton">Add</button>
+    </form>
+
+    <h3>Custom Statuses:</h3>
+    <ul id="customStatusList"></ul>
+
+    <button type="button" id="cancelBtn" class="listFormBtn">Go back</button>
+</body>
+</html>
