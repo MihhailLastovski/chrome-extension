@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     div.className = 'header';
     div.innerHTML = `
         <div class="dropdown">
-            <i class="fa-2x fa fa-bars" aria-hidden="true"></i>
+            <i class="fa-2x fa fa-bars" aria-hidden="true" style="color: #FFFFFF;"></i>
             <div class="dropdown-content">
                 <a href="popup.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
                 <a href="guide.html"><i class="fa fa-file-text" aria-hidden="true"></i> Apps Script guide</a>
