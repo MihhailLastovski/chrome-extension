@@ -10,8 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 <a href="settings.html"><i class="fa fa-cog" aria-hidden="true"></i> Settings</a>
                 <a href="about.html"><i class="fa fa-info-circle" aria-hidden="true"></i> About</a>
             </div>
-        </div>        
-        <h1 class="heading">Highlight Off</h1>
+        </div>   
+        <img src="../images/RS2883_Alpha_Logo.png" id="alphaLogo" alt="logo" width="50">       
+        <!--h1 class="heading">Highlight Off</h1-->
         <label class="switch">
             <input class="toggleSwitch" type="checkbox">
             <span class="slider"></span>
@@ -21,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
     body.insertBefore(div, body.firstChild);
 
     const toggleSwitch = document.querySelector('.toggleSwitch');
-    const heading = document.querySelector('.heading');
+    //const heading = document.querySelector('.heading');
     const searchTextInput = document.getElementById('searchText');
     const highlightBtn = document.getElementById('highlightBtn');
     let active;
@@ -46,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function updateUIState() {
-        heading.innerText = active ? 'Highlight On' : 'Highlight Off';
+        //heading.innerText = active ? 'Highlight On' : 'Highlight Off';
         searchTextInput &&
             highlightBtn &&
             (searchTextInput.disabled = highlightBtn.disabled = !active);

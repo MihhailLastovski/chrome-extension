@@ -43,7 +43,6 @@ input {
   padding: 8px;
   font-size: 14px;
   width: 100px;
-  /*border: 1px solid var(--main-grey);*/
   border: 1px solid var(--main-black);
   background-color: var(--main-white);
   color: var(--main-black);
@@ -51,7 +50,6 @@ input {
 }
 
 input::placeholder {
-  /*color: var(--main-grey);*/
   color: var(--main-black);
 }
 
@@ -113,10 +111,9 @@ i {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /*background-color: var(--main-light-green);*/
   background-color: var(--main-purple);
-  /*color: var(--main-white);*/
   color: #FFFFFF;
+  max-height: 35px;
 }
 
 .toggleViewSwitch {
@@ -127,6 +124,13 @@ i {
   display: inline-block;
   cursor: pointer;
   margin-left: 5%; 
+}
+
+#alphaLogo {
+  margin-top: 15%; 
+  border: 6pt solid white;
+  border-radius: 40px;
+  z-index: 2;
 }
 
 /* Menu */
