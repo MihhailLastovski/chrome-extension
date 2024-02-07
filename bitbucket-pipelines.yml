@@ -1,7 +1,7 @@
 pipelines:
   default:
     - step:
-        name: Sync GitHub Mirror
+        name: Sync GitHub Mirror (chrome-extension)
         image: alpine/git:latest
         clone:
           enabled: false
@@ -9,3 +9,14 @@ pipelines:
           - git clone --bare git@bitbucket.org:chrome-ex/chrome-extension.git
           - cd chrome-extension.git
           - git push --mirror git@github.com:MihhailLastovski/chrome-extension.git
+
+    - step:
+        name: Push Code to text_highlighter_ext
+        image: alpine/git:latest
+        clone:
+          enabled: false
+        script:
+          - git clone --bare git@bitbucket.org:chrome-ex/chrome-extension.git
+          - cd chrome-extension.git
+          - git remote add text_highlighter_ext https://dev.thisisalpha.com/bitbucket/scm/intern/text_highlighter_ext.git
+          - git push --mirror text_highlighter_ext
