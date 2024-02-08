@@ -128,9 +128,11 @@ i {
 
 #alphaLogo {
   margin-top: 15%; 
-  border: 6pt solid white;
+  margin-left: 6%;
+  border: 6pt solid var(--main-white);
   border-radius: 40px;
   z-index: 2;
+  background-color: var(--main-white);
 }
 
 /* Menu */
@@ -140,9 +142,9 @@ i {
 
 .dropdown-content {
   margin-left: -5%;
-  margin-top: 18px;
+  margin-top: 5px;
   min-width: 150px;
-  height: 505px;
+  height: auto;
   display: none;
   position: absolute;
   background-color: var(--main-white); 
@@ -223,13 +225,17 @@ i {
 footer {
   background-color: var(--main-purple);
   color: #FFFFFF;
-  padding: 1%;
   text-align: center;
   position: fixed;
   bottom: 0;
   width: 100%;
+  height: 35px;
   margin-top: auto;
   margin-left: -8px;
+}
+
+#searchText {
+  margin-top: 8%;
 }
 
 /* Content */
@@ -293,6 +299,7 @@ input[type=file] {
   background: var(--main-white);
   border-radius: 10px;
   border: 1px solid var(--main-black);
+  margin-top: 5%;
 }
 
 input[type=file]::file-selector-button {
@@ -333,7 +340,17 @@ input[type=file]::file-selector-button {
 /* List.html - adding form */
 
 #buttonsInLists {
-  margin-bottom: 5%;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 10px;
+
+}
+
+#buttonsInLists button { 
+  padding: 0px;
+  width: 33px;
+  height: 33px;
 }
 
 .list-words {
@@ -364,13 +381,13 @@ input[type=file]::file-selector-button {
 
 #colorPicker {
   -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
-  width: 48px;
-  height: 50px;
+  width: 33px;
+  height: 40px;
   background-color: transparent;
   border: none;
   cursor: pointer;
+  padding: 0px;
 }
 
 #colorPicker::-webkit-color-swatch {

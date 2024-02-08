@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const newList = {
                     id: Date.now().toString(),
                     name: listName,
-                    color: highlightingColor || '#b3ff99',
+                    color: highlightingColor || '#FC0365',
                     words: words,
                 };
 
