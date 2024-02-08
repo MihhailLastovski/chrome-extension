@@ -4,20 +4,6 @@ if (!window.hasRun) {
 
     let submenuContainer;
 
-    chrome.storage.local.get('submenuIsActive', function (data) {
-        var submenuIsActive = data.submenuIsActive;
-
-        if (submenuIsActive === true) {
-            document.addEventListener('mouseover', function (event) {
-                const target = event.target;
-                if (target.classList.contains('highlighted')) {
-                    createSubmenu(target);
-                    submenuContainer.style.display = 'block';
-                }
-            });
-        }
-    });
-
     const colorMappings = {
         '#b3ff99': '#ecffe6',
         cyan: '#b3ffff',
@@ -552,10 +538,20 @@ function doPost(e) {
                         element.outerHTML = textContent;
                     });
             }
+        } else if (request.action === 'submenuStatusUpdating') {
+            const submenuIsActive = request.submenuIsActive || false;
+
+            document.addEventListener('mouseover', function (event) {
+                const target = event.target;
+                if (target.classList.contains('highlighted')) {
+                    createSubmenu(target);
+                    if (submenuIsActive === true) {
+                        submenuContainer.style.display = 'block';
+                    } else {
+                        submenuContainer.style.display = 'none';
+                    }
+                }
+            });
         }
-        // else if (request.action === 'submenuStatusUpdating') {
-        //     submenuIsActive = request.submenuIsActive;
-        //     console.log(submenuIsActive);
-        // }
     });
 }

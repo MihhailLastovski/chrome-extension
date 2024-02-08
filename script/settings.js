@@ -19,9 +19,14 @@ document.addEventListener('DOMContentLoaded', function () {
     submenuCheckbox.addEventListener('change', function () {
         const submenuIsActive = submenuCheckbox.checked;
         chrome.storage.local.set({ submenuIsActive: submenuIsActive });
-        /*chrome.tabs.sendMessage({
-            action: 'submenuStatusUpdating',
-            submenuIsActive: submenuIsActive,
-        });*/
+        chrome.tabs.query(
+            { active: true, currentWindow: true },
+            function (tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: 'submenuStatusUpdating',
+                    submenuIsActive: submenuIsActive,
+                });
+            }
+        );
     });
 });
