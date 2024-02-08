@@ -15,6 +15,9 @@
         function createSubmenu(element) {
             if (!submenuContainer) {
                 submenuContainer = document.createElement('div');
+                submenuContainer.style.height = "200px"
+                submenuContainer.style.width = "250px"
+                submenuContainer.style.backgroundColor = "green"
                 submenuContainer.className = 'submenu-container';
                 document.body.appendChild(submenuContainer);
             }
@@ -46,6 +49,7 @@
 
             const dropdown = document.createElement('select');
             dropdown.id = 'statusDropdown';
+            //dropdown.style.overflowY = 'auto';
 
             // Retrieve statuses from local storage and populate the dropdown
             chrome.storage.local.get('customStatuses', function (result) {
@@ -56,11 +60,21 @@
                     option.text = status;
                     dropdown.appendChild(option);
                 });
+                // Check the number of options
+                console.log(customStatuses.length);
+                if (customStatuses.length > 3) {
+                    // If there are more than 2 options, add overflow-y: scroll
+                    dropdown.style.overflowY = 'auto';
+                    dropdown.style.maxHeight = '120px';
+                } else {
+                    // If there are 2 or fewer options, remove overflow-y property
+                    dropdown.style.overflowY = 'hidden'; // or 'visible' if you prefer
+                }
             });
 
+            submenuContainer.appendChild(captureScreenshotBtn);
             submenuContainer.appendChild(foundBtn);
             submenuContainer.appendChild(dropdown);
-            submenuContainer.appendChild(captureScreenshotBtn);
 
             // Дизайн кнопок на внешней странице
             const buttonStyles = {
