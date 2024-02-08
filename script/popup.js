@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
             chrome.action.setBadgeText({
                 text: count > 0 ? count.toString() : '',
             });
-            chrome.action.setBadgeBackgroundColor({ color: '#b3ff99' });
+            chrome.action.setBadgeBackgroundColor({ color: '#FC0365' });
             counterElem.innerHTML = `Word counter: ${count}`;
             chrome.storage.local.set({ count: count });
         }
@@ -239,11 +239,6 @@ document.addEventListener('DOMContentLoaded', function () {
     newListBtn.addEventListener('click', function () {
         window.location.href = 'list.html';
     });
-
-    // const settingsBtn = document.getElementById("settingsBtn");
-    // settingsBtn.addEventListener("click", function () {
-    //   window.location.href = "settings.html";
-    // });
 
     async function counterUpdating() {
         const result = await new Promise((resolve, reject) => {
