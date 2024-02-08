@@ -6,10 +6,10 @@ To link two private repositories, you can use the approach of adding remote repo
 
 2. Navigate to the local directory of your main repository (https://{`username`}@bitbucket.org/chrome-ex/chrome-extension.git).
 
-	  ```bash
-	  cd /path/to/your/local/repository
+	```bash
+	cd /path/to/your/local/repository
 	git remote add additional https://dev.thisisalpha.com/bitbucket/scm/intern/text_highlighter_ext.git	
-	 ```
+	```
 
 	*Here, "additional" is just a name you choose for the remote repository. You can choose any unique name.*
 	Now you have two remote repositories: "origin" for the main repository and "additional" for the extra one.
