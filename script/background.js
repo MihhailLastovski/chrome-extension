@@ -46,6 +46,10 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     }
 });
 
+chrome.storage.local.get('submenuIsActive', function (data) {
+    chrome.storage.local.set({ submenuIsActive: data.submenuIsActive });
+});
+
 //Добавление высплывающего окна
 // chrome.contextMenus.onClicked.addListener(function (info, event) {
 //   if (info.menuItemId === "myContextMenu") {
