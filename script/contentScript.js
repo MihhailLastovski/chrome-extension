@@ -4,6 +4,20 @@ if (!window.hasRun) {
 
     let submenuContainer;
 
+    chrome.storage.local.get('submenuIsActive', function (data) {
+        var submenuIsActive = data.submenuIsActive;
+
+        if (submenuIsActive === true) {
+            document.addEventListener('mouseover', function (event) {
+                const target = event.target;
+                if (target.classList.contains('highlighted')) {
+                    createSubmenu(target);
+                    submenuContainer.style.display = 'block';
+                }
+            });
+        }
+    });
+
     const colorMappings = {
         '#b3ff99': '#ecffe6',
         cyan: '#b3ffff',
@@ -99,7 +113,6 @@ if (!window.hasRun) {
                                         wordObj.word.trim().toLowerCase() ===
                                         el.innerHTML.toLowerCase()
                                     ) {
-                                        //wordObj['status'] = 'Found';
                                         delete wordObj['status'];
                                     }
                                 });
@@ -111,14 +124,6 @@ if (!window.hasRun) {
                         });
                     });
                 } else {
-                    // const colorMappings = {
-                    //     '#b3ff99': '#ecffe6',
-                    //     cyan: '#b3ffff',
-                    //     yellow: '#ffffb3',
-                    //     pink: '#ffe6ea',
-                    //     blueviolet: '#cda5f3',
-                    // };
-
                     el.style.backgroundColor =
                         colorMappings[highlightColorRestore] ||
                         highlightColorRestore;
@@ -397,14 +402,6 @@ function doPost(e) {
 
         */
 
-    document.addEventListener('mouseover', function (event) {
-        const target = event.target;
-        if (target.classList.contains('highlighted')) {
-            createSubmenu(target);
-            submenuContainer.style.display = 'block';
-        }
-    });
-
     async function highlightText(searchText, highlightColor, listId = null) {
         highlightColorRestore = highlightColor;
         const resultOld = await new Promise((resolve, reject) => {
@@ -456,11 +453,11 @@ function doPost(e) {
                               }; border: 4px solid ${highlightColor};`
                             : `border: 4px solid ${highlightColor};`;
                         if (node.parentNode.className !== 'highlighted') {
-                            let replacementText = `<span class="highlighted" style="${colorStyle}" onmouseover="window.showSubmenu(this)">$&</span>`;
+                            let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
                             let newNode = document.createElement('span');
                             newNode.className = 'highlightedP';
                             if (listId) {
-                                replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}" onmouseover="window.showSubmenu(this)">$&</span>`;
+                                replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
                                 newNode.setAttribute('data-list-id', listId);
                             }
                             const replacedText = text.replace(
@@ -556,5 +553,9 @@ function doPost(e) {
                     });
             }
         }
+        // else if (request.action === 'submenuStatusUpdating') {
+        //     submenuIsActive = request.submenuIsActive;
+        //     console.log(submenuIsActive);
+        // }
     });
 }

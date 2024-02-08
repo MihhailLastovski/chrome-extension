@@ -14,14 +14,14 @@ document.addEventListener('DOMContentLoaded', function () {
         <img src="../images/RS2883_Alpha_Logo.png" id="alphaLogo" alt="logo" width="50">       
         <!--h1 class="heading">Highlight Off</h1-->
         <label class="switch">
-            <input class="toggleSwitch" type="checkbox">
+            <input id="highlightCheckbox" class="toggleSwitch" type="checkbox">
             <span class="slider"></span>
         </label>`;
 
     var body = document.querySelector('body');
     body.insertBefore(div, body.firstChild);
 
-    const toggleSwitch = document.querySelector('.toggleSwitch');
+    const toggleSwitch = document.getElementById('highlightCheckbox');
     //const heading = document.querySelector('.heading');
     const searchTextInput = document.getElementById('searchText');
     const highlightBtn = document.getElementById('highlightBtn');
