@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     div.className = 'header';
     div.innerHTML = `
         <div class="dropdown">
-            <i class="fa-2x fa fa-bars" aria-hidden="true"></i>
+            <i class="fa-2x fa fa-bars" aria-hidden="true" style="color: #FFFFFF;"></i>
             <div class="dropdown-content">
                 <a href="popup.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
                 <a href="guide.html"><i class="fa fa-file-text" aria-hidden="true"></i> Apps Script guide</a>
@@ -11,18 +11,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 <a href="settings.html"><i class="fa fa-cog" aria-hidden="true"></i> Settings</a>
                 <a href="about.html"><i class="fa fa-info-circle" aria-hidden="true"></i> About</a>
             </div>
-        </div>        
-        <h1 class="heading">Highlight Off</h1>
+        </div>   
+        <img src="../images/RS2883_Alpha_Logo.png" id="alphaLogo" alt="logo" width="50">       
+        <!--h1 class="heading">Highlight Off</h1-->
         <label class="switch">
-            <input class="toggleSwitch" type="checkbox">
+            <input id="highlightCheckbox" class="toggleSwitch" type="checkbox">
             <span class="slider"></span>
         </label>`;
 
     var body = document.querySelector('body');
     body.insertBefore(div, body.firstChild);
 
-    const toggleSwitch = document.querySelector('.toggleSwitch');
-    const heading = document.querySelector('.heading');
+    const toggleSwitch = document.getElementById('highlightCheckbox');
+    //const heading = document.querySelector('.heading');
     const searchTextInput = document.getElementById('searchText');
     const highlightBtn = document.getElementById('highlightBtn');
     let active;
@@ -44,10 +45,23 @@ document.addEventListener('DOMContentLoaded', function () {
         active = !active;
         chrome.storage.local.set({ isActive: active });
         updateUIState();
+
+        if (active === false) {
+            chrome.tabs.query(
+                { active: true, currentWindow: true },
+                function (tabs) {
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        action: 'removeHighlight',
+                    });
+                }
+            );
+            chrome.action.setBadgeText({ text: '' });
+            chrome.storage.local.set({ count: 0 });
+        }
     });
 
     function updateUIState() {
-        heading.innerText = active ? 'Highlight On' : 'Highlight Off';
+        //heading.innerText = active ? 'Highlight On' : 'Highlight Off';
         searchTextInput &&
             highlightBtn &&
             (searchTextInput.disabled = highlightBtn.disabled = !active);

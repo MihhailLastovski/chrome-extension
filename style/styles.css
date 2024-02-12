@@ -1,24 +1,30 @@
 @import url('https://fonts.googleapis.com/css?family=Pacifico|Roboto:300,700');
 
 [data-theme="light"] {
-  --main-light-green: #b3ff99;
-  --main-medium-green: #8cff66;
-  --main-dark-green: #2db300;
-  --main-white: #ecffe6;
-  --main-black: #061a00;
-  --main-grey: #ccc;
+  /*--main-light-green: #b3ff99; */ 
+  /* --main-medium-green: #8cff66; */
+  /*--main-dark-green: #2db300;*/
+  --main-purple: #3B1269;
+  --main-magenta: #FC0365;
+  --main-light-magenta: #FD68A4;
+  --main-white: #ffffff;
+  --main-black: #320115;
+  /*--main-grey: #ccc;*/
   label i.fa.fa-sun-o {
     display: none;
   }
 }
 
 [data-theme="dark"] {
-  --main-light-green: #4e7043;
-  --main-medium-green: #458131;
-  --main-dark-green: #3c931f;
-  --main-black: #ecffe6;
-  --main-white: black;
-  --main-grey: #666;
+  /* --main-light-green: #4e7043; */
+  /* --main-medium-green: #458131; */
+  /*--main-dark-green: #3c931f;*/
+  --main-purple: #3B1269;
+  --main-magenta: #FC0365;
+  --main-light-magenta: #FD68A4;
+  --main-black: #ffffff;
+  --main-white: #19000a;
+  /* --main-grey: #666; */
   label i.fa.fa-moon-o {
     display: none; 
   }
@@ -37,12 +43,14 @@ input {
   padding: 8px;
   font-size: 14px;
   width: 100px;
-  border: 1px solid var(--main-grey);
+  border: 1px solid var(--main-black);
+  background-color: var(--main-white);
+  color: var(--main-black);
   border-radius: 4px;
 }
 
 input::placeholder {
-  color: var(--main-grey);
+  color: var(--main-black);
 }
 
 h2 {
@@ -58,18 +66,15 @@ p {
 button {
   cursor: pointer;
   padding: 8px 12px;
-  background-color: var(--main-light-green);
+  color: var(--main-black);
+  background-color: var(--main-magenta);
+  border-color: var(--main-black);
   border-radius: 5px;
 }
 
 input[type=file]::file-selector-button:hover,
 button:hover {
-  background-color: var(--main-medium-green);
-}
-
-input[type=file]::file-selector-button:active,
-button:active {
-  background-color: var(--main-dark-green);
+  background-color: var(--main-light-magenta);
 }
  
 .divsWithText {
@@ -81,8 +86,12 @@ button:active {
 }
 
 hr {
-  border: 1px solid var(--main-light-green);
+  border: 1px solid var(--main-purple);
   margin: 5%;
+}
+
+i {
+  color: var(--main-black);
 }
 
 .tooltip {
@@ -102,7 +111,9 @@ hr {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: var(--main-light-green);
+  background-color: var(--main-purple);
+  color: #FFFFFF;
+  max-height: 35px;
 }
 
 .toggleViewSwitch {
@@ -115,6 +126,15 @@ hr {
   margin-left: 5%; 
 }
 
+#alphaLogo {
+  margin-top: 15%; 
+  margin-left: 6%;
+  border: 6pt solid var(--main-white);
+  border-radius: 40px;
+  z-index: 2;
+  background-color: var(--main-white);
+}
+
 /* Menu */
 .dropdown {
   margin-left: 5%;
@@ -122,13 +142,13 @@ hr {
 
 .dropdown-content {
   margin-left: -5%;
-  margin-top: 18px;
+  margin-top: 5px;
   min-width: 150px;
-  height: 505px;
+  height: auto;
   display: none;
   position: absolute;
-  background-color: var(--main-light-green); 
-  box-shadow: 0px 4px 8px 0px var(--main-black);
+  background-color: var(--main-white); 
+  box-shadow: 0px 4px 8px 0px var(--main-magenta);
   z-index: 1;
 }
 
@@ -141,7 +161,7 @@ hr {
 }
 
 .dropdown-content a:hover {
-  background-color: var(--main-dark-green);
+  background-color: var(--main-light-magenta);
 }
 
 .fa-2x.fa.fa-bars {
@@ -172,7 +192,7 @@ hr {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--main-grey);
+  background-color: var(--main-black);
   -webkit-transition: .4s;
   transition: .4s;
   border-radius: 24px;
@@ -192,11 +212,7 @@ hr {
 }
 
 .toggleSwitch:checked + .slider {
-  background-color: var(--main-medium-green);
-}
-
-.toggleSwitch:focus + .slider {
-  box-shadow: 0 0 1px var(--main-medium-green);
+  background-color: var(--main-magenta);
 }
 
 .toggleSwitch:checked + .slider:before {
@@ -206,16 +222,20 @@ hr {
 }
 
 /* Popup.html */
-.footerDiv {
-  background-color: var(--main-light-green);
-  color: var(--main-black);
-  padding: 1%;
+footer {
+  background-color: var(--main-purple);
+  color: #FFFFFF;
   text-align: center;
   position: fixed;
   bottom: 0;
   width: 100%;
+  height: 35px;
   margin-top: auto;
   margin-left: -8px;
+}
+
+#searchText {
+  margin-top: 8%;
 }
 
 /* Content */
@@ -241,7 +261,8 @@ hr {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 1px solid var(--main-grey);
+  /*border: 1px solid var(--main-grey);*/
+  border: 1px solid var(--main-black);
   cursor: pointer;
 }
 
@@ -254,11 +275,11 @@ hr {
   border: 2px solid var(--main-white);
 }
 
-.content .color-option.green { background-color: #b3ff99; border-color: #b3ff99;}
-.content .color-option.cyan { background-color: cyan; border-color: cyan;}
-.content .color-option.yellow { background-color: yellow; border-color: yellow;}
-.content .color-option.pink { background-color: pink; border-color: pink;}
-.content .color-option.blueviolet { background-color: blueviolet; border-color: blueviolet;}
+.content .color-option.green { background-color: var(--main-magenta); border-color: var(--main-magenta);}
+.content .color-option.cyan { background-color: #2BB5A7; border-color: #2BB5A7;}
+.content .color-option.yellow { background-color: #D66513; border-color: #D66513;}
+.content .color-option.pink { background-color: #0067F4; border-color: #0067F4;}
+.content .color-option.blueviolet { background-color: var(--main-purple); border-color: var(--main-purple);}
 
 /* Lists */
 .content #newListBtn {
@@ -278,12 +299,13 @@ input[type=file] {
   background: var(--main-white);
   border-radius: 10px;
   border: 1px solid var(--main-black);
+  margin-top: 5%;
 }
 
 input[type=file]::file-selector-button {
   margin-right: 20px;
   border: none;
-  background: var(--main-light-green);
+  background: var(--main-magenta);
   padding: 10px 20px;
   border-radius: 10px;
   color: var(--main-black);
@@ -295,7 +317,7 @@ input[type=file]::file-selector-button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 2px solid var(--main-light-green);
+  border: 2px solid var(--main-black);
   border-radius: 10px;
   padding: 10px;
   margin-bottom: 10px;
@@ -318,11 +340,21 @@ input[type=file]::file-selector-button {
 /* List.html - adding form */
 
 #buttonsInLists {
-  margin-bottom: 5%;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  gap: 10px;
+
+}
+
+#buttonsInLists button { 
+  padding: 0px;
+  width: 33px;
+  height: 33px;
 }
 
 .list-words {
-  border: 2px solid var(--main-light-green);
+  border: 2px solid var(--main-black);
   border-radius: 10px;
   padding: 10px;
   margin-top: 5%;
@@ -332,6 +364,7 @@ input[type=file]::file-selector-button {
   display: flex;
   align-items: center;
   gap: 10px; 
+  margin-top: 10px;
 }
 
 .listFormBtn {
@@ -348,14 +381,15 @@ input[type=file]::file-selector-button {
 
 #colorPicker {
   -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
-  width: 48px;
-  height: 50px;
+  width: 33px;
+  height: 40px;
   background-color: transparent;
   border: none;
   cursor: pointer;
+  padding: 0px;
 }
+
 #colorPicker::-webkit-color-swatch {
   border-radius: 5px;
   border: none;
@@ -393,8 +427,8 @@ input[type=file]::file-selector-button {
   height: 20px; 
   background-color: var(--main-white); 
   border-width: 2px; 
-  border-style: solid; 
-  border-color: var(--main-medium-green); 
+  border-style: solid;
+  border-color: var(--main-magenta); 
   border-radius: 2px; 
   box-shadow: none; 
 }
@@ -412,8 +446,8 @@ input[type=file]::file-selector-button {
   margin-left: 0px; 
   left: 0px; 
   top: 0px; 
-  text-align: center; 
-  background-color: var(--main-medium-green); 
+  text-align: center;
+  background-color: var(--main-magenta); 
   font-size: 10px; 
   height: 22px; 
   width: 22px; 
@@ -423,10 +457,10 @@ input[type=file]::file-selector-button {
   resize: none;
   height: 22px;
   width: 100%;
-  border: none;
+  border: 2pt solid var(--main-black);
+  border-radius: 5px;
   padding: 8px;
   font-size: 14px;
-  border-radius: 4px;
   color: var(--main-black);
   background-color: var(--main-white);
 }
@@ -439,8 +473,17 @@ input[type=file]::file-selector-button {
   outline: none;
 }
 
-/* guide.html */
+.word-label {
+  margin-left: 10px;
+  font-size: 14px;
+  width: 100%;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
+/* guide.html */
 .code-block {
   background-color: var(--main-black);
   padding: 10px;

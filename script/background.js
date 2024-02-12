@@ -23,15 +23,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 });
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.action === 'requestScreenshot') {
-        chrome.tabs.captureVisibleTab(
-            null,
-            { format: 'png' },
-            function (dataUrl) {
-                saveScreenshot(dataUrl);
-            }
-        );
-    } else if (request.action === 'captureScreenshot') {
+    if (request.action === 'captureScreenshot') {
         chrome.tabs.captureVisibleTab(
             null,
             { format: 'png' },
@@ -42,35 +34,28 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         return true;
     } else if (request.action === 'downloadScreenshot') {
         const dataUrl = request.dataUrl;
-
-        chrome.downloads.download(
-            {
+        chrome.storage.local.get('saveAs', function (data) {
+            const saveAs = data.saveAs || false;
+            chrome.downloads.download({
                 url: dataUrl,
-                filename: 'screenshot.png',
-                saveAs: false, // false
-            },
-            function (downloadId) {
-                console.log('Download initiated with ID:', downloadId);
-            }
-        );
-
+                filename: 'screenshots/screenshot.png',
+                saveAs: !saveAs,
+            });
+        });
         return true;
+    } else if (request.action === 'updateBadge') {
+        const count = request.count || 0;
+        chrome.action.setBadgeText({
+            text: count > 0 ? count.toString() : '',
+        });
+        chrome.action.setBadgeBackgroundColor({ color: '#FC0365' });
+        chrome.storage.local.set({ count: count });
     }
 });
 
-function saveScreenshot(dataUrl) {
-    // Сохранение в Downloads
-    chrome.storage.local.get('saveAs', function (data) {
-        const saveAs = true; //data.saveAs || false;
-        const filename = 'screenshot.png';
-
-        chrome.downloads.download({
-            url: dataUrl,
-            filename: filename,
-            saveAs: false,
-        });
-    });
-}
+chrome.storage.local.get('submenuIsActive', function (data) {
+    chrome.storage.local.set({ submenuIsActive: data.submenuIsActive });
+});
 
 //Добавление высплывающего окна
 // chrome.contextMenus.onClicked.addListener(function (info, event) {
