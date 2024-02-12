@@ -11,11 +11,23 @@
             pink: '#ffe6ea',
             blueviolet: '#cda5f3',
         };
+        const iconsLink = document.createElement('link');
+        iconsLink.rel = 'stylesheet';
+        iconsLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
+        document.head.appendChild(iconsLink);
 
+
+        let selectedValue = '';
         function createSubmenu(element) {
             if (!submenuContainer) {
                 submenuContainer = document.createElement('div');
+                submenuContainer.id = 'submenu'
                 submenuContainer.className = 'submenu-container';
+                submenuContainer.style.height = "150px";
+                submenuContainer.style.width = "275px";
+                submenuContainer.style.backgroundColor = '#3c931f';
+                submenuContainer.style.textAlign = 'center';
+                submenuContainer.style.border = '1px solid black';
                 document.body.appendChild(submenuContainer);
             }
 
@@ -35,32 +47,104 @@
                 addNoteToElement(element);
             };
 
-            submenuContainer.appendChild(captureScreenshotBtn);
-            submenuContainer.appendChild(addNoteBtn);
+            
             const foundBtn = document.createElement('button');
             foundBtn.id = 'foundBtn';
-            foundBtn.innerHTML = 'Word founded';
+            foundBtn.innerHTML = 'Attach Status';
             foundBtn.onclick = function () {
                 changeWordStatus(element);
             };
+            const unfoundBtn = document.createElement('button');
+            unfoundBtn.id = 'unfoundBtn';
+            unfoundBtn.innerHTML = 'Remove Status';
+            unfoundBtn.onclick = function () {
+                removeWordsStatus(element);
+            };
+            const selectContainer = document.createElement('div');
+            selectContainer.classList.add('custom-select');
+            selectContainer.id = 'statusDropdown';
+            selectContainer.style.textAlign = 'center';
 
-            const dropdown = document.createElement('select');
-            dropdown.id = 'statusDropdown';
+            // Create the selected item container
+            const selectedContainer = document.createElement('div');
+            selectedContainer.classList.add('select-selected');
+            selectedContainer.textContent = 'Select Status';
+            const selectIcon = document.createElement('i')
+            selectIcon.classList.add('fa', 'fa-angle-down');
+            selectIcon.setAttribute('aria-hidden', 'true');
+            selectIcon.style.float = 'right';
+            selectedContainer.appendChild(selectIcon);
+            //css
+            selectedContainer.style.backgroundColor = '#ccc';
+            selectedContainer.style.padding = '10px';
+            selectedContainer.addEventListener('mouseenter', function() {
+                selectedContainer.style.backgroundColor = '#e6e6e6';
+                selectedContainer.style.cursor = 'pointer'; 
+            });
+            
+            selectedContainer.addEventListener('mouseleave', function() {
+                selectedContainer.style.backgroundColor = '#ccc'; 
+            });
 
-            // Retrieve statuses from local storage and populate the dropdown
+            // Create the dropdown items container
+            const itemsContainer = document.createElement('div');
+            itemsContainer.classList.add('select-items');
+            itemsContainer.classList.add('select-hide');
+
+            //css
+            itemsContainer.style.position = 'absolute';
+            itemsContainer.style.backgroundColor = '#f1f1f1';
+            itemsContainer.style.width = '100%';
+            itemsContainer.style.maxHeight = '120px';
+            itemsContainer.style.overflowY = 'auto';
+            itemsContainer.style.border = '1px solid #ccc';
+            itemsContainer.style.display = 'none';
+
+            //populates droplist
             chrome.storage.local.get('customStatuses', function (result) {
                 const customStatuses = result.customStatuses || [];
                 customStatuses.forEach(status => {
-                    const option = document.createElement('option');
-                    option.value = status;
-                    option.text = status;
-                    dropdown.appendChild(option);
+                    const option = document.createElement('div');
+                    option.textContent = status;
+                    // css
+                    option.style.padding = '10px';
+
+                    option.addEventListener('mouseenter', function() {
+                        option.style.backgroundColor = '#e6e6e6'; 
+                        option.style.cursor = 'pointer'; 
+                    });
+
+                    option.addEventListener('mouseleave', function() {
+                        option.style.backgroundColor = 'inherit'; 
+                    });
+                    //css
+
+                    option.addEventListener('click', function() {
+                        console.log('Selected:', status);
+                        selectedContainer.textContent = status; // Update selected item
+                        selectedContainer.appendChild(selectIcon);
+                        selectedValue = status;
+                        itemsContainer.classList.add('select-hide'); // Hide dropdown
+                    });
+                    itemsContainer.appendChild(option);
                 });
             });
 
-            submenuContainer.appendChild(foundBtn);
-            submenuContainer.appendChild(dropdown);
+            selectContainer.appendChild(foundBtn);
+            selectContainer.appendChild(unfoundBtn);
+            selectContainer.appendChild(selectedContainer);
+            selectContainer.appendChild(itemsContainer);
+            selectedContainer.addEventListener('click', function() {
+                if (itemsContainer.style.display === 'none') {
+                    itemsContainer.style.display = 'block'; // Show dropdown
+                } else {
+                    itemsContainer.style.display = 'none'; // Hide dropdown
+                }
+            });
+
+            submenuContainer.appendChild(addNoteBtn);
             submenuContainer.appendChild(captureScreenshotBtn);
+            submenuContainer.appendChild(selectContainer);
 
             // Дизайн кнопок на внешней странице
             const buttonStyles = {
@@ -68,9 +152,15 @@
                 padding: '8px 12px',
                 backgroundColor: '#b3ff99',
                 borderRadius: '5px',
+                margin: '3px',
             };
             for (const childElement of submenuContainer.children) {
                 Object.assign(childElement.style, buttonStyles);
+            }
+            for (const childElement of selectContainer.children) {
+                if (childElement.tagName.toLowerCase() === 'button') {
+                    Object.assign(childElement.style, buttonStyles);
+                }
             }
 
             submenuContainer.style.position = 'absolute';
@@ -93,18 +183,53 @@
         function sleep(ms) {
             return new Promise((resolve) => setTimeout(resolve, ms));
         }
-
-
-        //var selectedStatus;
-        async function changeWordStatus(element) {
+        async function removeWordsStatus(element) {
             const listId = element.getAttribute('data-list-id');
-            const selectedStatus = document.getElementById('statusDropdown').value
+            //const selectedContainer = document.getElementById('statusDropdown').innerHTML;
 
             document.querySelectorAll('.highlighted').forEach((el) => {
                 if (
                     el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
                 ) {
-                    if (el.hasAttribute('status')) {
+                    //if (el.hasAttribute('status')) {
+                        el.style.backgroundColor = 'transparent';
+                        el.removeAttribute('status');
+                        chrome.storage.local.get('wordLists', (result) => {
+                            const wordLists = result.wordLists || [];
+
+                            const updatedWordLists = wordLists.map((wordList) => {
+                                if (wordList.words && wordList.id === listId) {
+                                    wordList.words.forEach((wordObj) => {
+                                        if (
+                                            wordObj.word.trim().toLowerCase() ===
+                                            el.innerHTML.toLowerCase()
+                                        ) {
+                                            delete wordObj['status'];
+                                        }
+                                    });
+                                }
+                                return wordList;
+                            });
+                            chrome.storage.local.set({
+                                wordLists: updatedWordLists,
+                            });
+                        });
+                    //}
+                }
+            });
+        }
+
+
+        //var selectedStatus;
+        async function changeWordStatus(element) {
+            const listId = element.getAttribute('data-list-id');
+            //const selectedContainer = document.getElementById('statusDropdown').innerHTML;
+
+            document.querySelectorAll('.highlighted').forEach((el) => {
+                if (
+                    el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+                ) {
+                    /*if (el.hasAttribute('status')) {
                         el.style.backgroundColor = 'transparent';
                         el.removeAttribute('status');
                         chrome.storage.local.get('wordLists', (result) => {
@@ -128,7 +253,7 @@
                                 wordLists: updatedWordLists,
                             });
                         });
-                    } else {
+                    }*/ //else {
                         // const colorMappings = {
                         //     '#b3ff99': '#ecffe6',
                         //     cyan: '#b3ffff',
@@ -141,7 +266,7 @@
                             colorMappings[highlightColorRestore] ||
                             highlightColorRestore;
 
-                        el.setAttribute('status', selectedStatus);
+                        el.setAttribute('status', selectedValue );
                         chrome.storage.local.get('wordLists', (result) => {
                             const wordLists = result.wordLists || [];
 
@@ -152,7 +277,7 @@
                                             wordObj.word.trim().toLowerCase() ===
                                             el.innerHTML.toLowerCase()
                                         ) {
-                                            wordObj['status'] = selectedStatus;
+                                            wordObj['status'] = selectedValue ;
                                         }
                                     });
                                 }
@@ -162,7 +287,7 @@
                                 wordLists: updatedWordLists,
                             });
                         });
-                    }
+                    //}
                 }
             });
         }
