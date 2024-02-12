@@ -38,8 +38,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             const saveAs = data.saveAs || false;
             chrome.downloads.download({
                 url: dataUrl,
-                filename: 'screenshot.png',
-                saveAs: saveAs,
+                filename: 'screenshots/screenshot.png',
+                saveAs: !saveAs,
             });
         });
         return true;
