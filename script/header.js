@@ -44,6 +44,17 @@ document.addEventListener('DOMContentLoaded', function () {
         active = !active;
         chrome.storage.local.set({ isActive: active });
         updateUIState();
+
+        if (active === false) {
+            chrome.tabs.query(
+                { active: true, currentWindow: true },
+                function (tabs) {
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        action: 'removeHighlight',
+                    });
+                }
+            );
+        }
     });
 
     function updateUIState() {

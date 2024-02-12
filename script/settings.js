@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     chrome.storage.local.get('submenuIsActive', function (data) {
-        submenuCheckbox.checked = data.submenuIsActive || false;
-        console.log(data.submenuIsActive);
+        const submenuIsActive = data.submenuIsActive;
+        submenuCheckbox.checked = submenuIsActive || false;
     });
 
     saveAsCheckbox.addEventListener('change', function () {

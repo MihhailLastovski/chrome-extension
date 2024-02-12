@@ -3,6 +3,31 @@ if (!window.hasRun) {
     window.hasRun = true;
 
     let submenuContainer;
+    var submenuIsActive;
+
+    document.addEventListener('mouseover', showSubmenus);
+
+    function showSubmenus(event) {
+        const target = event.target;
+        if (target.classList.contains('highlighted')) {
+            createSubmenu(target);
+            if (submenuIsActive === false) {
+                submenuContainer.style.display = 'none';
+            } else {
+                submenuContainer.style.display = 'block';
+            }
+        }
+    }
+
+    async function getBooleanFromLocalStorage() {
+        const result = await new Promise((resolve, reject) => {
+            chrome.storage.local.get('submenuIsActive', (result) => {
+                resolve(result);
+            });
+        });
+        submenuIsActive = result.submenuIsActive || false;
+    }
+    getBooleanFromLocalStorage();
 
     const colorMappings = {
         '#b3ff99': '#ecffe6',
@@ -25,6 +50,7 @@ if (!window.hasRun) {
         captureScreenshotBtn.id = 'captureScreenshotBtn';
         captureScreenshotBtn.innerHTML = 'Capture Screenshot';
         captureScreenshotBtn.onclick = function () {
+            document.removeEventListener('mouseover', showSubmenus);
             captureScreenshot(element);
         };
 
@@ -35,8 +61,6 @@ if (!window.hasRun) {
             addNoteToElement(element);
         };
 
-        submenuContainer.appendChild(captureScreenshotBtn);
-        submenuContainer.appendChild(addNoteBtn);
         const foundBtn = document.createElement('button');
         foundBtn.id = 'foundBtn';
         foundBtn.innerHTML = 'Word founded';
@@ -44,6 +68,7 @@ if (!window.hasRun) {
             changeWordStatus(element);
         };
 
+        submenuContainer.appendChild(addNoteBtn);
         submenuContainer.appendChild(foundBtn);
         submenuContainer.appendChild(captureScreenshotBtn);
 
@@ -72,7 +97,6 @@ if (!window.hasRun) {
             addNoteBtn.style.display = 'none';
             foundBtn.style.display = 'none';
         };
-        submenuContainer.style.display = 'block';
     }
 
     function sleep(ms) {
@@ -149,8 +173,6 @@ if (!window.hasRun) {
         });
 
         const listId = element.getAttribute('data-list-id');
-        // captureScreenshotBtn.style.display = 'none';
-        // addNoteBtn.style.display = 'none';
         submenuContainer.style.display = 'none';
         await sleep(1000);
 
@@ -170,9 +192,7 @@ if (!window.hasRun) {
                 removeFromList(element);
             }
             restoreHighlight(element);
-            // captureScreenshotBtn.style.display = 'block';
-            // addNoteBtn.style.display = 'block';
-            submenuContainer.style.display = 'block';
+            document.addEventListener('mouseover', showSubmenus);
         });
     }
 
@@ -421,19 +441,7 @@ if (!window.hasRun) {
                     });
             }
         } else if (request.action === 'submenuStatusUpdating') {
-            const submenuIsActive = request.submenuIsActive || false;
-
-            document.addEventListener('mouseover', function (event) {
-                const target = event.target;
-                if (target.classList.contains('highlighted')) {
-                    createSubmenu(target);
-                    if (submenuIsActive === true) {
-                        submenuContainer.style.display = 'block';
-                    } else {
-                        submenuContainer.style.display = 'none';
-                    }
-                }
-            });
+            getBooleanFromLocalStorage();
         }
     });
 }
