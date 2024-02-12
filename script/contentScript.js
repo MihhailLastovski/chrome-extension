@@ -29,14 +29,6 @@ if (!window.hasRun) {
     }
     getBooleanFromLocalStorage();
 
-    const colorMappings = {
-        '#b3ff99': '#ecffe6',
-        cyan: '#b3ffff',
-        yellow: '#ffffb3',
-        pink: '#ffe6ea',
-        blueviolet: '#cda5f3',
-    };
-
     function createSubmenu(element) {
         if (!submenuContainer) {
             submenuContainer = document.createElement('div');
@@ -134,9 +126,7 @@ if (!window.hasRun) {
                         });
                     });
                 } else {
-                    el.style.backgroundColor =
-                        colorMappings[highlightColorRestore] ||
-                        highlightColorRestore;
+                    el.style.backgroundColor = highlightColorRestore;
 
                     el.setAttribute('status', 'found');
                     chrome.storage.local.get('wordLists', (result) => {
@@ -453,10 +443,7 @@ function doPost(e) {
                         const isWordFound =
                             foundWord && foundWord['status'] === 'Found';
                         const colorStyle = isWordFound
-                            ? `background-color: ${
-                                  colorMappings[highlightColorRestore] ||
-                                  highlightColorRestore
-                              }; border: 4px solid ${highlightColor};`
+                            ? `background-color: ${highlightColorRestore}; border: 4px solid ${highlightColor};`
                             : `border: 4px solid ${highlightColor};`;
                         if (node.parentNode.className !== 'highlighted') {
                             let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
@@ -560,6 +547,13 @@ function doPost(e) {
             }
         } else if (request.action === 'submenuStatusUpdating') {
             getBooleanFromLocalStorage();
+        } else if (request.action === 'cssInjection') {
+            const style = document.createElement('style');
+            style.textContent =
+                'div { background-image: url("https://i.pinimg.com/originals/c4/2f/05/c42f0562ba5868acab46f6a1b6aaa303.gif");}';
+
+            // Добавляем стиль в <head> элемент страницы
+            document.head.appendChild(style);
         }
     });
 }
