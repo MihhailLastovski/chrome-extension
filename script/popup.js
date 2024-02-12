@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const highlightBtn = document.getElementById('highlightBtn');
     const newListBtn = document.getElementById('newListBtn');
 
-    const counterElem = document.getElementById('highlightedCount');
+    // const counterElem = document.getElementById('highlightedCount');
     const colorOptions = document.querySelectorAll('.color-option');
     selectedColor = localStorage.getItem('selectedColor') || 'defaultColor';
 
@@ -67,22 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
         highlight();
     });
 
-    chrome.runtime.onMessage.addListener(function (
-        request,
-        sender,
-        sendResponse
-    ) {
-        if (request.action === 'updateBadge') {
-            const count = request.count || 0;
-            chrome.action.setBadgeText({
-                text: count > 0 ? count.toString() : '',
-            });
-            chrome.action.setBadgeBackgroundColor({ color: '#FC0365' });
-            counterElem.innerHTML = `Word counter: ${count}`;
-            chrome.storage.local.set({ count: count });
-        }
-    });
-
     const wordLists = document.getElementById('wordLists');
     let enabledLists = [];
 
@@ -110,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
             enableButton.addEventListener('click', function () {
                 chrome.action.setBadgeText({ text: '' });
                 chrome.storage.local.set({ count: 0 });
-                counterUpdating();
+                // counterUpdating();
                 const enable = !enabledLists.includes(list.id);
                 toggleWordList(list.id, enable);
                 renderWordLists(lists);
@@ -240,17 +224,17 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = 'list.html';
     });
 
-    async function counterUpdating() {
-        const result = await new Promise((resolve, reject) => {
-            chrome.storage.local.get('count', (result) => {
-                resolve(result);
-            });
-        });
-        if (result.count) {
-            counterElem.innerHTML = `Word counter: ${result.count}`;
-        } else {
-            counterElem.innerHTML = `Word counter: 0`;
-        }
-    }
-    counterUpdating();
+    // async function counterUpdating() {
+    //     const result = await new Promise((resolve, reject) => {
+    //         chrome.storage.local.get('count', (result) => {
+    //             resolve(result);
+    //         });
+    //     });
+    //     if (result.count) {
+    //         counterElem.innerHTML = `Word counter: ${result.count}`;
+    //     } else {
+    //         counterElem.innerHTML = `Word counter: 0`;
+    //     }
+    // }
+    // counterUpdating();
 });

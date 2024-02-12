@@ -54,6 +54,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                 }
             );
+            chrome.action.setBadgeText({ text: '' });
+            chrome.storage.local.set({ count: 0 });
         }
     });
 
