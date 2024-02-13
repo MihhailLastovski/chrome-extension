@@ -32,21 +32,10 @@ if (!window.hasRun) {
     let selectedValue = '';
 
     function createSubmenu(element) {
-        // if (!submenuContainer) {
-        //     submenuContainer = document.createElement('div');
-        //     submenuContainer.className = 'submenu-container';
-        //     document.body.appendChild(submenuContainer);
-        // }
-
         if (!submenuContainer) {
             submenuContainer = document.createElement('div');
             submenuContainer.id = 'submenu';
-            submenuContainer.className = 'submenu-container';
-            submenuContainer.style.height = '150px';
-            submenuContainer.style.width = '275px';
-            submenuContainer.style.backgroundColor = '#3c931f';
-            submenuContainer.style.textAlign = 'center';
-            submenuContainer.style.border = '1px solid black';
+            submenuContainer.className = 'exa-radience-submenu';
             document.body.appendChild(submenuContainer);
         }
 
@@ -57,11 +46,63 @@ if (!window.hasRun) {
         iconsLink.rel = 'stylesheet';
         iconsLink.href =
             'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
+
+        // const webPageCss = document.createElement('link');
+        // webPageCss.rel = 'stylesheet';
+        // webPageCss.type = 'text/css';
+        // webPageCss.href = '../style/web-page.css';
+
+        const webPageCss = document.createElement('style');
+        webPageCss.textContent = `
+            .exa-radience-submenu, 
+            .custom-select, 
+            .select-selected {
+                background-color: #FC0365; 
+                border: 1px solid white;
+                border-radius: 5px;
+                font-family: 'Roboto', sans-serif;
+                font-size: 15px; 
+                text-align: center;  
+                position: absolute;
+            }
+            
+            .exa-radience-submenu {
+                height: 150px;
+                width: 275px;
+            }
+            
+            .exa-radience-submenu button {
+                cursor: pointer;
+                padding: 8px 12px;
+                margin: 3px;
+            };
+            
+            
+            .select-selected {
+                padding: 10px;
+            }
+            
+            .select-selected:hover {
+                background-color: #FD68A4; 
+                cursor: pointer;
+            }
+            
+            .select-items {
+                position: absolute;
+                width: 100%;
+                max-height: 120px;
+                overflow-y: auto;
+                display: none;
+            }
+            `;
+
+
         document.head.appendChild(iconsLink);
+        document.head.appendChild(webPageCss);
 
         const captureScreenshotBtn = document.createElement('button');
         captureScreenshotBtn.id = 'captureScreenshotBtn';
-        captureScreenshotBtn.innerHTML = 'Capture Screenshot';
+        captureScreenshotBtn.innerHTML = '<i class="fa fa-camera-retro" aria-hidden="true"></i>';
         captureScreenshotBtn.onclick = function () {
             document.removeEventListener('mouseover', showSubmenus);
             captureScreenshot(element);
@@ -89,45 +130,47 @@ if (!window.hasRun) {
         };
 
         const selectContainer = document.createElement('div');
-        selectContainer.classList.add('custom-select');
         selectContainer.id = 'statusDropdown';
-        selectContainer.style.textAlign = 'center';
+        selectContainer.className = 'custom-select';
+        
+        // selectContainer.style.textAlign = 'center';
 
         // Create the selected item container
         const selectedContainer = document.createElement('div');
-        selectedContainer.classList.add('select-selected');
-        selectedContainer.textContent = 'Select Status';
-        const selectIcon = document.createElement('i');
-        selectIcon.classList.add('fa', 'fa-angle-down');
-        selectIcon.setAttribute('aria-hidden', 'true');
-        selectIcon.style.float = 'right';
-        selectedContainer.appendChild(selectIcon);
+        selectedContainer.className = 'select-selected';
+        selectedContainer.innerHTML = 'Select Status <i class="fa fa-angle-down" aria-hidden="true"></i>';
+        // selectedContainer.textContent = 'Select Status';
+        // const selectIcon = document.createElement('i');
+        // selectIcon.classList.add('fa', 'fa-angle-down');
+        // selectIcon.setAttribute('aria-hidden', 'true');
+        // selectIcon.style.float = 'right';
+        // selectedContainer.appendChild(selectIcon);
 
         //css
-        selectedContainer.style.backgroundColor = '#ccc';
-        selectedContainer.style.padding = '10px';
-        selectedContainer.addEventListener('mouseenter', function () {
-            selectedContainer.style.backgroundColor = '#e6e6e6';
-            selectedContainer.style.cursor = 'pointer';
-        });
+        // selectedContainer.style.backgroundColor = '#ccc';
+        // selectedContainer.style.padding = '10px';
+        // selectedContainer.addEventListener('mouseenter', function () {
+        //     selectedContainer.style.backgroundColor = '#e6e6e6';
+        //     selectedContainer.style.cursor = 'pointer';
+        // });
 
-        selectedContainer.addEventListener('mouseleave', function () {
-            selectedContainer.style.backgroundColor = '#ccc';
-        });
+        // selectedContainer.addEventListener('mouseleave', function () {
+        //     selectedContainer.style.backgroundColor = '#ccc';
+        // });
 
         // Create the dropdown items container
         const itemsContainer = document.createElement('div');
-        itemsContainer.classList.add('select-items');
-        itemsContainer.classList.add('select-hide');
+        itemsContainer.className = 'select-items';
+        // itemsContainer.classList.add('select-hide');
 
         //css
-        itemsContainer.style.position = 'absolute';
-        itemsContainer.style.backgroundColor = '#f1f1f1';
-        itemsContainer.style.width = '100%';
-        itemsContainer.style.maxHeight = '120px';
-        itemsContainer.style.overflowY = 'auto';
-        itemsContainer.style.border = '1px solid #ccc';
-        itemsContainer.style.display = 'none';
+        // itemsContainer.style.position = 'absolute';
+        // itemsContainer.style.backgroundColor = '#f1f1f1';
+        // itemsContainer.style.width = '100%';
+        // itemsContainer.style.maxHeight = '120px';
+        // itemsContainer.style.overflowY = 'auto';
+        // itemsContainer.style.border = '1px solid #ccc';
+        // itemsContainer.style.display = 'none';
 
         //populates droplist
         chrome.storage.local.get('customStatuses', function (result) {
@@ -179,23 +222,23 @@ if (!window.hasRun) {
         submenuContainer.appendChild(selectContainer);
 
         // Дизайн кнопок на внешней странице
-        const buttonStyles = {
-            cursor: 'pointer',
-            padding: '8px 12px',
-            backgroundColor: '#b3ff99',
-            borderRadius: '5px',
-            margin: '3px',
-        };
-        for (const childElement of submenuContainer.children) {
-            Object.assign(childElement.style, buttonStyles);
-        }
-        for (const childElement of selectContainer.children) {
-            if (childElement.tagName.toLowerCase() === 'button') {
-                Object.assign(childElement.style, buttonStyles);
-            }
-        }
+        // const buttonStyles = {
+        //     cursor: 'pointer',
+        //     padding: '8px 12px',
+        //     backgroundColor: '#b3ff99',
+        //     borderRadius: '5px',
+        //     margin: '3px',
+        // };
+        // for (const childElement of submenuContainer.children) {
+        //     Object.assign(childElement.style, buttonStyles);
+        // }
+        // for (const childElement of selectContainer.children) {
+        //     if (childElement.tagName.toLowerCase() === 'button') {
+        //         Object.assign(childElement.style, buttonStyles);
+        //     }
+        // }
 
-        submenuContainer.style.position = 'absolute';
+        // submenuContainer.style.position = 'absolute';
         submenuContainer.style.left = `${
             element.getBoundingClientRect().left
         }px`;
