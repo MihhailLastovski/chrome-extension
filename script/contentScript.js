@@ -29,7 +29,7 @@ if (!window.hasRun) {
     }
     getBooleanFromLocalStorage();
 
-    let selectedValue = '';
+    let selectedValue;
 
     function createSubmenu(element) {
         // if (!submenuContainer) {
@@ -74,6 +74,12 @@ if (!window.hasRun) {
             addNoteToElement(element);
         };
 
+        const notificationDiv = document.createElement('div');
+        notificationDiv.id = 'notifyDiv';
+        notificationDiv.width = '100%';
+        notificationDiv.style.display = 'none';
+        notificationDiv.style.transition = 'opacity 0.5s ease-in-out';
+
         const foundBtn = document.createElement('button');
         foundBtn.id = 'foundBtn';
         foundBtn.innerHTML = 'Attach Status';
@@ -96,7 +102,8 @@ if (!window.hasRun) {
         // Create the selected item container
         const selectedContainer = document.createElement('div');
         selectedContainer.classList.add('select-selected');
-        selectedContainer.textContent = 'Select Status';
+        console.log(element.status)
+        selectedContainer.textContent = 'Select Status';//
         const selectIcon = document.createElement('i');
         selectIcon.classList.add('fa', 'fa-angle-down');
         selectIcon.setAttribute('aria-hidden', 'true');
@@ -162,6 +169,7 @@ if (!window.hasRun) {
         // submenuContainer.appendChild(addNoteBtn);
         // submenuContainer.appendChild(foundBtn);
         // submenuContainer.appendChild(captureScreenshotBtn);
+        selectContainer.appendChild(notificationDiv);
         selectContainer.appendChild(foundBtn);
         selectContainer.appendChild(unfoundBtn);
         selectContainer.appendChild(selectedContainer);
@@ -215,74 +223,105 @@ if (!window.hasRun) {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
+    function showNotification(color, text) {
+        const notificationDiv = document.getElementById('notifyDiv');
+        notificationDiv.textContent = text;
+        notificationDiv.style.backgroundColor = color;
+        notificationDiv.style.display = 'block';
+        notificationDiv.style.opacity = '1';
+    
+        // Hide the notification div after a certain duration
+        setTimeout(() => {
+            notificationDiv.style.opacity = '0'; // Fade out the notification div
+            setTimeout(() => {
+                notificationDiv.style.display = 'none'; // Hide after it fades out
+            }, 500);
+        }, 3000);
+    }
+    
+
     async function changeWordStatus(element) {
-        const listId = element.getAttribute('data-list-id');
+        if(selectedValue) {
+            const listId = element.getAttribute('data-list-id');
 
-        document.querySelectorAll('.highlighted').forEach((el) => {
-            if (
-                el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
-            ) {
-                el.style.backgroundColor = highlightColorRestore;
-
-                el.setAttribute('status', selectedValue);
-                chrome.storage.local.get('wordLists', (result) => {
-                    const wordLists = result.wordLists || [];
-
-                    const updatedWordLists = wordLists.map((wordList) => {
-                        if (wordList.words && wordList.id === listId) {
-                            wordList.words.forEach((wordObj) => {
-                                if (
-                                    wordObj.word.trim().toLowerCase() ===
-                                    el.innerHTML.toLowerCase()
-                                ) {
-                                    wordObj['status'] = selectedValue;
-                                }
-                            });
-                        }
-                        return wordList;
+            document.querySelectorAll('.highlighted').forEach((el) => {
+                if (
+                    el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+                ) {
+                    el.style.backgroundColor = highlightColorRestore;
+    
+                    el.setAttribute('status', selectedValue);
+                    chrome.storage.local.get('wordLists', (result) => {
+                        const wordLists = result.wordLists || [];
+    
+                        const updatedWordLists = wordLists.map((wordList) => {
+                            if (wordList.words && wordList.id === listId) {
+                                wordList.words.forEach((wordObj) => {
+                                    if (
+                                        wordObj.word.trim().toLowerCase() ===
+                                        el.innerHTML.toLowerCase()
+                                    ) {
+                                        wordObj['status'] = selectedValue;
+                                    }
+                                });
+                            }
+                            return wordList;
+                        });
+                        chrome.storage.local.set({
+                            wordLists: updatedWordLists,
+                        });
+                        showNotification('green',"Status added")
                     });
-                    chrome.storage.local.set({
-                        wordLists: updatedWordLists,
-                    });
-                });
-            }
-        });
+                }
+            });
+        }
+        else{
+            showNotification('red', "Select status")
+        }
+        
     }
 
     async function removeWordsStatus(element) {
-        const listId = element.getAttribute('data-list-id');
-        //const selectedContainer = document.getElementById('statusDropdown').innerHTML;
-
-        document.querySelectorAll('.highlighted').forEach((el) => {
-            if (
-                el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
-            ) {
-                //if (el.hasAttribute('status')) {
-                el.style.backgroundColor = 'transparent';
-                el.removeAttribute('status');
-                chrome.storage.local.get('wordLists', (result) => {
-                    const wordLists = result.wordLists || [];
-
-                    const updatedWordLists = wordLists.map((wordList) => {
-                        if (wordList.words && wordList.id === listId) {
-                            wordList.words.forEach((wordObj) => {
-                                if (
-                                    wordObj.word.trim().toLowerCase() ===
-                                    el.innerHTML.toLowerCase()
-                                ) {
-                                    delete wordObj['status'];
-                                }
-                            });
-                        }
-                        return wordList;
+        const styleAttribute = element.getAttribute('style');
+        if (!styleAttribute || !styleAttribute.includes('background-color')) {
+            showNotification('red', "Status is missing")
+        }
+        else {
+            const listId = element.getAttribute('data-list-id');
+            //const selectedContainer = document.getElementById('statusDropdown').innerHTML;
+    
+            document.querySelectorAll('.highlighted').forEach((el) => {
+                if (
+                    el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+                ) {
+                    //if (el.hasAttribute('status')) {
+                    el.style.backgroundColor = 'transparent';
+                    el.removeAttribute('status');
+                    chrome.storage.local.get('wordLists', (result) => {
+                        const wordLists = result.wordLists || [];
+    
+                        const updatedWordLists = wordLists.map((wordList) => {
+                            if (wordList.words && wordList.id === listId) {
+                                wordList.words.forEach((wordObj) => {
+                                    if (
+                                        wordObj.word.trim().toLowerCase() ===
+                                        el.innerHTML.toLowerCase()
+                                    ) {
+                                        delete wordObj['status'];
+                                    }
+                                });
+                            }
+                            return wordList;
+                        });
+                        chrome.storage.local.set({
+                            wordLists: updatedWordLists,
+                        });
+                        showNotification('green',"Status removed")
                     });
-                    chrome.storage.local.set({
-                        wordLists: updatedWordLists,
-                    });
-                });
-                //}
-            }
-        });
+                    //}
+                }
+            });
+        }
     }
 
     async function captureScreenshot(element) {
