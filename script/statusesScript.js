@@ -52,10 +52,15 @@ document.addEventListener('DOMContentLoaded', function () {
     function deleteCustomStatus(status, listItem) {
         chrome.storage.local.get('customStatuses', function (result) {
             const existingStatuses = result.customStatuses || [];
-            const updatedStatuses = existingStatuses.filter(s => s !== status);
-            chrome.storage.local.set({ customStatuses: updatedStatuses }, function () {
-                listItem.remove();
-            });
+            const updatedStatuses = existingStatuses.filter(
+                (s) => s !== status
+            );
+            chrome.storage.local.set(
+                { customStatuses: updatedStatuses },
+                function () {
+                    listItem.remove();
+                }
+            );
         });
     }
 
@@ -68,8 +73,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    const cancelBtn = document.getElementById('cancelBtn');
-    cancelBtn.addEventListener('click', function () {
-        window.location.href = 'popup.html';
-    });
+    // const cancelBtn = document.getElementById('cancelBtn');
+    // cancelBtn.addEventListener('click', function () {
+    //     window.location.href = 'popup.html';
+    // });
 });
