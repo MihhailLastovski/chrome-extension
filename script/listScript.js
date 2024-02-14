@@ -207,16 +207,16 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         const listName = listNameInput.value.trim();
         const words = [];
-    
+
         const wordDivs = document.querySelectorAll('#wordsContainer > div');
         wordDivs.forEach((wordDiv) => {
             const checkbox = wordDiv.querySelector('.word-checkbox');
             const wordLabel = wordDiv.querySelector('.word-label');
-    
+
             if (wordLabel) {
                 const word = wordLabel.textContent;
                 const enabled = checkbox.checked;
-    
+
                 if (word !== '') {
                     words.push({
                         word: word,
@@ -225,10 +225,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-    
-        chrome.storage.local.get('dataURL', function(result) {
+
+        chrome.storage.local.get('dataURL', function (result) {
             const urlFromInput = result.dataURL;
-    
+
             if (listName && words.length > 0) {
                 if (!listId) {
                     const newList = {
@@ -236,9 +236,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         name: listName,
                         color: highlightingColor || '#FC0365',
                         words: words,
-                        dataURL: urlFromInput
+                        dataURL: urlFromInput,
                     };
-    
+
                     saveWordList(newList);
                 }
                 window.location.href = 'popup.html';
@@ -247,20 +247,19 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    chrome.windows.onFocusChanged.addListener(function(window) {
-
+    chrome.windows.onFocusChanged.addListener(function (window) {
         const listName = listNameInput.value.trim() || 'unnamed';
         const words = [];
-    
+
         const wordDivs = document.querySelectorAll('#wordsContainer > div');
         wordDivs.forEach((wordDiv) => {
             const checkbox = wordDiv.querySelector('.word-checkbox');
             const wordLabel = wordDiv.querySelector('.word-label');
-    
+
             if (wordLabel) {
                 const word = wordLabel.textContent;
                 const enabled = checkbox.checked;
-    
+
                 if (word !== '') {
                     words.push({
                         word: word,
@@ -269,24 +268,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         });
-    
-        chrome.storage.local.get('dataURL', function(result) {
+
+        chrome.storage.local.get('dataURL', function (result) {
             const urlFromInput = result.dataURL;
-    
-            if (listName && words.length > 0) {
-                if (!listId) {
-                    const newList = {
-                        id: Date.now().toString(),
-                        name: listName,
-                        color: highlightingColor || '#FC0365',
-                        words: words,
-                        dataURL: urlFromInput
-                    };
-    
+
+            if (!listId) {
+                const newList = {
+                    id: Date.now().toString(),
+                    name: listName,
+                    color: highlightingColor || '#FC0365',
+                    words: words,
+                    dataURL: urlFromInput,
+                };
+                if (listName && words.length > 0) {
                     saveWordList(newList);
                 }
-            } else {
-                alert('Enter list name or words');
             }
         });
     });
