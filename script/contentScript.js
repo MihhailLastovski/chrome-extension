@@ -2,8 +2,7 @@ if (!window.hasRun) {
     var highlightColorRestore;
     window.hasRun = true;
 
-    let submenuContainer;
-    var submenuIsActive;
+    var submenuContainer, submenuIsActive;
 
     document.addEventListener('mouseover', showSubmenus);
 
@@ -47,17 +46,11 @@ if (!window.hasRun) {
         iconsLink.href =
             'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
 
-        // const webPageCss = document.createElement('link');
-        // webPageCss.rel = 'stylesheet';
-        // webPageCss.type = 'text/css';
-        // webPageCss.href = '../style/web-page.css';
-
         const webPageCss = document.createElement('style');
         webPageCss.textContent = `
-            .exa-radience-submenu, 
-            .custom-select, 
-            .select-selected {
+            .exa-radience-submenu {
                 background-color: #FC0365; 
+                color: white;
                 border: 1px solid white;
                 border-radius: 5px;
                 font-family: 'Roboto', sans-serif;
@@ -75,39 +68,44 @@ if (!window.hasRun) {
                 cursor: pointer;
                 padding: 8px 12px;
                 margin: 3px;
+                color: white;
+                background-color: #FC0365;
+                border-color: white;
+                border-radius: 5px;
             };
-            
-            
-            .select-selected {
-                padding: 10px;
+
+            .exa-radience-select {
+                justify-content: center;             
             }
-            
-            .select-selected:hover {
-                background-color: #FD68A4; 
+
+            .exa-radience-select-item {
                 cursor: pointer;
+                background-color: #FC0365;
+                border: 1px solid white;
+                border-radius: 5px;
+                margin: 10px;
+                padding: 8px 12px;
             }
-            
-            .select-items {
-                position: absolute;
-                width: 100%;
-                max-height: 120px;
-                overflow-y: auto;
-                display: none;
+
+            .exa-radience-submenu button:hover,
+            .exa-radience-select-item:hover {
+                background-color: #FD68A4;           
             }
             `;
-
 
         document.head.appendChild(iconsLink);
         document.head.appendChild(webPageCss);
 
+        // Скриншот
         const captureScreenshotBtn = document.createElement('button');
         captureScreenshotBtn.id = 'captureScreenshotBtn';
-        captureScreenshotBtn.innerHTML = '<i class="fa fa-camera-retro" aria-hidden="true"></i>';
+        captureScreenshotBtn.innerHTML = 'Capture screenshot';
         captureScreenshotBtn.onclick = function () {
             document.removeEventListener('mouseover', showSubmenus);
             captureScreenshot(element);
         };
 
+        // Заметка
         const addNoteBtn = document.createElement('button');
         addNoteBtn.id = 'addNoteBtn';
         addNoteBtn.innerHTML = 'Add Note';
@@ -115,130 +113,48 @@ if (!window.hasRun) {
             addNoteToElement(element);
         };
 
-        const foundBtn = document.createElement('button');
-        foundBtn.id = 'foundBtn';
-        foundBtn.innerHTML = 'Attach Status';
-        foundBtn.onclick = function () {
+        // Добавить статус
+        const addStatusBtn = document.createElement('button');
+        addStatusBtn.id = 'addStatusBtn';
+        addStatusBtn.innerHTML = 'Attach Status';
+        addStatusBtn.onclick = function () {
             changeWordStatus(element);
         };
 
-        const unfoundBtn = document.createElement('button');
-        unfoundBtn.id = 'unfoundBtn';
-        unfoundBtn.innerHTML = 'Remove Status';
-        unfoundBtn.onclick = function () {
+        // Убрать статус
+        const removeStatusBtn = document.createElement('button');
+        removeStatusBtn.id = 'removeStatusBtn';
+        removeStatusBtn.innerHTML = 'Remove Status';
+        removeStatusBtn.onclick = function () {
             removeWordsStatus(element);
         };
 
-        const selectContainer = document.createElement('div');
-        selectContainer.id = 'statusDropdown';
-        selectContainer.className = 'custom-select';
-        
-        // selectContainer.style.textAlign = 'center';
+        // Отображение статусов
+        var statusesContainer = document.createElement('div');
+        statusesContainer.className = 'exa-radience-select';
+        statusesContainer.innerHTML =
+            '<div class="exa-radience-select-item">...</div>';
+        statusesContainer.style.width = '200px';
+        statusesContainer.style.height = '50px';
+        statusesContainer.style.overflowY = 'auto';
+        statusesContainer.style.backgroundColor = 'white';
 
-        // Create the selected item container
-        const selectedContainer = document.createElement('div');
-        selectedContainer.className = 'select-selected';
-        selectedContainer.innerHTML = 'Select Status <i class="fa fa-angle-down" aria-hidden="true"></i>';
-        // selectedContainer.textContent = 'Select Status';
-        // const selectIcon = document.createElement('i');
-        // selectIcon.classList.add('fa', 'fa-angle-down');
-        // selectIcon.setAttribute('aria-hidden', 'true');
-        // selectIcon.style.float = 'right';
-        // selectedContainer.appendChild(selectIcon);
-
-        //css
-        // selectedContainer.style.backgroundColor = '#ccc';
-        // selectedContainer.style.padding = '10px';
-        // selectedContainer.addEventListener('mouseenter', function () {
-        //     selectedContainer.style.backgroundColor = '#e6e6e6';
-        //     selectedContainer.style.cursor = 'pointer';
-        // });
-
-        // selectedContainer.addEventListener('mouseleave', function () {
-        //     selectedContainer.style.backgroundColor = '#ccc';
-        // });
-
-        // Create the dropdown items container
-        const itemsContainer = document.createElement('div');
-        itemsContainer.className = 'select-items';
-        // itemsContainer.classList.add('select-hide');
-
-        //css
-        // itemsContainer.style.position = 'absolute';
-        // itemsContainer.style.backgroundColor = '#f1f1f1';
-        // itemsContainer.style.width = '100%';
-        // itemsContainer.style.maxHeight = '120px';
-        // itemsContainer.style.overflowY = 'auto';
-        // itemsContainer.style.border = '1px solid #ccc';
-        // itemsContainer.style.display = 'none';
-
-        //populates droplist
         chrome.storage.local.get('customStatuses', function (result) {
             const customStatuses = result.customStatuses || [];
             customStatuses.forEach((status) => {
-                const option = document.createElement('div');
-                option.textContent = status;
-                // css
-                option.style.padding = '10px';
-
-                option.addEventListener('mouseenter', function () {
-                    option.style.backgroundColor = '#e6e6e6';
-                    option.style.cursor = 'pointer';
-                });
-
-                option.addEventListener('mouseleave', function () {
-                    option.style.backgroundColor = 'inherit';
-                });
-                //css
-
-                option.addEventListener('click', function () {
-                    console.log('Selected:', status);
-                    selectedContainer.textContent = status; // Update selected item
-                    selectedContainer.appendChild(selectIcon);
-                    selectedValue = status;
-                    itemsContainer.classList.add('select-hide'); // Hide dropdown
-                });
-                itemsContainer.appendChild(option);
+                const div = document.createElement('div');
+                div.className = 'exa-radience-select-item';
+                div.textContent = status;
+                statusesContainer.appendChild(div);
             });
-        });
-
-        // submenuContainer.appendChild(addNoteBtn);
-        // submenuContainer.appendChild(foundBtn);
-        // submenuContainer.appendChild(captureScreenshotBtn);
-        selectContainer.appendChild(foundBtn);
-        selectContainer.appendChild(unfoundBtn);
-        selectContainer.appendChild(selectedContainer);
-        selectContainer.appendChild(itemsContainer);
-        selectedContainer.addEventListener('click', function () {
-            if (itemsContainer.style.display === 'none') {
-                itemsContainer.style.display = 'block'; // Show dropdown
-            } else {
-                itemsContainer.style.display = 'none'; // Hide dropdown
-            }
         });
 
         submenuContainer.appendChild(addNoteBtn);
         submenuContainer.appendChild(captureScreenshotBtn);
-        submenuContainer.appendChild(selectContainer);
+        submenuContainer.appendChild(addStatusBtn);
+        submenuContainer.appendChild(removeStatusBtn);
+        submenuContainer.appendChild(statusesContainer);
 
-        // Дизайн кнопок на внешней странице
-        // const buttonStyles = {
-        //     cursor: 'pointer',
-        //     padding: '8px 12px',
-        //     backgroundColor: '#b3ff99',
-        //     borderRadius: '5px',
-        //     margin: '3px',
-        // };
-        // for (const childElement of submenuContainer.children) {
-        //     Object.assign(childElement.style, buttonStyles);
-        // }
-        // for (const childElement of selectContainer.children) {
-        //     if (childElement.tagName.toLowerCase() === 'button') {
-        //         Object.assign(childElement.style, buttonStyles);
-        //     }
-        // }
-
-        // submenuContainer.style.position = 'absolute';
         submenuContainer.style.left = `${
             element.getBoundingClientRect().left
         }px`;
@@ -248,9 +164,6 @@ if (!window.hasRun) {
 
         submenuContainer.onmouseleave = function () {
             submenuContainer.style.display = 'none';
-            // captureScreenshotBtn.style.display = 'none';
-            // addNoteBtn.style.display = 'none';
-            // foundBtn.style.display = 'none';
         };
     }
 
@@ -294,13 +207,11 @@ if (!window.hasRun) {
 
     async function removeWordsStatus(element) {
         const listId = element.getAttribute('data-list-id');
-        //const selectedContainer = document.getElementById('statusDropdown').innerHTML;
 
         document.querySelectorAll('.highlighted').forEach((el) => {
             if (
                 el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
             ) {
-                //if (el.hasAttribute('status')) {
                 el.style.backgroundColor = 'transparent';
                 el.removeAttribute('status');
                 chrome.storage.local.get('wordLists', (result) => {
