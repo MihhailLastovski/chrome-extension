@@ -48,50 +48,52 @@ if (!window.hasRun) {
 
         const webPageCss = document.createElement('style');
         webPageCss.textContent = `
-            .exa-radience-submenu {
-                background-color: #FC0365; 
-                color: white;
-                border: 1px solid white;
-                border-radius: 5px;
-                font-family: 'Roboto', sans-serif;
-                font-size: 15px; 
-                text-align: center;  
-                position: absolute;
-            }
-            
-            .exa-radience-submenu {
-                height: 150px;
-                width: 275px;
-            }
-            
-            .exa-radience-submenu button {
-                cursor: pointer;
-                padding: 8px 12px;
-                margin: 3px;
-                color: white;
-                background-color: #FC0365;
-                border-color: white;
-                border-radius: 5px;
-            };
-
-            .exa-radience-select {
-                justify-content: center;             
-            }
-
-            .exa-radience-select-item {
-                cursor: pointer;
-                background-color: #FC0365;
-                border: 1px solid white;
-                border-radius: 5px;
-                margin: 10px;
-                padding: 8px 12px;
-            }
-
-            .exa-radience-submenu button:hover,
-            .exa-radience-select-item:hover {
-                background-color: #FD68A4;           
-            }
-            `;
+        .exa-radience-submenu {
+            height: 150px;
+            width: 240px;
+            background-color: #FC0365; 
+            color: white;
+            border: 1px solid white;
+            border-radius: 5px;
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 15px !important; 
+            text-align: center;  
+            position: absolute;
+        }
+        
+        .exa-radience-submenu button {
+            cursor: pointer;
+            padding: 8px 12px;
+            margin: 3px;
+            color: white;
+            background-color: #FC0365;
+            border-color: white;
+            border-radius: 5px;
+        }
+        
+        .exa-radience-statuses-container { 
+            background-color: white;
+            width: 200px;
+            overflow-y: auto;
+            height: 50px;
+            margin-left: 20px;
+            margin-top: 10px;
+        }  
+        
+        .exa-radience-statuses-container-item {
+            cursor: pointer;
+            background-color: #FC0365;
+            border: 1px solid white;
+            border-radius: 5px;
+            margin: 10px;
+            padding: 8px 12px;
+        }
+        
+        .exa-radience-submenu button:hover,
+        .exa-radience-statuses-container-item:hover {
+            background-color: #FD68A4;           
+        } 
+        `;
 
         document.head.appendChild(iconsLink);
         document.head.appendChild(webPageCss);
@@ -131,20 +133,15 @@ if (!window.hasRun) {
 
         // Отображение статусов
         var statusesContainer = document.createElement('div');
-        statusesContainer.className = 'exa-radience-select';
-        statusesContainer.innerHTML =
-            '<div class="exa-radience-select-item">...</div>';
-        statusesContainer.style.width = '200px';
-        statusesContainer.style.height = '50px';
-        statusesContainer.style.overflowY = 'auto';
-        statusesContainer.style.backgroundColor = 'white';
+        statusesContainer.className = 'exa-radience-statuses-container';
 
         chrome.storage.local.get('customStatuses', function (result) {
             const customStatuses = result.customStatuses || [];
             customStatuses.forEach((status) => {
                 const div = document.createElement('div');
-                div.className = 'exa-radience-select-item';
+                div.className = 'exa-radience-statuses-container-item';
                 div.textContent = status;
+                selectedValue = status;
                 statusesContainer.appendChild(div);
             });
         });
