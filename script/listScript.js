@@ -221,6 +221,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     words.push({
                         word: word,
                         enabled: enabled,
+                        stringID: stringID,
+                        status: wordStatus,
                     });
                 }
             }
@@ -264,6 +266,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     words.push({
                         word: word,
                         enabled: enabled,
+                        stringID: "stringID",
+                        status: "wordStatus",
                     });
                 }
             }
