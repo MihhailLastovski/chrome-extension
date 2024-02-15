@@ -1,9 +1,73 @@
 if (!window.hasRun) {
-    var highlightColorRestore;
+    var highlightColorRestore, submenuContainer, submenuIsActive;
+    let selectedValue = '';
     window.hasRun = true;
 
-    var submenuContainer, submenuIsActive;
+    // Внедрение CSS файла
+    const iconsLink = document.createElement('link');
+    iconsLink.rel = 'stylesheet';
+    iconsLink.href =
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
 
+    const webPageCss = document.createElement('style');
+    webPageCss.textContent = `
+    .exa-radience-submenu {
+        height: 120px;
+        width: 240px;
+        background-color: #FC0365;
+        color: white;
+        border: 1px solid white;
+        border-radius: 5px;
+        font-family: 'Roboto', sans-serif !important;
+        font-size: 15px !important;
+        text-align: center;
+        position: absolute;
+    }
+
+    .exa-radience-submenu button {
+        cursor: pointer;
+        padding: 8px 12px;
+        margin: 3px;
+        color: white;
+        background-color: #FC0365;
+        border-color: white;
+        border-radius: 5px;
+    }
+
+    .exa-radience-submenu #removeStatusBtn {
+        border: none;
+        padding: 2px;
+    }
+
+    .exa-radience-statuses-container {
+        background-color: white;
+        width: 200px;
+        overflow-y: auto;
+        height: 50px;
+        margin-left: 20px;
+        margin-top: 10px;
+    }
+
+    .exa-radience-statuses-container-item {
+        cursor: pointer;
+        background-color: #FD68A4;
+        border: 1px solid white;
+        border-radius: 5px;
+        /*margin: 10px;*/
+        padding: 8px 12px;
+    }
+
+    .exa-radience-submenu button:hover {
+        background-color: #FD68A4;
+    }
+
+    .exa-radience-statuses-container-item:hover {
+        background-color: #FC0365;
+    }
+    `;
+
+    document.head.appendChild(iconsLink);
+    document.head.appendChild(webPageCss);
     document.addEventListener('mouseover', showSubmenus);
 
     function showSubmenus(event) {
@@ -28,8 +92,6 @@ if (!window.hasRun) {
     }
     getBooleanFromLocalStorage();
 
-    let selectedValue = '';
-
     function createSubmenu(element) {
         if (!submenuContainer) {
             submenuContainer = document.createElement('div');
@@ -40,68 +102,11 @@ if (!window.hasRun) {
 
         submenuContainer.innerHTML = '';
 
-        // Внедрение CSS файла
-        const iconsLink = document.createElement('link');
-        iconsLink.rel = 'stylesheet';
-        iconsLink.href =
-            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
-
-        const webPageCss = document.createElement('style');
-        webPageCss.textContent = `
-        .exa-radience-submenu {
-            height: 150px;
-            width: 240px;
-            background-color: #FC0365; 
-            color: white;
-            border: 1px solid white;
-            border-radius: 5px;
-            font-family: 'Roboto', sans-serif !important;
-            font-size: 15px !important; 
-            text-align: center;  
-            position: absolute;
-        }
-        
-        .exa-radience-submenu button {
-            cursor: pointer;
-            padding: 8px 12px;
-            margin: 3px;
-            color: white;
-            background-color: #FC0365;
-            border-color: white;
-            border-radius: 5px;
-        }
-        
-        .exa-radience-statuses-container { 
-            background-color: white;
-            width: 200px;
-            overflow-y: auto;
-            height: 50px;
-            margin-left: 20px;
-            margin-top: 10px;
-        }  
-        
-        .exa-radience-statuses-container-item {
-            cursor: pointer;
-            background-color: #FC0365;
-            border: 1px solid white;
-            border-radius: 5px;
-            margin: 10px;
-            padding: 8px 12px;
-        }
-        
-        .exa-radience-submenu button:hover,
-        .exa-radience-statuses-container-item:hover {
-            background-color: #FD68A4;           
-        } 
-        `;
-
-        document.head.appendChild(iconsLink);
-        document.head.appendChild(webPageCss);
-
         // Скриншот
         const captureScreenshotBtn = document.createElement('button');
         captureScreenshotBtn.id = 'captureScreenshotBtn';
-        captureScreenshotBtn.innerHTML = 'Capture screenshot';
+        captureScreenshotBtn.innerHTML =
+            '<i class="fa-2x fa fa-camera-retro" aria-hidden="true"></i>';
         captureScreenshotBtn.onclick = function () {
             document.removeEventListener('mouseover', showSubmenus);
             captureScreenshot(element);
@@ -110,28 +115,34 @@ if (!window.hasRun) {
         // Заметка
         const addNoteBtn = document.createElement('button');
         addNoteBtn.id = 'addNoteBtn';
-        addNoteBtn.innerHTML = 'Add Note';
+        addNoteBtn.innerHTML =
+            '<i class="fa-2x fa fa-file-text-o" aria-hidden="true"></i>';
         addNoteBtn.onclick = function () {
             addNoteToElement(element);
         };
 
-        // Добавить статус
-        const addStatusBtn = document.createElement('button');
-        addStatusBtn.id = 'addStatusBtn';
-        addStatusBtn.innerHTML = 'Attach Status';
-        addStatusBtn.onclick = function () {
-            changeWordStatus(element);
-        };
+        // // Добавить статус
+        // const addStatusBtn = document.createElement('button');
+        // addStatusBtn.id = 'addStatusBtn';
+        // addStatusBtn.innerHTML = 'Attach Status';
+        // addStatusBtn.onclick = function () {
+        //     changeWordStatus(element);
+        // };
 
         // Убрать статус
         const removeStatusBtn = document.createElement('button');
         removeStatusBtn.id = 'removeStatusBtn';
-        removeStatusBtn.innerHTML = 'Remove Status';
+        removeStatusBtn.innerHTML =
+            '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
         removeStatusBtn.onclick = function () {
             removeWordsStatus(element);
         };
 
         // Отображение статусов
+        var lineDiv = document.createElement('div');
+        lineDiv.style.display = 'flex';
+        lineDiv.style.flexDirection = 'row';
+
         var statusesContainer = document.createElement('div');
         statusesContainer.className = 'exa-radience-statuses-container';
 
@@ -148,9 +159,11 @@ if (!window.hasRun) {
 
         submenuContainer.appendChild(addNoteBtn);
         submenuContainer.appendChild(captureScreenshotBtn);
-        submenuContainer.appendChild(addStatusBtn);
-        submenuContainer.appendChild(removeStatusBtn);
-        submenuContainer.appendChild(statusesContainer);
+        // submenuContainer.appendChild(addStatusBtn);
+        submenuContainer.appendChild(lineDiv);
+
+        lineDiv.appendChild(statusesContainer);
+        lineDiv.appendChild(removeStatusBtn);
 
         submenuContainer.style.left = `${
             element.getBoundingClientRect().left
