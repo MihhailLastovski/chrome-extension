@@ -162,6 +162,8 @@ document.addEventListener('DOMContentLoaded', function () {
         wordInput.value = word;
         wordInput.className = 'word-input';
 
+        const statusLbl = document.createElement('label');
+
         chrome.storage.local.get('wordLists', (result) => {
             const wordLists = result.wordLists || [];
             const foundWord = wordLists
@@ -171,6 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
             wordLabel.style.textDecoration = foundWord?.status
                 ? 'line-through'
                 : 'none';
+            statusLbl.textContent = foundWord?.status || '';
         });
 
         const updateBtn = document.createElement('button');
@@ -199,6 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
         wordDiv.appendChild(checkbox);
         wordDiv.appendChild(label);
         wordDiv.appendChild(wordLabel);
+        wordDiv.appendChild(statusLbl);
         wordDiv.appendChild(updateBtn);
         wordDiv.appendChild(deleteBtn);
 
