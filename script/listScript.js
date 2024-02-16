@@ -102,11 +102,11 @@ document.addEventListener('DOMContentLoaded', function () {
         wordDivs.forEach((wordDiv) => {
             const checkbox = wordDiv.querySelector('.word-checkbox');
             const wordLabel = wordDiv.querySelector('.word-label');
-            const status = wordLabel.dataset.status || '';
 
             if (wordLabel) {
                 const word = wordLabel.textContent;
                 const enabled = checkbox.checked;
+                const status = wordLabel.dataset.status || '';
 
                 if (word !== '') {
                     editedWords.push({
