@@ -103,12 +103,38 @@ if (!window.hasRun) {
         const selectedContainer = document.createElement('div');
         selectedContainer.classList.add('select-selected');
         console.log(element.status)
-        selectedContainer.textContent = 'Select Status';//
+
         const selectIcon = document.createElement('i');
         selectIcon.classList.add('fa', 'fa-angle-down');
         selectIcon.setAttribute('aria-hidden', 'true');
         selectIcon.style.float = 'right';
-        selectedContainer.appendChild(selectIcon);
+        
+        chrome.storage.local.get('wordLists', function (result) {
+            const wordLists = result.wordLists || [];
+            const wordList = wordLists.find((list) => {
+                return list.words && list.words.find((wordObj) => {
+                    return wordObj.word.trim().toLowerCase() === element.innerHTML.trim().toLowerCase();
+                });
+            });
+
+            if (wordList) {
+                const foundWord = wordList.words.find((wordObj) => {
+                    return wordObj.word.trim().toLowerCase() === element.innerHTML.trim().toLowerCase();
+                });
+                if (foundWord && foundWord.status) {
+                    // Set the initial value of the selected status container
+                    selectedContainer.textContent = foundWord.status;
+                    selectedContainer.appendChild(selectIcon);
+                } else {
+                    selectedContainer.textContent = 'Select Status';
+                    selectedContainer.appendChild(selectIcon);
+                }
+            } else {
+                selectedContainer.textContent = 'Select Status';
+                selectedContainer.appendChild(selectIcon);
+            }
+        });
+        
 
         //css
         selectedContainer.style.backgroundColor = '#ccc';
