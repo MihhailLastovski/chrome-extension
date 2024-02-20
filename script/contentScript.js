@@ -141,42 +141,6 @@ if (!window.hasRun) {
         lineDiv.style.display = 'flex';
         lineDiv.style.flexDirection = 'row';
 
-        // // Create the selected item container
-        // const selectedContainer = document.createElement('div');
-        // selectedContainer.classList.add('select-selected');
-        // console.log(element.status)
-
-        // const selectIcon = document.createElement('i');
-        // selectIcon.classList.add('fa', 'fa-angle-down');
-        // selectIcon.setAttribute('aria-hidden', 'true');
-        // selectIcon.style.float = 'right';
-
-        // chrome.storage.local.get('wordLists', function (result) {
-        //     const wordLists = result.wordLists || [];
-        //     const wordList = wordLists.find((list) => {
-        //         return list.words && list.words.find((wordObj) => {
-        //             return wordObj.word.trim().toLowerCase() === element.innerHTML.trim().toLowerCase();
-        //         });
-        //     });
-
-        //     if (wordList) {
-        //         const foundWord = wordList.words.find((wordObj) => {
-        //             return wordObj.word.trim().toLowerCase() === element.innerHTML.trim().toLowerCase();
-        //         });
-        //         if (foundWord && foundWord.status) {
-        //             // Set the initial value of the selected status container
-        //             selectedContainer.textContent = foundWord.status;
-        //             selectedContainer.appendChild(selectIcon);
-        //         } else {
-        //             selectedContainer.textContent = 'Select Status';
-        //             selectedContainer.appendChild(selectIcon);
-        //         }
-        //     } else {
-        //         selectedContainer.textContent = 'Select Status';
-        //         selectedContainer.appendChild(selectIcon);
-        //     }
-        // });
-
         var statusesContainer = document.createElement('div');
         statusesContainer.className = 'exa-radience-statuses-container';
 
@@ -187,6 +151,14 @@ if (!window.hasRun) {
                 div.className = 'exa-radience-statuses-container-item';
                 div.textContent = status;
                 div.onclick = function () {
+                    // Получаем все элементы с классом '.exa-radience-statuses-container-item'
+                    var allItems = document.querySelectorAll(
+                        '.exa-radience-statuses-container-item'
+                    );
+                    // Применяем изменения ко всем элементам
+                    allItems.forEach(function (elem) {
+                        elem.style.backgroundColor = '#FD68A4';
+                    });
                     selectedValue = status;
                     changeWordStatus(element);
                     div.style.backgroundColor = '#3B1269';
@@ -195,9 +167,40 @@ if (!window.hasRun) {
             });
         });
 
+        // chrome.storage.local.get('wordLists', function (result) {
+        //     const wordLists = result.wordLists || [];
+        //     const wordList = wordLists.find((list) => {
+        //         return (
+        //             list.words &&
+        //             list.words.find((wordObj) => {
+        //                 return (
+        //                     wordObj.word.trim().toLowerCase() ===
+        //                     element.innerHTML.trim().toLowerCase()
+        //                 );
+        //             })
+        //         );
+        //     });
+
+        //     if (wordList) {
+        //         const foundWord = wordList.words.find((wordObj) => {
+        //             return (
+        //                 wordObj.word.trim().toLowerCase() ===
+        //                 element.innerHTML.trim().toLowerCase()
+        //             );
+        //         });
+        //         if (foundWord && foundWord.status) {
+        //             statusesContainer.find((elem) => {
+        //                 if (elem.textContent === foundWord.status) {
+        //                     elem.style.backgroundColor = '#3B1269';
+        //                 }
+        //             });
+        //         }
+        //     }
+        // });
+
         submenuContainer.appendChild(addNoteBtn);
         submenuContainer.appendChild(captureScreenshotBtn);
-        // submenuContainer.appendChild(addStatusBtn);
+        // submenuContainer.appendChild(notificationDiv);
         submenuContainer.appendChild(lineDiv);
 
         lineDiv.appendChild(statusesContainer);
@@ -219,21 +222,21 @@ if (!window.hasRun) {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
 
-    function showNotification(color, text) {
-        const notificationDiv = document.getElementById('notifyDiv');
-        notificationDiv.textContent = text;
-        notificationDiv.style.backgroundColor = color;
-        notificationDiv.style.display = 'block';
-        notificationDiv.style.opacity = '1';
+    // function showNotification(color, text) {
+    //     const notificationDiv = document.getElementById('notifyDiv');
+    //     notificationDiv.textContent = text;
+    //     notificationDiv.style.backgroundColor = color;
+    //     notificationDiv.style.display = 'block';
+    //     notificationDiv.style.opacity = '1';
 
-        // Hide the notification div after a certain duration
-        setTimeout(() => {
-            notificationDiv.style.opacity = '0'; // Fade out the notification div
-            setTimeout(() => {
-                notificationDiv.style.display = 'none'; // Hide after it fades out
-            }, 500);
-        }, 3000);
-    }
+    //     // Hide the notification div after a certain duration
+    //     setTimeout(() => {
+    //         notificationDiv.style.opacity = '0'; // Fade out the notification div
+    //         setTimeout(() => {
+    //             notificationDiv.style.display = 'none'; // Hide after it fades out
+    //         }, 500);
+    //     }, 3000);
+    // }
 
     async function changeWordStatus(element) {
         if (selectedValue) {
@@ -266,12 +269,12 @@ if (!window.hasRun) {
                         chrome.storage.local.set({
                             wordLists: updatedWordLists,
                         });
-                        showNotification('green', 'Status added');
+                        // showNotification('green', 'Status added');
                     });
                 }
             });
         } else {
-            showNotification('red', 'Select status');
+            // showNotification('red', 'Select status');
         }
     }
 

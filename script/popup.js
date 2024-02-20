@@ -224,17 +224,19 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = 'list.html';
     });
 
-    // async function counterUpdating() {
-    //     const result = await new Promise((resolve, reject) => {
-    //         chrome.storage.local.get('count', (result) => {
-    //             resolve(result);
-    //         });
-    //     });
-    //     if (result.count) {
-    //         counterElem.innerHTML = `Word counter: ${result.count}`;
-    //     } else {
-    //         counterElem.innerHTML = `Word counter: 0`;
-    //     }
-    // }
-    // counterUpdating();
+    const version = document.getElementById('version');
+    async function getProjectVersion() {
+        try {
+            // Загрузка manifest.json
+            const response = await fetch(
+                chrome.runtime.getURL('/manifest.json')
+            );
+            const data = await response.json();
+            version.textContent = 'v ' + data.version;
+        } catch (error) {
+            console.error('Ошибка при загрузке manifest.json:', error);
+        }
+    }
+
+    getProjectVersion();
 });
