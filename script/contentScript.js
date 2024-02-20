@@ -152,7 +152,11 @@ if (!window.hasRun) {
                 const div = document.createElement('div');
                 div.className = 'exa-radience-statuses-container-item';
                 div.textContent = status;
-                selectedValue = status;
+                div.onclick = function () {
+                    selectedValue = status;
+                    changeWordStatus(element);
+                    div.style.backgroundColor = '#3B1269';
+                };
                 statusesContainer.appendChild(div);
             });
         });
