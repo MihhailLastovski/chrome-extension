@@ -26,6 +26,8 @@
   },
   "content_scripts": [
     {
+      "all_frames": true,
+      "match_about_blank": true,
       "matches": ["<all_urls>"],
       "js": [ "script/contentScript.js" ]
     }
