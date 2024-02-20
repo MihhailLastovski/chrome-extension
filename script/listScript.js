@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            createTooltips();
+            //createTooltips();
         }
     });
 
@@ -346,42 +346,42 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Чтение слов из CSV файла
     csvListBtn.addEventListener('click', function () {
-        // divWithListImportSettigs.innerHTML = '';
-
-        // var csvInput = document.createElement('input');
-        // csvInput.type = 'text';
-        // csvInput.id = 'textInput';
-        // csvInput.placeholder = 'Paste the link';
-
-        // csvButton.addEventListener('click', function () {
-        //     if (csvInput.value.trim() !== '') {
-        //         csvLink = csvInput.value.replace('/edit', '/export?format=csv');
-        //         chrome.storage.local.set({ dataURL: csvLink });
-        //         fetchDataAndProcessWords(csvLink, true);
-
-        //         csvInput.value = '';
-        //     } else {
-        //         alert('Please enter link');
-        //     }
-        // });
         divWithListImportSettigs.innerHTML = '';
 
         var csvInput = document.createElement('input');
         csvInput.type = 'text';
         csvInput.id = 'textInput';
         csvInput.placeholder = 'Paste the link';
-    
+
         csvButton.addEventListener('click', function () {
             if (csvInput.value.trim() !== '') {
-                const htmlLink = csvInput.value;
-                chrome.storage.local.set({ dataURL: htmlLink });
-                fetchDataAndProcessWords(htmlLink, true);
-    
+                csvLink = csvInput.value.replace('/edit', '/export?format=csv');
+                chrome.storage.local.set({ dataURL: csvLink });
+                fetchDataAndProcessWords(csvLink, true);
+
                 csvInput.value = '';
             } else {
                 alert('Please enter link');
             }
         });
+        // divWithListImportSettigs.innerHTML = '';
+
+        // var csvInput = document.createElement('input');
+        // csvInput.type = 'text';
+        // csvInput.id = 'textInput';
+        // csvInput.placeholder = 'Paste the link';
+    
+        // csvButton.addEventListener('click', function () {
+        //     if (csvInput.value.trim() !== '') {
+        //         const htmlLink = csvInput.value;
+        //         chrome.storage.local.set({ dataURL: htmlLink });
+        //         fetchDataAndProcessWords(htmlLink, true);
+    
+        //         csvInput.value = '';
+        //     } else {
+        //         alert('Please enter link');
+        //     }
+        // });
 
         var csvh2 = document.createElement('h2');
         csvh2.textContent = 'Google Sheets assistant';
@@ -497,7 +497,27 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-
+    async function fetchDataAndProcessWords(url, readOnly) {
+        try {
+            const response = await fetch(url);
+            const htmlData = await response.text();
+    
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlData, 'text/html');
+    
+            // Update the selector to target the "Core Strings" column
+            const coreStringsColumn = Array.from(doc.querySelectorAll('.waffle tbody tr td:nth-child(7)'))
+                .map(column => column.textContent.trim());
+    
+            coreStringsColumn.forEach((word) => {
+                addWord(word);
+            });
+        } catch (error) {
+            console.error('Error while retrieving data:', error);
+            alert('Error while retrieving data, please try again.');
+        }
+    }
+    
     // async function fetchDataAndProcessWords(url, readOnly) {
     //     if (readOnly) {
     //         try {
@@ -538,28 +558,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //         }
     //     }
     // }
-    async function fetchDataAndProcessWords(url, readOnly) {
-        try {
-            const response = await fetch(url);
-            const htmlData = await response.text();
 
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlData, 'text/html');
-            const tableRows = doc.querySelectorAll('.waffle tbody tr');
-
-            const wordsArray = Array.from(tableRows).map(row => {
-                const columns = row.querySelectorAll('td');
-                return Array.from(columns).map(column => column.textContent.trim());
-            });
-
-            wordsArray.forEach((word) => {
-                addWord(word.join(','));
-            });
-        } catch (error) {
-            console.error('Error while retrieving data:', error);
-            alert('Error while retrieving data, please try again.');
-        }
-    }
     function sendDataToGoogleAppsScript(url, data) {
         fetch(url, {
             method: 'POST',
