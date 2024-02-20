@@ -11,17 +11,17 @@
     <title>Document</title>
 </head>
 <body>
-    <h2>Create Custom Statuses</h2>
-
-    <form id="customStatusForm">
-        <label for="status">Custom Status:</label>
-        <input type="text" id="status" name="status" required>
-        <button type="button" id="addButton">Add</button>
-    </form>
-
-    <h3>Custom Statuses:</h3>
-    <ul id="customStatusList"></ul>
-
-    <!--button type="button" id="cancelBtn" class="listFormBtn">Go back</button-->
+    <h2>Statuses</h2>
+    <hr>
+    <p class="guideText"><strong>Create new</strong></p>
+    <div class="content">
+        <input type="text" id="status" name="status" placeholder="Press enter to create" style="margin-left: -35%;">
+    </div>
+    <hr>
+    
+    <p class="guideText"><strong>Custom Statuses:</strong></p>
+    <div class="content"> 
+        <div id="customStatusList" class="list-words" style="margin-left: 5%; margin-right: 5%;"></div>
+    </div>  
 </body>
 </html>

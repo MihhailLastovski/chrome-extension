@@ -1,10 +1,73 @@
 if (!window.hasRun) {
-    var highlightColorRestore;
+    var highlightColorRestore, submenuContainer, submenuIsActive;
+    let selectedValue = '';
     window.hasRun = true;
 
-    let submenuContainer;
-    var submenuIsActive;
+    // Внедрение CSS файла
+    const iconsLink = document.createElement('link');
+    iconsLink.rel = 'stylesheet';
+    iconsLink.href =
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
 
+    const webPageCss = document.createElement('style');
+    webPageCss.textContent = `
+    .exa-radience-submenu {
+        height: 120px;
+        width: 240px;
+        background-color: #FC0365;
+        color: white;
+        border: 1px solid white;
+        border-radius: 5px;
+        font-family: 'Roboto', sans-serif !important;
+        font-size: 15px !important;
+        text-align: center;
+        position: absolute;
+    }
+
+    .exa-radience-submenu button {
+        cursor: pointer;
+        padding: 8px 12px;
+        margin: 3px;
+        color: white;
+        background-color: #FC0365;
+        border-color: white;
+        border-radius: 5px;
+    }
+
+    .exa-radience-submenu #removeStatusBtn {
+        border: none;
+        padding: 2px;
+    }
+
+    .exa-radience-statuses-container {
+        background-color: white;
+        width: 200px;
+        overflow-y: auto;
+        height: 50px;
+        margin-left: 20px;
+        margin-top: 10px;
+    }
+
+    .exa-radience-statuses-container-item {
+        cursor: pointer;
+        background-color: #FD68A4;
+        border: 1px solid white;
+        border-radius: 5px;
+        /*margin: 10px;*/
+        padding: 8px 12px;
+    }
+
+    .exa-radience-submenu button:hover {
+        background-color: #FD68A4;
+    }
+
+    .exa-radience-statuses-container-item:hover {
+        background-color: #FC0365;
+    }
+    `;
+
+    document.head.appendChild(iconsLink);
+    document.head.appendChild(webPageCss);
     document.addEventListener('mouseover', showSubmenus);
 
     function showSubmenus(event) {
@@ -29,207 +92,117 @@ if (!window.hasRun) {
     }
     getBooleanFromLocalStorage();
 
-    let selectedValue;
-
     function createSubmenu(element) {
-        // if (!submenuContainer) {
-        //     submenuContainer = document.createElement('div');
-        //     submenuContainer.className = 'submenu-container';
-        //     document.body.appendChild(submenuContainer);
-        // }
-
         if (!submenuContainer) {
             submenuContainer = document.createElement('div');
             submenuContainer.id = 'submenu';
-            submenuContainer.className = 'submenu-container';
-            submenuContainer.style.height = '150px';
-            submenuContainer.style.width = '275px';
-            submenuContainer.style.backgroundColor = '#3c931f';
-            submenuContainer.style.textAlign = 'center';
-            submenuContainer.style.border = '1px solid black';
+            submenuContainer.className = 'exa-radience-submenu';
             document.body.appendChild(submenuContainer);
         }
 
         submenuContainer.innerHTML = '';
 
-        // Внедрение CSS файла
-        const iconsLink = document.createElement('link');
-        iconsLink.rel = 'stylesheet';
-        iconsLink.href =
-            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
-        document.head.appendChild(iconsLink);
-
+        // Скриншот
         const captureScreenshotBtn = document.createElement('button');
         captureScreenshotBtn.id = 'captureScreenshotBtn';
-        captureScreenshotBtn.innerHTML = 'Capture Screenshot';
+        captureScreenshotBtn.innerHTML =
+            '<i class="fa-2x fa fa-camera-retro" aria-hidden="true"></i>';
         captureScreenshotBtn.onclick = function () {
             document.removeEventListener('mouseover', showSubmenus);
             captureScreenshot(element);
         };
 
+        // Заметка
         const addNoteBtn = document.createElement('button');
         addNoteBtn.id = 'addNoteBtn';
-        addNoteBtn.innerHTML = 'Add Note';
+        addNoteBtn.innerHTML =
+            '<i class="fa-2x fa fa-file-text-o" aria-hidden="true"></i>';
         addNoteBtn.onclick = function () {
             addNoteToElement(element);
         };
 
-        const notificationDiv = document.createElement('div');
-        notificationDiv.id = 'notifyDiv';
-        notificationDiv.width = '100%';
-        notificationDiv.style.display = 'none';
-        notificationDiv.style.transition = 'opacity 0.5s ease-in-out';
+        // const notificationDiv = document.createElement('div');
+        // notificationDiv.id = 'notifyDiv';
+        // notificationDiv.width = '100%';
+        // notificationDiv.style.display = 'none';
+        // notificationDiv.style.transition = 'opacity 0.5s ease-in-out';
 
-        const foundBtn = document.createElement('button');
-        foundBtn.id = 'foundBtn';
-        foundBtn.innerHTML = 'Attach Status';
-        foundBtn.onclick = function () {
-            changeWordStatus(element);
-        };
-
-        const unfoundBtn = document.createElement('button');
-        unfoundBtn.id = 'unfoundBtn';
-        unfoundBtn.innerHTML = 'Remove Status';
-        unfoundBtn.onclick = function () {
+        // Убрать статус
+        const removeStatusBtn = document.createElement('button');
+        removeStatusBtn.id = 'removeStatusBtn';
+        removeStatusBtn.innerHTML =
+            '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
+        removeStatusBtn.onclick = function () {
             removeWordsStatus(element);
         };
 
-        const selectContainer = document.createElement('div');
-        selectContainer.classList.add('custom-select');
-        selectContainer.id = 'statusDropdown';
-        selectContainer.style.textAlign = 'center';
+        // Отображение статусов
+        var lineDiv = document.createElement('div');
+        lineDiv.style.display = 'flex';
+        lineDiv.style.flexDirection = 'row';
 
-        // Create the selected item container
-        const selectedContainer = document.createElement('div');
-        selectedContainer.classList.add('select-selected');
-        console.log(element.status)
+        // // Create the selected item container
+        // const selectedContainer = document.createElement('div');
+        // selectedContainer.classList.add('select-selected');
+        // console.log(element.status)
 
-        const selectIcon = document.createElement('i');
-        selectIcon.classList.add('fa', 'fa-angle-down');
-        selectIcon.setAttribute('aria-hidden', 'true');
-        selectIcon.style.float = 'right';
-        
-        chrome.storage.local.get('wordLists', function (result) {
-            const wordLists = result.wordLists || [];
-            const wordList = wordLists.find((list) => {
-                return list.words && list.words.find((wordObj) => {
-                    return wordObj.word.trim().toLowerCase() === element.innerHTML.trim().toLowerCase();
-                });
-            });
+        // const selectIcon = document.createElement('i');
+        // selectIcon.classList.add('fa', 'fa-angle-down');
+        // selectIcon.setAttribute('aria-hidden', 'true');
+        // selectIcon.style.float = 'right';
 
-            if (wordList) {
-                const foundWord = wordList.words.find((wordObj) => {
-                    return wordObj.word.trim().toLowerCase() === element.innerHTML.trim().toLowerCase();
-                });
-                if (foundWord && foundWord.status) {
-                    // Set the initial value of the selected status container
-                    selectedContainer.textContent = foundWord.status;
-                    selectedContainer.appendChild(selectIcon);
-                } else {
-                    selectedContainer.textContent = 'Select Status';
-                    selectedContainer.appendChild(selectIcon);
-                }
-            } else {
-                selectedContainer.textContent = 'Select Status';
-                selectedContainer.appendChild(selectIcon);
-            }
-        });
-        
+        // chrome.storage.local.get('wordLists', function (result) {
+        //     const wordLists = result.wordLists || [];
+        //     const wordList = wordLists.find((list) => {
+        //         return list.words && list.words.find((wordObj) => {
+        //             return wordObj.word.trim().toLowerCase() === element.innerHTML.trim().toLowerCase();
+        //         });
+        //     });
 
-        //css
-        selectedContainer.style.backgroundColor = '#ccc';
-        selectedContainer.style.padding = '10px';
-        selectedContainer.addEventListener('mouseenter', function () {
-            selectedContainer.style.backgroundColor = '#e6e6e6';
-            selectedContainer.style.cursor = 'pointer';
-        });
+        //     if (wordList) {
+        //         const foundWord = wordList.words.find((wordObj) => {
+        //             return wordObj.word.trim().toLowerCase() === element.innerHTML.trim().toLowerCase();
+        //         });
+        //         if (foundWord && foundWord.status) {
+        //             // Set the initial value of the selected status container
+        //             selectedContainer.textContent = foundWord.status;
+        //             selectedContainer.appendChild(selectIcon);
+        //         } else {
+        //             selectedContainer.textContent = 'Select Status';
+        //             selectedContainer.appendChild(selectIcon);
+        //         }
+        //     } else {
+        //         selectedContainer.textContent = 'Select Status';
+        //         selectedContainer.appendChild(selectIcon);
+        //     }
+        // });
 
-        selectedContainer.addEventListener('mouseleave', function () {
-            selectedContainer.style.backgroundColor = '#ccc';
-        });
+        var statusesContainer = document.createElement('div');
+        statusesContainer.className = 'exa-radience-statuses-container';
 
-        // Create the dropdown items container
-        const itemsContainer = document.createElement('div');
-        itemsContainer.classList.add('select-items');
-        itemsContainer.classList.add('select-hide');
-
-        //css
-        itemsContainer.style.position = 'absolute';
-        itemsContainer.style.backgroundColor = '#f1f1f1';
-        itemsContainer.style.width = '100%';
-        itemsContainer.style.maxHeight = '120px';
-        itemsContainer.style.overflowY = 'auto';
-        itemsContainer.style.border = '1px solid #ccc';
-        itemsContainer.style.display = 'none';
-
-        //populates droplist
         chrome.storage.local.get('customStatuses', function (result) {
             const customStatuses = result.customStatuses || [];
             customStatuses.forEach((status) => {
-                const option = document.createElement('div');
-                option.textContent = status;
-                // css
-                option.style.padding = '10px';
-
-                option.addEventListener('mouseenter', function () {
-                    option.style.backgroundColor = '#e6e6e6';
-                    option.style.cursor = 'pointer';
-                });
-
-                option.addEventListener('mouseleave', function () {
-                    option.style.backgroundColor = 'inherit';
-                });
-                //css
-
-                option.addEventListener('click', function () {
-                    console.log('Selected:', status);
-                    selectedContainer.textContent = status; // Update selected item
-                    selectedContainer.appendChild(selectIcon);
+                const div = document.createElement('div');
+                div.className = 'exa-radience-statuses-container-item';
+                div.textContent = status;
+                div.onclick = function () {
                     selectedValue = status;
-                    itemsContainer.classList.add('select-hide'); // Hide dropdown
-                });
-                itemsContainer.appendChild(option);
+                    changeWordStatus(element);
+                    div.style.backgroundColor = '#3B1269';
+                };
+                statusesContainer.appendChild(div);
             });
-        });
-
-        // submenuContainer.appendChild(addNoteBtn);
-        // submenuContainer.appendChild(foundBtn);
-        // submenuContainer.appendChild(captureScreenshotBtn);
-        selectContainer.appendChild(notificationDiv);
-        selectContainer.appendChild(foundBtn);
-        selectContainer.appendChild(unfoundBtn);
-        selectContainer.appendChild(selectedContainer);
-        selectContainer.appendChild(itemsContainer);
-        selectedContainer.addEventListener('click', function () {
-            if (itemsContainer.style.display === 'none') {
-                itemsContainer.style.display = 'block'; // Show dropdown
-            } else {
-                itemsContainer.style.display = 'none'; // Hide dropdown
-            }
         });
 
         submenuContainer.appendChild(addNoteBtn);
         submenuContainer.appendChild(captureScreenshotBtn);
-        submenuContainer.appendChild(selectContainer);
+        // submenuContainer.appendChild(addStatusBtn);
+        submenuContainer.appendChild(lineDiv);
 
-        // Дизайн кнопок на внешней странице
-        const buttonStyles = {
-            cursor: 'pointer',
-            padding: '8px 12px',
-            backgroundColor: '#b3ff99',
-            borderRadius: '5px',
-            margin: '3px',
-        };
-        for (const childElement of submenuContainer.children) {
-            Object.assign(childElement.style, buttonStyles);
-        }
-        for (const childElement of selectContainer.children) {
-            if (childElement.tagName.toLowerCase() === 'button') {
-                Object.assign(childElement.style, buttonStyles);
-            }
-        }
+        lineDiv.appendChild(statusesContainer);
+        lineDiv.appendChild(removeStatusBtn);
 
-        submenuContainer.style.position = 'absolute';
         submenuContainer.style.left = `${
             element.getBoundingClientRect().left
         }px`;
@@ -239,9 +212,6 @@ if (!window.hasRun) {
 
         submenuContainer.onmouseleave = function () {
             submenuContainer.style.display = 'none';
-            // captureScreenshotBtn.style.display = 'none';
-            // addNoteBtn.style.display = 'none';
-            // foundBtn.style.display = 'none';
         };
     }
 
@@ -255,7 +225,7 @@ if (!window.hasRun) {
         notificationDiv.style.backgroundColor = color;
         notificationDiv.style.display = 'block';
         notificationDiv.style.opacity = '1';
-    
+
         // Hide the notification div after a certain duration
         setTimeout(() => {
             notificationDiv.style.opacity = '0'; // Fade out the notification div
@@ -264,22 +234,22 @@ if (!window.hasRun) {
             }, 500);
         }, 3000);
     }
-    
 
     async function changeWordStatus(element) {
-        if(selectedValue) {
+        if (selectedValue) {
             const listId = element.getAttribute('data-list-id');
 
             document.querySelectorAll('.highlighted').forEach((el) => {
                 if (
-                    el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+                    el.innerHTML.toLowerCase() ===
+                    element.innerHTML.toLowerCase()
                 ) {
                     el.style.backgroundColor = highlightColorRestore;
-    
+
                     el.setAttribute('status', selectedValue);
                     chrome.storage.local.get('wordLists', (result) => {
                         const wordLists = result.wordLists || [];
-    
+
                         const updatedWordLists = wordLists.map((wordList) => {
                             if (wordList.words && wordList.id === listId) {
                                 wordList.words.forEach((wordObj) => {
@@ -296,60 +266,85 @@ if (!window.hasRun) {
                         chrome.storage.local.set({
                             wordLists: updatedWordLists,
                         });
-                        showNotification('green',"Status added")
+                        showNotification('green', 'Status added');
                     });
                 }
             });
+        } else {
+            showNotification('red', 'Select status');
         }
-        else{
-            showNotification('red', "Select status")
-        }
-        
     }
+
+    // async function removeWordsStatus(element) {
+    //     const styleAttribute = element.getAttribute('style');
+    //     if (!styleAttribute || !styleAttribute.includes('background-color')) {
+    //         showNotification('red', "Status is missing")
+    //     }
+    //     else {
+    //         const listId = element.getAttribute('data-list-id');
+    //         //const selectedContainer = document.getElementById('statusDropdown').innerHTML;
+
+    //         document.querySelectorAll('.highlighted').forEach((el) => {
+    //             if (
+    //                 el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+    //             ) {
+    //                 //if (el.hasAttribute('status')) {
+    //                 el.style.backgroundColor = 'transparent';
+    //                 el.removeAttribute('status');
+    //                 chrome.storage.local.get('wordLists', (result) => {
+    //                     const wordLists = result.wordLists || [];
+
+    //                     const updatedWordLists = wordLists.map((wordList) => {
+    //                         if (wordList.words && wordList.id === listId) {
+    //                             wordList.words.forEach((wordObj) => {
+    //                                 if (
+    //                                     wordObj.word.trim().toLowerCase() ===
+    //                                     el.innerHTML.toLowerCase()
+    //                                 ) {
+    //                                     delete wordObj['status'];
+    //                                 }
+    //                             });
+    //                         }
+    //                         return wordList;
+    //                     });
+    //                     chrome.storage.local.set({
+    //                         wordLists: updatedWordLists,
+    //                     });
+    //                     showNotification('green',"Status removed")
+    // }
 
     async function removeWordsStatus(element) {
-        const styleAttribute = element.getAttribute('style');
-        if (!styleAttribute || !styleAttribute.includes('background-color')) {
-            showNotification('red', "Status is missing")
-        }
-        else {
-            const listId = element.getAttribute('data-list-id');
-            //const selectedContainer = document.getElementById('statusDropdown').innerHTML;
-    
-            document.querySelectorAll('.highlighted').forEach((el) => {
-                if (
-                    el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
-                ) {
-                    //if (el.hasAttribute('status')) {
-                    el.style.backgroundColor = 'transparent';
-                    el.removeAttribute('status');
-                    chrome.storage.local.get('wordLists', (result) => {
-                        const wordLists = result.wordLists || [];
-    
-                        const updatedWordLists = wordLists.map((wordList) => {
-                            if (wordList.words && wordList.id === listId) {
-                                wordList.words.forEach((wordObj) => {
-                                    if (
-                                        wordObj.word.trim().toLowerCase() ===
-                                        el.innerHTML.toLowerCase()
-                                    ) {
-                                        delete wordObj['status'];
-                                    }
-                                });
-                            }
-                            return wordList;
-                        });
-                        chrome.storage.local.set({
-                            wordLists: updatedWordLists,
-                        });
-                        showNotification('green',"Status removed")
-                    });
-                    //}
-                }
-            });
-        }
-    }
+        const listId = element.getAttribute('data-list-id');
 
+        document.querySelectorAll('.highlighted').forEach((el) => {
+            if (
+                el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+            ) {
+                el.style.backgroundColor = 'transparent';
+                el.removeAttribute('status');
+                chrome.storage.local.get('wordLists', (result) => {
+                    const wordLists = result.wordLists || [];
+
+                    const updatedWordLists = wordLists.map((wordList) => {
+                        if (wordList.words && wordList.id === listId) {
+                            wordList.words.forEach((wordObj) => {
+                                if (
+                                    wordObj.word.trim().toLowerCase() ===
+                                    el.innerHTML.toLowerCase()
+                                ) {
+                                    delete wordObj['status'];
+                                }
+                            });
+                        }
+                        return wordList;
+                    });
+                    chrome.storage.local.set({
+                        wordLists: updatedWordLists,
+                    });
+                });
+            }
+        });
+    }
     async function captureScreenshot(element) {
         document.querySelectorAll('.highlighted').forEach((el) => {
             if (el !== element) {

@@ -1,51 +1,38 @@
 document.addEventListener('DOMContentLoaded', function () {
     const statusInput = document.getElementById('status');
+    const customStatusList = document.getElementById('customStatusList');
 
-    function addCustomStatus() {
-        const customStatusList = document.getElementById('customStatusList');
-
-        const status = statusInput.value.trim();
-
+    function addCustomStatus(status) {
         if (status !== '') {
-            const listItem = document.createElement('li');
-            listItem.textContent = `Status: ${status}`;
+            const listItem = document.createElement('div');
+            listItem.className = 'list-wordsItem';
+
+            const wordLabel = document.createElement('label');
+            wordLabel.textContent = status;
+            wordLabel.className = 'word-label';
 
             const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
+            deleteButton.innerHTML =
+                '<i class="fa-2x fa fa-trash-o" aria-hidden="true"></i>';
+            deleteButton.className = 'trash-btn';
             deleteButton.addEventListener('click', function () {
                 deleteCustomStatus(status, listItem);
             });
+
+            listItem.appendChild(wordLabel);
             listItem.appendChild(deleteButton);
 
             customStatusList.appendChild(listItem);
-
-            // Save the custom status in Chrome storage.local
-            chrome.storage.local.get('customStatuses', function (result) {
-                const existingStatuses = result.customStatuses || [];
-                existingStatuses.push(status);
-                chrome.storage.local.set({ customStatuses: existingStatuses });
-            });
         }
-        // Clear the input field
-        statusInput.value = '';
     }
 
     // Get existing statuses from Chrome storage.local
     chrome.storage.local.get('customStatuses', function (result) {
         const existingStatuses = result.customStatuses || [];
-        console.log(existingStatuses);
-        // Render the existing statuses in the list
-        existingStatuses.forEach(function (status) {
-            const listItem = document.createElement('li');
-            listItem.textContent = `Status: ${status}`;
-            customStatusList.appendChild(listItem);
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Delete';
-            deleteButton.addEventListener('click', function () {
-                deleteCustomStatus(status, listItem);
-            });
 
-            listItem.appendChild(deleteButton);
+        // Render the existing statuses in the list
+        existingStatuses.forEach((status) => {
+            addCustomStatus(status);
         });
     });
 
@@ -64,17 +51,21 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    const addButton = document.getElementById('addButton');
-    addButton.addEventListener('click', addCustomStatus);
     statusInput.addEventListener('keypress', function (event) {
         if (event.key === 'Enter') {
             event.preventDefault();
-            addCustomStatus();
+
+            const status = statusInput.value.trim();
+            addCustomStatus(status);
+
+            // Save the custom status in Chrome storage.local
+            chrome.storage.local.get('customStatuses', function (result) {
+                const existingStatuses = result.customStatuses || [];
+                existingStatuses.push(status);
+                chrome.storage.local.set({ customStatuses: existingStatuses });
+            });
+
+            statusInput.value = '';
         }
     });
-
-    // const cancelBtn = document.getElementById('cancelBtn');
-    // cancelBtn.addEventListener('click', function () {
-    //     window.location.href = 'popup.html';
-    // });
 });
