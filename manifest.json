@@ -8,8 +8,7 @@
     "scripting",
     "storage",
     "tabs",
-    "downloads",
-    "contextMenus"
+    "downloads"
   ],
   "action": {
     "default_popup": "pages/popup.html",
@@ -29,7 +28,8 @@
       "all_frames": true,
       "match_about_blank": true,
       "matches": ["<all_urls>"],
-      "js": [ "script/contentScript.js" ]
+      "js": [ "script/contentScript.js" ],
+      "run_at": "document_end"
     }
   ],
   "background": {

@@ -92,9 +92,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 ? '<i class="fa fa-pause" aria-hidden="true"></i>'
                 : '<i class="fa fa-play" aria-hidden="true"></i>';
             enableButton.addEventListener('click', function () {
-                chrome.action.setBadgeText({ text: '' });
-                chrome.storage.local.set({ count: 0 });
-                // counterUpdating();
+                //Обновление счётчика
+                chrome.runtime.sendMessage({
+                    action: 'updateBadge',
+                    count: 0,
+                });
                 const enable = !enabledLists.includes(list.id);
                 toggleWordList(list.id, enable);
                 renderWordLists(lists);

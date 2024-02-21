@@ -144,28 +144,28 @@ if (!window.hasRun) {
         var statusesContainer = document.createElement('div');
         statusesContainer.className = 'exa-radience-statuses-container';
 
-        chrome.storage.local.get('customStatuses', function (result) {
-            const customStatuses = result.customStatuses || [];
-            customStatuses.forEach((status) => {
-                const div = document.createElement('div');
-                div.className = 'exa-radience-statuses-container-item';
-                div.textContent = status;
-                div.onclick = function () {
-                    // Получаем все элементы с классом '.exa-radience-statuses-container-item'
-                    var allItems = document.querySelectorAll(
-                        '.exa-radience-statuses-container-item'
-                    );
-                    // Применяем изменения ко всем элементам
-                    allItems.forEach(function (elem) {
-                        elem.style.backgroundColor = '#FD68A4';
-                    });
-                    selectedValue = status;
-                    changeWordStatus(element);
-                    div.style.backgroundColor = '#3B1269';
-                };
-                statusesContainer.appendChild(div);
-            });
-        });
+        // chrome.storage.local.get('customStatuses', function (result) {
+        //     const customStatuses = result.customStatuses || [];
+        //     customStatuses.forEach((status) => {
+        //         const div = document.createElement('div');
+        //         div.className = 'exa-radience-statuses-container-item';
+        //         div.textContent = status;
+        //         div.onclick = function () {
+        //             // Получаем все элементы с классом '.exa-radience-statuses-container-item'
+        //             var allItems = document.querySelectorAll(
+        //                 '.exa-radience-statuses-container-item'
+        //             );
+        //             // Применяем изменения ко всем элементам
+        //             allItems.forEach(function (elem) {
+        //                 elem.style.backgroundColor = '#FD68A4';
+        //             });
+        //             selectedValue = status;
+        //             changeWordStatus(element);
+        //             div.style.backgroundColor = '#3B1269';
+        //         };
+        //         statusesContainer.appendChild(div);
+        //     });
+        // });
 
         // chrome.storage.local.get('wordLists', function (result) {
         //     const wordLists = result.wordLists || [];
@@ -499,172 +499,170 @@ if (!window.hasRun) {
         const match = url.match(regex);
         return match ? match[1] : null;
     }
+}
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.action === 'highlight') {
+        highlightText(
+            request.searchText,
+            request.highlightColor,
+            request.listId
+            // request.isActive
+        );
 
-    async function highlightText(searchText, highlightColor, listId = null) {
-        highlightColorRestore = highlightColor;
-        const resultOld = await new Promise((resolve, reject) => {
-            chrome.storage.local.get('isActive', (result) => {
-                resolve(result);
+        async function highlightText(
+            searchText,
+            highlightColor,
+            listId = null
+        ) {
+            highlightColorRestore = highlightColor;
+            const resultOld = await new Promise((resolve, reject) => {
+                chrome.storage.local.get('isActive', (result) => {
+                    resolve(result);
+                });
             });
-        });
-        const boolActive = resultOld.isActive;
+            const boolActive = resultOld.isActive;
 
-        const result = await new Promise((resolve) => {
-            chrome.storage.local.get('wordLists', (data) => {
-                resolve(data);
+            const result = await new Promise((resolve) => {
+                chrome.storage.local.get('wordLists', (data) => {
+                    resolve(data);
+                });
             });
-        });
-        const wordLists = result.wordLists || [];
+            const wordLists = result.wordLists || [];
 
-        const statusesResult = await new Promise((resolve) => {
-            chrome.storage.local.get('customStatuses', (data) => {
-                resolve(data);
+            const statusesResult = await new Promise((resolve) => {
+                chrome.storage.local.get('customStatuses', (data) => {
+                    resolve(data);
+                });
             });
-        });
-        const statusesLists = statusesResult.customStatuses || [];
+            const statusesLists = statusesResult.customStatuses || [];
 
-        function findWordInWordLists(word) {
-            for (const wordList of wordLists) {
-                if (wordList.words && wordList.id === listId) {
-                    const foundWord = wordList.words.find(
-                        (wordObj) =>
-                            wordObj.word.trim().toLowerCase() ===
-                            word.toLowerCase()
-                    );
-                    if (foundWord) {
-                        return foundWord;
-                    }
-                }
-            }
-            return null;
-        }
-
-        if (boolActive && searchText !== '') {
-            const searchRegex = new RegExp(searchText, 'gi');
-            function highlightTextNode(node) {
-                let text = node.nodeValue;
-                if (
-                    node.nodeType === Node.TEXT_NODE &&
-                    !isDescendantOfStyleOrScript(node)
-                ) {
-                    if (searchRegex.test(text)) {
-                        const foundWord = findWordInWordLists(searchText);
-                        const status = foundWord.status;
-                        const isValid = statusesLists.includes(status);
-
-                        // const isWordFound = foundWord && foundWord['status'] === 'Found';
-                        const colorStyle = isValid
-                            ? `background-color: ${highlightColorRestore}; border: 4px solid ${highlightColor};`
-                            : `border: 4px solid ${highlightColor};`;
-                        if (node.parentNode.className !== 'highlighted') {
-                            let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
-                            let newNode = document.createElement('span');
-                            newNode.className = 'highlightedP';
-                            if (listId) {
-                                replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
-                                newNode.setAttribute('data-list-id', listId);
-                            }
-                            const replacedText = text.replace(
-                                searchRegex,
-                                replacementText
-                            );
-                            newNode.innerHTML = replacedText;
-                            node.parentNode.replaceChild(newNode, node);
+            function findWordInWordLists(word) {
+                for (const wordList of wordLists) {
+                    if (wordList.words && wordList.id === listId) {
+                        const foundWord = wordList.words.find(
+                            (wordObj) =>
+                                wordObj.word.trim().toLowerCase() ===
+                                word.toLowerCase()
+                        );
+                        if (foundWord) {
+                            return foundWord;
                         }
                     }
-                } else if (
-                    node.nodeType === Node.ELEMENT_NODE &&
-                    node.tagName.toLowerCase() !== 'style' &&
-                    node.tagName.toLowerCase() !== 'script' &&
-                    node.childNodes &&
-                    node.childNodes.length > 0
-                ) {
-                    node.childNodes.forEach((childNode) => {
-                        highlightTextNode(childNode);
-                    });
                 }
+                return null;
             }
 
-            // Проверка, является ли узел потомком элемента style или script
-            function isDescendantOfStyleOrScript(node) {
-                while (node.parentNode) {
-                    node = node.parentNode;
+            if (boolActive && searchText !== '') {
+                const searchRegex = new RegExp(searchText, 'gi');
+                function highlightTextNode(node) {
+                    let text = node.nodeValue;
                     if (
-                        node.tagName &&
-                        (node.tagName.toLowerCase() === 'style' ||
-                            node.tagName.toLowerCase() === 'script')
+                        node.nodeType === Node.TEXT_NODE &&
+                        !isDescendantOfStyleOrScript(node)
                     ) {
-                        return true;
+                        if (searchRegex.test(text)) {
+                            const foundWord = findWordInWordLists(searchText);
+                            const status = foundWord.status;
+                            const isValid = statusesLists.includes(status);
+
+                            // const isWordFound = foundWord && foundWord['status'] === 'Found';
+                            const colorStyle = isValid
+                                ? `background-color: ${highlightColorRestore}; border: 4px solid ${highlightColor};`
+                                : `border: 4px solid ${highlightColor};`;
+                            if (node.parentNode.className !== 'highlighted') {
+                                let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
+                                let newNode = document.createElement('span');
+                                newNode.className = 'highlightedP';
+                                if (listId) {
+                                    replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
+                                    newNode.setAttribute(
+                                        'data-list-id',
+                                        listId
+                                    );
+                                }
+                                const replacedText = text.replace(
+                                    searchRegex,
+                                    replacementText
+                                );
+                                newNode.innerHTML = replacedText;
+                                node.parentNode.replaceChild(newNode, node);
+                            }
+                        }
+                    } else if (
+                        node.nodeType === Node.ELEMENT_NODE &&
+                        node.tagName.toLowerCase() !== 'style' &&
+                        node.tagName.toLowerCase() !== 'script' &&
+                        node.childNodes &&
+                        node.childNodes.length > 0
+                    ) {
+                        node.childNodes.forEach((childNode) => {
+                            highlightTextNode(childNode);
+                        });
                     }
                 }
-                return false;
-            }
 
-            highlightTextNode(document.body);
+                // Проверка, является ли узел потомком элемента style или script
+                function isDescendantOfStyleOrScript(node) {
+                    while (node.parentNode) {
+                        node = node.parentNode;
+                        if (
+                            node.tagName &&
+                            (node.tagName.toLowerCase() === 'style' ||
+                                node.tagName.toLowerCase() === 'script')
+                        ) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                highlightTextNode(document.body);
+            }
+            // Отображение счётчика
+            chrome.runtime.sendMessage({
+                action: 'updateBadge',
+                count: document.querySelectorAll('span.highlighted').length,
+            });
         }
-        let highlightedCount =
-            document.querySelectorAll('span.highlighted').length;
-        chrome.storage.local.set({ count: highlightedCount });
-        chrome.runtime.sendMessage({
-            action: 'updateBadge',
-            count: highlightedCount,
-        });
+    } else if (request.action === 'removeHighlight') {
+        const listId = request.listId;
+        if (listId) {
+            document
+                .querySelectorAll(
+                    `span[data-list-id="${listId}"].highlighted, span[data-list-id="${listId}"].highlighted`
+                )
+                .forEach((element) => {
+                    const { textContent } = element;
+                    element.outerHTML = textContent;
+                });
+            document
+                .querySelectorAll(
+                    `span[data-list-id="${listId}"].highlighted, span[data-list-id="${listId}"].highlightedP`
+                )
+                .forEach((element) => {
+                    const { textContent } = element;
+                    element.outerHTML = textContent;
+                });
+        } else {
+            document.querySelectorAll('span.highlighted').forEach((element) => {
+                const { textContent } = element;
+                element.outerHTML = textContent;
+            });
+            document
+                .querySelectorAll('span.highlightedP')
+                .forEach((element) => {
+                    const { textContent } = element;
+                    element.outerHTML = textContent;
+                });
+        }
+    } else if (request.action === 'submenuStatusUpdating') {
+        getBooleanFromLocalStorage();
+    } else if (request.action === 'cssInjection') {
+        const style = document.createElement('style');
+        style.textContent =
+            'div { background-image: url("https://i.pinimg.com/originals/c4/2f/05/c42f0562ba5868acab46f6a1b6aaa303.gif");}';
+
+        // Добавляем стиль в <head> элемент страницы
+        document.head.appendChild(style);
     }
-
-    chrome.runtime.onMessage.addListener(function (
-        request,
-        sender,
-        sendResponse
-    ) {
-        if (request.action === 'highlight') {
-            highlightText(
-                request.searchText,
-                request.highlightColor,
-                request.listId,
-                request.isActive
-            );
-        } else if (request.action === 'removeHighlight') {
-            const listId = request.listId;
-            if (listId) {
-                document
-                    .querySelectorAll(
-                        `span[data-list-id="${listId}"].highlighted, span[data-list-id="${listId}"].highlighted`
-                    )
-                    .forEach((element) => {
-                        const { textContent } = element;
-                        element.outerHTML = textContent;
-                    });
-                document
-                    .querySelectorAll(
-                        `span[data-list-id="${listId}"].highlighted, span[data-list-id="${listId}"].highlightedP`
-                    )
-                    .forEach((element) => {
-                        const { textContent } = element;
-                        element.outerHTML = textContent;
-                    });
-            } else {
-                document
-                    .querySelectorAll('span.highlighted')
-                    .forEach((element) => {
-                        const { textContent } = element;
-                        element.outerHTML = textContent;
-                    });
-                document
-                    .querySelectorAll('span.highlightedP')
-                    .forEach((element) => {
-                        const { textContent } = element;
-                        element.outerHTML = textContent;
-                    });
-            }
-        } else if (request.action === 'submenuStatusUpdating') {
-            getBooleanFromLocalStorage();
-        } else if (request.action === 'cssInjection') {
-            const style = document.createElement('style');
-            style.textContent =
-                'div { background-image: url("https://i.pinimg.com/originals/c4/2f/05/c42f0562ba5868acab46f6a1b6aaa303.gif");}';
-
-            // Добавляем стиль в <head> элемент страницы
-            document.head.appendChild(style);
-        }
-    });
-}
+});

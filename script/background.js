@@ -5,20 +5,29 @@ chrome.runtime.onInstalled.addListener(function () {
             chrome.storage.local.set({ firstOpen: true });
         }
     });
-
-    // chrome.contextMenus.create({
-    //   id: "myContextMenu",
-    //   title: "Take a screenshot",
-    //   contexts: ["all"]
-    // });
 });
 
 //Обновление иконки
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status === 'complete') {
-        console.log('Tab is updated');
-        chrome.action.setBadgeText({ text: '' });
-        chrome.storage.local.set({ count: 0 });
+        updateBadgeCount(0);
+        // function highlight() {
+        //     chrome.tabs.query(
+        //         { active: true, currentWindow: true },
+        //         function (tabs) {
+        //             chrome.scripting.executeScript({
+        //                 target: { tabId: tabs[0].id },
+        //                 files: ['./script/contentScript.js'],
+        //             });
+        //             chrome.tabs.sendMessage(tabs[0].id, {
+        //                 action: 'highlight',
+        //                 searchText: 'рыба',
+        //                 highlightColor: '#FC0365',
+        //             });
+        //         }
+        //     );
+        // }
+        highlight();
     }
 });
 
@@ -45,11 +54,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         return true;
     } else if (request.action === 'updateBadge') {
         const count = request.count || 0;
-        chrome.action.setBadgeText({
-            text: count > 0 ? count.toString() : '',
-        });
-        chrome.action.setBadgeBackgroundColor({ color: '#FC0365' });
-        chrome.storage.local.set({ count: count });
+        updateBadgeCount(count);
     }
 });
 
@@ -57,9 +62,23 @@ chrome.storage.local.get('submenuIsActive', function (data) {
     chrome.storage.local.set({ submenuIsActive: data.submenuIsActive });
 });
 
-//Добавление высплывающего окна
-// chrome.contextMenus.onClicked.addListener(function (info, event) {
-//   if (info.menuItemId === "myContextMenu") {
-//     console.log("Context menu in clicked")
-//   }
-// });
+function updateBadgeCount(count) {
+    chrome.action.setBadgeText({
+        text: count > 0 ? count.toString() : '',
+    });
+    chrome.action.setBadgeBackgroundColor({ color: '#FC0365' });
+}
+function highlight() {
+    // chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    //     chrome.runtime.sendMessage(tabs[0].id, {
+    //         action: 'highlight',
+    //         searchText: 'рыба',
+    //         highlightColor: '#FC0365',
+    //     });
+    // });
+    chrome.runtime.sendMessage({
+        action: 'highlight',
+        searchText: 'рыба',
+        highlightColor: '#FC0365',
+    });
+}
