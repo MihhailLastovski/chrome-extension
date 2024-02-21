@@ -12,3 +12,8 @@ v 1.1.2
 
 -   Added changelog
 -   Highlighting works in iframe
+
+v 1.1.4
+
+-   Status related bug in the update list menu is fixed
+-   Submenu displays statuses accordingly
