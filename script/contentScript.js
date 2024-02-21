@@ -149,9 +149,18 @@ if (!window.hasRun) {
                 chrome.storage.local.get('wordLists', function (result) {
                     const wordLists = result.wordLists || [];
                     const foundWord = wordLists.find((wordList) => {
-                        return wordList.words && wordList.words.find((wordObj) => {
-                            return wordObj.word.trim().toLowerCase() === element.innerHTML.trim().toLowerCase() && wordObj.status === status;
-                        });
+                        return (
+                            wordList.words &&
+                            wordList.words.find((wordObj) => {
+                                return (
+                                    wordObj.word.trim().toLowerCase() ===
+                                        element.innerHTML
+                                            .trim()
+                                            .toLowerCase() &&
+                                    wordObj.status === status
+                                );
+                            })
+                        );
                     });
                     if (foundWord) {
                         div.style.backgroundColor = '#3B1269';
@@ -240,15 +249,15 @@ if (!window.hasRun) {
     async function removeWordsStatus(element) {
         const styleAttribute = element.getAttribute('style');
         if (!styleAttribute || !styleAttribute.includes('background-color')) {
-            console.log("No status selected");
-        }
-        else {
+            console.log('No status selected');
+        } else {
             const listId = element.getAttribute('data-list-id');
             //const selectedContainer = document.getElementById('statusDropdown').innerHTML;
 
             document.querySelectorAll('.highlighted').forEach((el) => {
                 if (
-                    el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+                    el.innerHTML.toLowerCase() ===
+                    element.innerHTML.toLowerCase()
                 ) {
                     //if (el.hasAttribute('status')) {
                     el.style.backgroundColor = 'transparent';
@@ -272,11 +281,13 @@ if (!window.hasRun) {
                         chrome.storage.local.set({
                             wordLists: updatedWordLists,
                         });
-                        const statusItems = document.querySelectorAll('.exa-radience-statuses-container-item');
+                        const statusItems = document.querySelectorAll(
+                            '.exa-radience-statuses-container-item'
+                        );
                         statusItems.forEach((item) => {
                             item.style.backgroundColor = '#FD68A4';
                         });
-                        console.log('Word status added');;
+                        console.log('Word status added');
                     });
                 }
             });
@@ -474,49 +485,153 @@ if (!window.hasRun) {
             return null;
         }
 
+        // if (boolActive && searchText !== '') {
+        //     const searchRegex = new RegExp(searchText, 'gi');
+        //     function highlightTextNode(node) {
+        //         let text = node.nodeValue;
+        //         if (
+        //             node.nodeType === Node.TEXT_NODE &&
+        //             !isDescendantOfStyleOrScript(node)
+        //         ) {
+        //             if (searchRegex.test(text)) {
+        //                 const foundWord = findWordInWordLists(searchText);
+        //                 const status = foundWord.status;
+        //                 const isValid = statusesLists.includes(status);
+
+        //                 // const isWordFound = foundWord && foundWord['status'] === 'Found';
+        //                 const colorStyle = isValid
+        //                     ? `background-color: ${highlightColorRestore}; border: 4px solid ${highlightColor};`
+        //                     : `border: 4px solid ${highlightColor};`;
+        //                 if (node.parentNode.className !== 'highlighted') {
+        //                     let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
+        //                     let newNode = document.createElement('span');
+        //                     newNode.className = 'highlightedP';
+        //                     if (listId) {
+        //                         replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
+        //                         newNode.setAttribute('data-list-id', listId);
+        //                     }
+        //                     const replacedText = text.replace(
+        //                         searchRegex,
+        //                         replacementText
+        //                     );
+        //                     newNode.innerHTML = replacedText;
+        //                     node.parentNode.replaceChild(newNode, node);
+        //                 }
+        //             }
+        //         } else if (
+        //             node.nodeType === Node.ELEMENT_NODE &&
+        //             node.tagName.toLowerCase() !== 'style' &&
+        //             node.tagName.toLowerCase() !== 'script' &&
+        //             node.childNodes &&
+        //             node.childNodes.length > 0
+        //         ) {
+        //             node.childNodes.forEach((childNode) => {
+        //                 highlightTextNode(childNode);
+        //             });
+        //         }
+        //     }
+
+        //     // Проверка, является ли узел потомком элемента style или script
+        //     function isDescendantOfStyleOrScript(node) {
+        //         while (node.parentNode) {
+        //             node = node.parentNode;
+        //             if (
+        //                 node.tagName &&
+        //                 (node.tagName.toLowerCase() === 'style' ||
+        //                     node.tagName.toLowerCase() === 'script')
+        //             ) {
+        //                 return true;
+        //             }
+        //         }
+        //         return false;
+        //     }
+
+        //     highlightTextNode(document.body);
+        // }
+
         if (boolActive && searchText !== '') {
             const searchRegex = new RegExp(searchText, 'gi');
+
             function highlightTextNode(node) {
-                let text = node.nodeValue;
                 if (
                     node.nodeType === Node.TEXT_NODE &&
                     !isDescendantOfStyleOrScript(node)
                 ) {
+                    const text = node.nodeValue;
                     if (searchRegex.test(text)) {
                         const foundWord = findWordInWordLists(searchText);
-                        const status = foundWord.status;
-                        const isValid = statusesLists.includes(status);
-
-                        // const isWordFound = foundWord && foundWord['status'] === 'Found';
+                        const isValid = statusesLists.includes(
+                            foundWord.status
+                        );
                         const colorStyle = isValid
                             ? `background-color: ${highlightColorRestore}; border: 4px solid ${highlightColor};`
                             : `border: 4px solid ${highlightColor};`;
+
                         if (node.parentNode.className !== 'highlighted') {
-                            let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
-                            let newNode = document.createElement('span');
-                            newNode.className = 'highlightedP';
-                            if (listId) {
-                                replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
-                                newNode.setAttribute('data-list-id', listId);
+                            const wrapper = document.createElement('span');
+                            wrapper.className = 'highlightedP';
+                            wrapper.setAttribute('data-list-id', listId);
+
+                            let lastIndex = 0;
+                            let match;
+
+                            // Если выводить в консоль, то почему-то подсвечивает больше слов, но все ровно не все
+                            // console.log(searchRegex.exec(text));
+
+                            while ((match = searchRegex.exec(text)) !== null) {
+                                const beforeMatch = text.substring(
+                                    lastIndex,
+                                    match.index
+                                );
+
+                                wrapper.appendChild(
+                                    document.createTextNode(beforeMatch)
+                                );
+
+                                const matchedText =
+                                    document.createElement('span');
+                                matchedText.className = 'highlighted';
+                                matchedText.style.cssText = colorStyle;
+                                matchedText.textContent = match[0];
+                                if (listId) {
+                                    matchedText.dataset.listId = listId;
+                                }
+                                wrapper.appendChild(matchedText);
+                                lastIndex = match.index + match[0].length;
                             }
-                            const replacedText = text.replace(
-                                searchRegex,
-                                replacementText
+
+                            wrapper.appendChild(
+                                document.createTextNode(
+                                    text.substring(lastIndex)
+                                )
                             );
-                            newNode.innerHTML = replacedText;
-                            node.parentNode.replaceChild(newNode, node);
+
+                            node.parentNode.replaceChild(wrapper, node);
+
+                            // let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
+                            // let newNode = document.createElement('span');
+                            // newNode.className = 'highlightedP';
+                            // if (listId) {
+                            //     replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
+                            //     newNode.setAttribute('data-list-id', listId);
+                            // }
+                            // const replacedText = text.replace(
+                            //     searchRegex,
+                            //     replacementText
+                            // );
+                            // newNode.innerHTML = replacedText;
+                            // node.parentNode.replaceChild(newNode, node);
                         }
                     }
                 } else if (
                     node.nodeType === Node.ELEMENT_NODE &&
-                    node.tagName.toLowerCase() !== 'style' &&
-                    node.tagName.toLowerCase() !== 'script' &&
+                    !['style', 'script'].includes(node.tagName.toLowerCase()) &&
                     node.childNodes &&
                     node.childNodes.length > 0
                 ) {
-                    node.childNodes.forEach((childNode) => {
-                        highlightTextNode(childNode);
-                    });
+                    node.childNodes.forEach((childNode) =>
+                        highlightTextNode(childNode)
+                    );
                 }
             }
 
@@ -537,6 +652,7 @@ if (!window.hasRun) {
 
             highlightTextNode(document.body);
         }
+
         let highlightedCount =
             document.querySelectorAll('span.highlighted').length;
         chrome.storage.local.set({ count: highlightedCount });
@@ -563,7 +679,7 @@ if (!window.hasRun) {
             if (listId) {
                 document
                     .querySelectorAll(
-                        `span[data-list-id="${listId}"].highlighted, span[data-list-id="${listId}"].highlighted`
+                        `span[data-list-id="${listId}"].highlighted`
                     )
                     .forEach((element) => {
                         const { textContent } = element;
@@ -571,7 +687,7 @@ if (!window.hasRun) {
                     });
                 document
                     .querySelectorAll(
-                        `span[data-list-id="${listId}"].highlighted, span[data-list-id="${listId}"].highlightedP`
+                        `span[data-list-id="${listId}"].highlightedP`
                     )
                     .forEach((element) => {
                         const { textContent } = element;
