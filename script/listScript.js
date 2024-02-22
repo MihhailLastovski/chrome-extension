@@ -102,11 +102,11 @@ document.addEventListener('DOMContentLoaded', function () {
         wordDivs.forEach((wordDiv) => {
             const checkbox = wordDiv.querySelector('.word-checkbox');
             const wordLabel = wordDiv.querySelector('.word-label');
-
+            const statusLabel = wordDiv.querySelector('.status-label')
             if (wordLabel) {
                 const word = wordLabel.textContent;
                 const enabled = checkbox.checked;
-                const status = wordLabel.dataset.status || '';
+                const status = statusLabel.textContent;
 
                 if (word !== '') {
                     editedWords.push({
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
         wordInput.className = 'word-input';
 
         const statusLbl = document.createElement('label');
-
+        statusLbl.className = "status-label"
         chrome.storage.local.get('wordLists', (result) => {
             const wordLists = result.wordLists || [];
             const foundWord = wordLists
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     words: wordsArray,
                     dataURL: urlFromInput,
                 };
-                if (listName && words.length > 0) {
+                if (listName && wordsArray.length > 0) {
                     saveWordList(newList);
                 }
             }
