@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function saveEditedList(index, lists) {
         const listName = listNameInput.value.trim();
         const editedWords = [];
-
+        
         const wordDivs = document.querySelectorAll('#wordsContainer > div');
         wordDivs.forEach((wordDiv) => {
             const checkbox = wordDiv.querySelector('.word-checkbox');
@@ -124,8 +124,6 @@ document.addEventListener('DOMContentLoaded', function () {
             lists[index].words = editedWords;
 
             chrome.storage.local.set({ wordLists: lists }, function () {});
-        } else {
-            alert('Enter list name or non-empty words');
         }
     }
 
@@ -212,38 +210,17 @@ document.addEventListener('DOMContentLoaded', function () {
     addListForm.addEventListener('submit', function (event) {
         event.preventDefault();
         const listName = listNameInput.value.trim();
-        const words = [];
-
-        const wordDivs = document.querySelectorAll('#wordsContainer > div');
-        wordDivs.forEach((wordDiv) => {
-            const checkbox = wordDiv.querySelector('.word-checkbox');
-            const wordLabel = wordDiv.querySelector('.word-label');
-
-            if (wordLabel) {
-                const word = wordLabel.textContent;
-                const enabled = checkbox.checked;
-
-                if (word !== '') {
-                    words.push({
-                        word: word,
-                        enabled: enabled,
-                        stringID: stringID,
-                        status: wordStatus,
-                    });
-                }
-            }
-        });
 
         chrome.storage.local.get('dataURL', function (result) {
             const urlFromInput = result.dataURL;
 
-            if (listName && words.length > 0) {
+            if (listName && wordsArray.length > 0) {
                 if (!listId) {
                     const newList = {
                         id: Date.now().toString(),
                         name: listName,
                         color: highlightingColor || '#FC0365',
-                        words: words,
+                        words: wordsArray,
                         dataURL: urlFromInput,
                     };
 
@@ -257,28 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     chrome.windows.onFocusChanged.addListener(function (window) {
         const listName = listNameInput.value.trim() || 'unnamed';
-        const words = [];
-
-        const wordDivs = document.querySelectorAll('#wordsContainer > div');
-        wordDivs.forEach((wordDiv) => {
-            const checkbox = wordDiv.querySelector('.word-checkbox');
-            const wordLabel = wordDiv.querySelector('.word-label');
-
-            if (wordLabel) {
-                const word = wordLabel.textContent;
-                const enabled = checkbox.checked;
-
-                if (word !== '') {
-                    words.push({
-                        word: word,
-                        enabled: enabled,
-                        stringID: "stringID",
-                        status: "wordStatus",
-                    });
-                }
-            }
-        });
-
+     
         chrome.storage.local.get('dataURL', function (result) {
             const urlFromInput = result.dataURL;
 
@@ -287,7 +243,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     id: Date.now().toString(),
                     name: listName,
                     color: highlightingColor || '#FC0365',
-                    words: words,
+                    words: wordsArray,
                     dataURL: urlFromInput,
                 };
                 if (listName && words.length > 0) {
@@ -497,6 +453,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+    const wordsArray = [];
+
     async function fetchDataAndProcessWords(url, readOnly) {
         try {
             const response = await fetch(url);
@@ -505,18 +463,29 @@ document.addEventListener('DOMContentLoaded', function () {
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlData, 'text/html');
     
-            // Update the selector to target the "Core Strings" column
-            const coreStringsColumn = Array.from(doc.querySelectorAll('.waffle tbody tr td:nth-child(7)'))
-                .map(column => column.textContent.trim());
-    
-            coreStringsColumn.forEach((word) => {
-                addWord(word);
-            });
+            const coreStringsColumn = Array.from(doc.querySelectorAll('.waffle tbody tr'))
+                .slice(1) 
+                .map((row, index) => {
+                    const word = row.querySelector('td:nth-child(7)').textContent.trim();
+                    const wordId = row.querySelector('td:nth-child(6)').textContent.trim();
+                    const status = row.querySelector('td:nth-child(10)').textContent.trim();
+                    
+                    if (word !== '') {
+                        addWord(word);
+                        wordsArray.push({ word, id: wordId, status });
+                    }
+                    
+                    return { word, id: wordId, status };
+                });
         } catch (error) {
             console.error('Error while retrieving data:', error);
             alert('Error while retrieving data, please try again.');
         }
     }
+
+
+
+
     
     // async function fetchDataAndProcessWords(url, readOnly) {
     //     if (readOnly) {
