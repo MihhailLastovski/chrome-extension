@@ -7,27 +7,60 @@ chrome.runtime.onInstalled.addListener(function () {
     });
 });
 
-//Обновление иконки
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status === 'complete') {
+        // Обновление иконки
         updateBadgeCount(0);
-        // function highlight() {
-        //     chrome.tabs.query(
-        //         { active: true, currentWindow: true },
-        //         function (tabs) {
-        //             chrome.scripting.executeScript({
-        //                 target: { tabId: tabs[0].id },
-        //                 files: ['./script/contentScript.js'],
-        //             });
-        //             chrome.tabs.sendMessage(tabs[0].id, {
-        //                 action: 'highlight',
-        //                 searchText: 'рыба',
-        //                 highlightColor: '#FC0365',
-        //             });
-        //         }
-        //     );
-        // }
-        highlight();
+
+        // Подсвечивание списков при обновлении страницы
+        chrome.storage.local.get('enabledLists', function (data) {
+            let enabledLists = data.enabledLists || [];
+
+            enabledLists.forEach((listId) => {
+                highlightWordsFromList(listId);
+            });
+
+            function highlightWordsFromList(listId) {
+                chrome.storage.local.get('wordLists', function (data) {
+                    const lists = data.wordLists || [];
+                    const listToHighlight = lists.find(
+                        (list) => list.id === listId
+                    );
+
+                    if (listToHighlight) {
+                        const sortedWords = listToHighlight.words.sort(
+                            (a, b) => {
+                                return b.word.length - a.word.length;
+                            }
+                        );
+
+                        sortedWords.forEach((wordObj) => {
+                            if (wordObj.enabled) {
+                                const searchText = wordObj.word.trim();
+                                chrome.tabs.query(
+                                    { active: true, currentWindow: true },
+                                    function (tabs) {
+                                        chrome.scripting.executeScript({
+                                            target: { tabId: tabs[0].id },
+                                            files: [
+                                                './script/contentScript.js',
+                                            ],
+                                        });
+                                        chrome.tabs.sendMessage(tabs[0].id, {
+                                            action: 'highlight',
+                                            searchText: searchText,
+                                            highlightColor:
+                                                listToHighlight.color,
+                                            listId: listId,
+                                        });
+                                    }
+                                );
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 });
 
@@ -67,18 +100,4 @@ function updateBadgeCount(count) {
         text: count > 0 ? count.toString() : '',
     });
     chrome.action.setBadgeBackgroundColor({ color: '#FC0365' });
-}
-function highlight() {
-    // chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    //     chrome.runtime.sendMessage(tabs[0].id, {
-    //         action: 'highlight',
-    //         searchText: 'рыба',
-    //         highlightColor: '#FC0365',
-    //     });
-    // });
-    chrome.runtime.sendMessage({
-        action: 'highlight',
-        searchText: 'рыба',
-        highlightColor: '#FC0365',
-    });
 }

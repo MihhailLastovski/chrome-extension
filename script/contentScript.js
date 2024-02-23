@@ -348,6 +348,7 @@ if (!window.hasRun) {
             }
         });
     }
+
     async function captureScreenshot(element) {
         document.querySelectorAll('.highlighted').forEach((el) => {
             if (el !== element) {
@@ -506,7 +507,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             request.searchText,
             request.highlightColor,
             request.listId
-            // request.isActive
         );
 
         async function highlightText(
@@ -565,10 +565,12 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                             const status = foundWord.status;
                             const isValid = statusesLists.includes(status);
 
-                            // const isWordFound = foundWord && foundWord['status'] === 'Found';
                             const colorStyle = isValid
                                 ? `background-color: ${highlightColorRestore}; border: 4px solid ${highlightColor};`
                                 : `border: 4px solid ${highlightColor};`;
+
+                            // const colorStyle = `border: 4px solid ${highlightColor};`;
+
                             if (node.parentNode.className !== 'highlighted') {
                                 let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
                                 let newNode = document.createElement('span');
@@ -657,12 +659,5 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         }
     } else if (request.action === 'submenuStatusUpdating') {
         getBooleanFromLocalStorage();
-    } else if (request.action === 'cssInjection') {
-        const style = document.createElement('style');
-        style.textContent =
-            'div { background-image: url("https://i.pinimg.com/originals/c4/2f/05/c42f0562ba5868acab46f6a1b6aaa303.gif");}';
-
-        // Добавляем стиль в <head> элемент страницы
-        document.head.appendChild(style);
     }
 });

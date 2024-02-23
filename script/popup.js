@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ? '<i class="fa fa-pause" aria-hidden="true"></i>'
                 : '<i class="fa fa-play" aria-hidden="true"></i>';
             enableButton.addEventListener('click', function () {
-                //Обновление счётчика
+                // Обновление счётчика
                 chrome.runtime.sendMessage({
                     action: 'updateBadge',
                     count: 0,
@@ -226,6 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = 'list.html';
     });
 
+    // Отображение версии проекта с manifest
     const version = document.getElementById('version');
     async function getProjectVersion() {
         try {
