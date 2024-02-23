@@ -156,7 +156,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (enable) {
             if (!enabledLists.includes(listId)) {
                 enabledLists.push(listId);
-                highlightWordsFromList(listId);
+                chrome.runtime.sendMessage({
+                    action: 'updateLists',
+                    listId: listId,
+                });
             }
         } else {
             enabledLists = enabledLists.filter((id) => id !== listId);
@@ -167,40 +170,6 @@ document.addEventListener('DOMContentLoaded', function () {
             { enabledLists: enabledLists },
             function () {}
         );
-    }
-
-    function highlightWordsFromList(listId) {
-        chrome.storage.local.get('wordLists', function (data) {
-            const lists = data.wordLists || [];
-            const listToHighlight = lists.find((list) => list.id === listId);
-
-            if (listToHighlight) {
-                const sortedWords = listToHighlight.words.sort((a, b) => {
-                    return b.word.length - a.word.length;
-                });
-
-                sortedWords.forEach((wordObj) => {
-                    if (wordObj.enabled) {
-                        const searchText = wordObj.word.trim();
-                        chrome.tabs.query(
-                            { active: true, currentWindow: true },
-                            function (tabs) {
-                                chrome.scripting.executeScript({
-                                    target: { tabId: tabs[0].id },
-                                    files: ['./script/contentScript.js'],
-                                });
-                                chrome.tabs.sendMessage(tabs[0].id, {
-                                    action: 'highlight',
-                                    searchText: searchText,
-                                    highlightColor: listToHighlight.color,
-                                    listId: listId,
-                                });
-                            }
-                        );
-                    }
-                });
-            }
-        });
     }
 
     function deleteWordList(listId) {

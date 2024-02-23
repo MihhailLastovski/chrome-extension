@@ -9,57 +9,12 @@ chrome.runtime.onInstalled.addListener(function () {
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status === 'complete') {
-        // Обновление иконки
-        updateBadgeCount(0);
-
         // Подсвечивание списков при обновлении страницы
         chrome.storage.local.get('enabledLists', function (data) {
             let enabledLists = data.enabledLists || [];
-
             enabledLists.forEach((listId) => {
                 highlightWordsFromList(listId);
             });
-
-            function highlightWordsFromList(listId) {
-                chrome.storage.local.get('wordLists', function (data) {
-                    const lists = data.wordLists || [];
-                    const listToHighlight = lists.find(
-                        (list) => list.id === listId
-                    );
-
-                    if (listToHighlight) {
-                        const sortedWords = listToHighlight.words.sort(
-                            (a, b) => {
-                                return b.word.length - a.word.length;
-                            }
-                        );
-
-                        sortedWords.forEach((wordObj) => {
-                            if (wordObj.enabled) {
-                                const searchText = wordObj.word.trim();
-                                chrome.tabs.query(
-                                    { active: true, currentWindow: true },
-                                    function (tabs) {
-                                        chrome.scripting.executeScript({
-                                            target: { tabId: tabs[0].id },
-                                            files: [
-                                                './script/contentScript.js',
-                                            ],
-                                        });
-                                        chrome.tabs.sendMessage(tabs[0].id, {
-                                            action: 'highlight',
-                                            searchText: searchText,
-                                            highlightColor:
-                                                listToHighlight.color,
-                                            listId: listId,
-                                        });
-                                    }
-                                );
-                            }
-                        });
-                    }
-                });
-            }
         });
     }
 });
@@ -87,7 +42,13 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         return true;
     } else if (request.action === 'updateBadge') {
         const count = request.count || 0;
-        updateBadgeCount(count);
+        chrome.action.setBadgeText({
+            text: count > 0 ? count.toString() : '',
+        });
+        chrome.action.setBadgeBackgroundColor({ color: '#FC0365' });
+    } else if (request.action === 'updateLists') {
+        const listId = request.listId || 0;
+        highlightWordsFromList(listId);
     }
 });
 
@@ -95,9 +56,36 @@ chrome.storage.local.get('submenuIsActive', function (data) {
     chrome.storage.local.set({ submenuIsActive: data.submenuIsActive });
 });
 
-function updateBadgeCount(count) {
-    chrome.action.setBadgeText({
-        text: count > 0 ? count.toString() : '',
+function highlightWordsFromList(listId) {
+    chrome.storage.local.get('wordLists', function (data) {
+        const lists = data.wordLists || [];
+        const listToHighlight = lists.find((list) => list.id === listId);
+
+        if (listToHighlight) {
+            const sortedWords = listToHighlight.words.sort((a, b) => {
+                return b.word.length - a.word.length;
+            });
+
+            sortedWords.forEach((wordObj) => {
+                if (wordObj.enabled) {
+                    const searchText = wordObj.word.trim();
+                    chrome.tabs.query(
+                        { active: true, currentWindow: true },
+                        function (tabs) {
+                            chrome.scripting.executeScript({
+                                target: { tabId: tabs[0].id },
+                                files: ['./script/contentScript.js'],
+                            });
+                            chrome.tabs.sendMessage(tabs[0].id, {
+                                action: 'highlight',
+                                searchText: searchText,
+                                highlightColor: listToHighlight.color,
+                                listId: listId,
+                            });
+                        }
+                    );
+                }
+            });
+        }
     });
-    chrome.action.setBadgeBackgroundColor({ color: '#FC0365' });
 }
