@@ -17,3 +17,7 @@ v 1.1.4
 
 -   Status related bug in the update list menu is fixed
 -   Submenu displays statuses accordingly
+
+v 1.1.5
+
+-   About menu expanded
