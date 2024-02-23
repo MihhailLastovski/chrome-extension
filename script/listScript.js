@@ -97,12 +97,12 @@ document.addEventListener('DOMContentLoaded', function () {
     function saveEditedList(index, lists) {
         const listName = listNameInput.value.trim();
         const editedWords = [];
-        
+
         const wordDivs = document.querySelectorAll('#wordsContainer > div');
         wordDivs.forEach((wordDiv) => {
             const checkbox = wordDiv.querySelector('.word-checkbox');
             const wordLabel = wordDiv.querySelector('.word-label');
-            const statusLabel = wordDiv.querySelector('.status-label')
+            const statusLabel = wordDiv.querySelector('.status-label');
             if (wordLabel) {
                 const word = wordLabel.textContent;
                 const enabled = checkbox.checked;
@@ -161,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
         wordInput.className = 'word-input';
 
         const statusLbl = document.createElement('label');
-        statusLbl.className = "status-label"
+        statusLbl.className = 'status-label';
         chrome.storage.local.get('wordLists', (result) => {
             const wordLists = result.wordLists || [];
             const foundWord = wordLists
@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     chrome.windows.onFocusChanged.addListener(function (window) {
         const listName = listNameInput.value.trim() || 'unnamed';
-     
+
         chrome.storage.local.get('dataURL', function (result) {
             const urlFromInput = result.dataURL;
 
@@ -326,13 +326,13 @@ document.addEventListener('DOMContentLoaded', function () {
         // csvInput.type = 'text';
         // csvInput.id = 'textInput';
         // csvInput.placeholder = 'Paste the link';
-    
+
         // csvButton.addEventListener('click', function () {
         //     if (csvInput.value.trim() !== '') {
         //         const htmlLink = csvInput.value;
         //         chrome.storage.local.set({ dataURL: htmlLink });
         //         fetchDataAndProcessWords(htmlLink, true);
-    
+
         //         csvInput.value = '';
         //     } else {
         //         alert('Please enter link');
@@ -459,22 +459,30 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             const response = await fetch(url);
             const htmlData = await response.text();
-    
+
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlData, 'text/html');
-    
-            const coreStringsColumn = Array.from(doc.querySelectorAll('.waffle tbody tr'))
-                .slice(1) 
+
+            const coreStringsColumn = Array.from(
+                doc.querySelectorAll('.waffle tbody tr')
+            )
+                .slice(1)
                 .map((row, index) => {
-                    const word = row.querySelector('td:nth-child(7)').textContent.trim();
-                    const wordId = row.querySelector('td:nth-child(6)').textContent.trim();
-                    const status = row.querySelector('td:nth-child(10)').textContent.trim();
-                    
+                    const word = row
+                        .querySelector('td:nth-child(7)')
+                        .textContent.trim();
+                    const wordId = row
+                        .querySelector('td:nth-child(6)')
+                        .textContent.trim();
+                    const status = row
+                        .querySelector('td:nth-child(10)')
+                        .textContent.trim();
+
                     if (word !== '') {
                         addWord(word);
                         wordsArray.push({ word, id: wordId, status });
                     }
-                    
+
                     return { word, id: wordId, status };
                 });
         } catch (error) {
@@ -483,10 +491,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-
-
-
-    
     // async function fetchDataAndProcessWords(url, readOnly) {
     //     if (readOnly) {
     //         try {
