@@ -90,23 +90,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
 
-            createTooltips();
+            //createTooltips();
         }
     });
 
     function saveEditedList(index, lists) {
         const listName = listNameInput.value.trim();
         const editedWords = [];
-
+        
         const wordDivs = document.querySelectorAll('#wordsContainer > div');
         wordDivs.forEach((wordDiv) => {
             const checkbox = wordDiv.querySelector('.word-checkbox');
             const wordLabel = wordDiv.querySelector('.word-label');
-
+            const statusLabel = wordDiv.querySelector('.status-label')
             if (wordLabel) {
                 const word = wordLabel.textContent;
                 const enabled = checkbox.checked;
-                const status = wordLabel.dataset.status || '';
+                const status = statusLabel.textContent;
 
                 if (word !== '') {
                     editedWords.push({
@@ -124,8 +124,6 @@ document.addEventListener('DOMContentLoaded', function () {
             lists[index].words = editedWords;
 
             chrome.storage.local.set({ wordLists: lists }, function () {});
-        } else {
-            alert('Enter list name or non-empty words');
         }
     }
 
@@ -163,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
         wordInput.className = 'word-input';
 
         const statusLbl = document.createElement('label');
-
+        statusLbl.className = "status-label"
         chrome.storage.local.get('wordLists', (result) => {
             const wordLists = result.wordLists || [];
             const foundWord = wordLists
@@ -212,36 +210,17 @@ document.addEventListener('DOMContentLoaded', function () {
     addListForm.addEventListener('submit', function (event) {
         event.preventDefault();
         const listName = listNameInput.value.trim();
-        const words = [];
-
-        const wordDivs = document.querySelectorAll('#wordsContainer > div');
-        wordDivs.forEach((wordDiv) => {
-            const checkbox = wordDiv.querySelector('.word-checkbox');
-            const wordLabel = wordDiv.querySelector('.word-label');
-
-            if (wordLabel) {
-                const word = wordLabel.textContent;
-                const enabled = checkbox.checked;
-
-                if (word !== '') {
-                    words.push({
-                        word: word,
-                        enabled: enabled,
-                    });
-                }
-            }
-        });
 
         chrome.storage.local.get('dataURL', function (result) {
             const urlFromInput = result.dataURL;
 
-            if (listName && words.length > 0) {
+            if (listName && wordsArray.length > 0) {
                 if (!listId) {
                     const newList = {
                         id: Date.now().toString(),
                         name: listName,
                         color: highlightingColor || '#FC0365',
-                        words: words,
+                        words: wordsArray,
                         dataURL: urlFromInput,
                     };
 
@@ -255,26 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     chrome.windows.onFocusChanged.addListener(function (window) {
         const listName = listNameInput.value.trim() || 'unnamed';
-        const words = [];
-
-        const wordDivs = document.querySelectorAll('#wordsContainer > div');
-        wordDivs.forEach((wordDiv) => {
-            const checkbox = wordDiv.querySelector('.word-checkbox');
-            const wordLabel = wordDiv.querySelector('.word-label');
-
-            if (wordLabel) {
-                const word = wordLabel.textContent;
-                const enabled = checkbox.checked;
-
-                if (word !== '') {
-                    words.push({
-                        word: word,
-                        enabled: enabled,
-                    });
-                }
-            }
-        });
-
+     
         chrome.storage.local.get('dataURL', function (result) {
             const urlFromInput = result.dataURL;
 
@@ -283,10 +243,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     id: Date.now().toString(),
                     name: listName,
                     color: highlightingColor || '#FC0365',
-                    words: words,
+                    words: wordsArray,
                     dataURL: urlFromInput,
                 };
-                if (listName && words.length > 0) {
+                if (listName && wordsArray.length > 0) {
                     saveWordList(newList);
                 }
             }
@@ -360,6 +320,24 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('Please enter link');
             }
         });
+        // divWithListImportSettigs.innerHTML = '';
+
+        // var csvInput = document.createElement('input');
+        // csvInput.type = 'text';
+        // csvInput.id = 'textInput';
+        // csvInput.placeholder = 'Paste the link';
+    
+        // csvButton.addEventListener('click', function () {
+        //     if (csvInput.value.trim() !== '') {
+        //         const htmlLink = csvInput.value;
+        //         chrome.storage.local.set({ dataURL: htmlLink });
+        //         fetchDataAndProcessWords(htmlLink, true);
+    
+        //         csvInput.value = '';
+        //     } else {
+        //         alert('Please enter link');
+        //     }
+        // });
 
         var csvh2 = document.createElement('h2');
         csvh2.textContent = 'Google Sheets assistant';
@@ -475,47 +453,80 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+    const wordsArray = [];
 
     async function fetchDataAndProcessWords(url, readOnly) {
-        if (readOnly) {
-            try {
-                const response = await fetch(url);
-                const csvData = await response.text();
-
-                const rows = csvData.split('\n');
-                const wordsArray = rows.reduce((words, row) => {
-                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    const wordsInRow = columns.map((cell) =>
-                        cell.trim().replace(/"/g, '')
-                    );
-                    return words.concat(
-                        wordsInRow.filter((word) => word !== '')
-                    );
-                }, []);
-
-                wordsArray.forEach((word) => {
-                    addWord(word.trim());
+        try {
+            const response = await fetch(url);
+            const htmlData = await response.text();
+    
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlData, 'text/html');
+    
+            const coreStringsColumn = Array.from(doc.querySelectorAll('.waffle tbody tr'))
+                .slice(1) 
+                .map((row, index) => {
+                    const word = row.querySelector('td:nth-child(7)').textContent.trim();
+                    const wordId = row.querySelector('td:nth-child(6)').textContent.trim();
+                    const status = row.querySelector('td:nth-child(10)').textContent.trim();
+                    
+                    if (word !== '') {
+                        addWord(word);
+                        wordsArray.push({ word, id: wordId, status });
+                    }
+                    
+                    return { word, id: wordId, status };
                 });
-            } catch (error) {
-                console.error('Error while retrieving data:', error);
-                alert('Error while retrieving data, please try again.');
-            }
-        } else {
-            try {
-                const response = await fetch(url);
-                const csvData = await response.json();
-
-                const wordsArray = csvData.map((rowData) => rowData.col1);
-
-                wordsArray.forEach((word) => {
-                    addWord(word.trim());
-                });
-            } catch (error) {
-                console.error('Ошибка при получении данных:', error);
-                alert('Ошибка при получении данных');
-            }
+        } catch (error) {
+            console.error('Error while retrieving data:', error);
+            alert('Error while retrieving data, please try again.');
         }
     }
+
+
+
+
+    
+    // async function fetchDataAndProcessWords(url, readOnly) {
+    //     if (readOnly) {
+    //         try {
+    //             const response = await fetch(url);
+    //             const csvData = await response.text();
+
+    //             const rows = csvData.split('\n');
+    //             const wordsArray = rows.reduce((words, row) => {
+    //                 const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+    //                 const wordsInRow = columns.map((cell) =>
+    //                     cell.trim().replace(/"/g, '')
+    //                 );
+    //                 return words.concat(
+    //                     wordsInRow.filter((word) => word !== '')
+    //                 );
+    //             }, []);
+
+    //             wordsArray.forEach((word) => {
+    //                 addWord(word.trim());
+    //             });
+    //         } catch (error) {
+    //             console.error('Error while retrieving data:', error);
+    //             alert('Error while retrieving data, please try again.');
+    //         }
+    //     } else {
+    //         try {
+    //             const response = await fetch(url);
+    //             const csvData = await response.json();
+
+    //             const wordsArray = csvData.map((rowData) => rowData.col1);
+
+    //             wordsArray.forEach((word) => {
+    //                 addWord(word.trim());
+    //             });
+    //         } catch (error) {
+    //             console.error('Ошибка при получении данных:', error);
+    //             alert('Ошибка при получении данных');
+    //         }
+    //     }
+    // }
 
     function sendDataToGoogleAppsScript(url, data) {
         fetch(url, {
