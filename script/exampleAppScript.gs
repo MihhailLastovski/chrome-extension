@@ -6,9 +6,7 @@ function addNoteToElement(sheetId, note, textContent) {
         
         // Получаем все листы
         var sheets = spreadsheet.getSheets();
-
-        // Приводим textContent к нижнему регистру и удаляем пробелы
-        var cleanedTextContent = textContent.toLowerCase().trim();
+        var targetTextContent = textContent;
 
         // Перебираем все листы
         for (var s = 0; s < sheets.length; s++) {
@@ -21,12 +19,9 @@ function addNoteToElement(sheetId, note, textContent) {
             for (var i = 0; i < data.length; i++) {
                 for (var j = 0; j < data[i].length; j++) {
                     var cellValue = String(data[i][j]).toLowerCase().trim();
-                    Logger.log('Comparing:', cellValue, 'with', cleanedTextContent);
+                    Logger.log('Comparing:', cellValue, 'with', targetTextContent.toLowerCase().trim());
 
-                    // Используем регулярное выражение для точного совпадения по слову
-                    var regex = new RegExp("(^|\\s)" + cleanedTextContent + "($|\\s)", "g");
-
-                    if (cellValue.match(regex)) {
+                    if (cellValue === targetTextContent.toLowerCase().trim()) {
                         // Нашли значение, добавляем заметку
                         var cell = sheet.getRange(i + 1, j + 1);
                         cell.setNote(note);
@@ -38,13 +33,12 @@ function addNoteToElement(sheetId, note, textContent) {
         }
 
         // Если значение не найдено
-        Logger.log('Value not found in any sheet:', cleanedTextContent);
+        Logger.log('Value not found in any sheet:', targetTextContent);
 
     } catch (error) {
         Logger.log('Error adding note:', error);
     }
 }
-
 
 
 

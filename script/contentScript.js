@@ -471,7 +471,7 @@ if (!window.hasRun) {
                 console.log('Sending data:', data);
 
                 fetch(
-                    'https://script.google.com/macros/s/AKfycbx3M7piLw8ceBgFuVfE9EAl92q2_EwJidSQXP32FUkQ3C_2mJxdEfn2vLIwqd5_c96e/exec',
+                    'https://script.google.com/macros/s/AKfycbwPvwuMovmRe6ADa48Do7PvoRpVB1xsEWehh-aPgKJroOTZeyb2XXJNY29xfMMWhisN/exec',
                     {
                         method: 'POST',
                         mode: 'no-cors',
