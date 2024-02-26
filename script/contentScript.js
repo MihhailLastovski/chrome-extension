@@ -485,70 +485,6 @@ if (!window.hasRun) {
             return null;
         }
 
-        // if (boolActive && searchText !== '') {
-        //     const searchRegex = new RegExp(searchText, 'gi');
-        //     function highlightTextNode(node) {
-        //         let text = node.nodeValue;
-        //         if (
-        //             node.nodeType === Node.TEXT_NODE &&
-        //             !isDescendantOfStyleOrScript(node)
-        //         ) {
-        //             if (searchRegex.test(text)) {
-        //                 const foundWord = findWordInWordLists(searchText);
-        //                 const status = foundWord.status;
-        //                 const isValid = statusesLists.includes(status);
-
-        //                 // const isWordFound = foundWord && foundWord['status'] === 'Found';
-        //                 const colorStyle = isValid
-        //                     ? `background-color: ${highlightColorRestore}; border: 4px solid ${highlightColor};`
-        //                     : `border: 4px solid ${highlightColor};`;
-        //                 if (node.parentNode.className !== 'highlighted') {
-        //                     let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
-        //                     let newNode = document.createElement('span');
-        //                     newNode.className = 'highlightedP';
-        //                     if (listId) {
-        //                         replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
-        //                         newNode.setAttribute('data-list-id', listId);
-        //                     }
-        //                     const replacedText = text.replace(
-        //                         searchRegex,
-        //                         replacementText
-        //                     );
-        //                     newNode.innerHTML = replacedText;
-        //                     node.parentNode.replaceChild(newNode, node);
-        //                 }
-        //             }
-        //         } else if (
-        //             node.nodeType === Node.ELEMENT_NODE &&
-        //             node.tagName.toLowerCase() !== 'style' &&
-        //             node.tagName.toLowerCase() !== 'script' &&
-        //             node.childNodes &&
-        //             node.childNodes.length > 0
-        //         ) {
-        //             node.childNodes.forEach((childNode) => {
-        //                 highlightTextNode(childNode);
-        //             });
-        //         }
-        //     }
-
-        //     // Проверка, является ли узел потомком элемента style или script
-        //     function isDescendantOfStyleOrScript(node) {
-        //         while (node.parentNode) {
-        //             node = node.parentNode;
-        //             if (
-        //                 node.tagName &&
-        //                 (node.tagName.toLowerCase() === 'style' ||
-        //                     node.tagName.toLowerCase() === 'script')
-        //             ) {
-        //                 return true;
-        //             }
-        //         }
-        //         return false;
-        //     }
-
-        //     highlightTextNode(document.body);
-        // }
-
         if (boolActive && searchText !== '') {
             const searchRegex = new RegExp(searchText, 'gi');
 
@@ -575,9 +511,7 @@ if (!window.hasRun) {
                             let lastIndex = 0;
                             let match;
 
-                            // Если выводить в консоль, то почему-то подсвечивает больше слов, но все ровно не все
-                            // console.log(searchRegex.exec(text));
-
+                            searchRegex.lastIndex = 0;
                             while ((match = searchRegex.exec(text)) !== null) {
                                 const beforeMatch = text.substring(
                                     lastIndex,
@@ -607,20 +541,6 @@ if (!window.hasRun) {
                             );
 
                             node.parentNode.replaceChild(wrapper, node);
-
-                            // let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;
-                            // let newNode = document.createElement('span');
-                            // newNode.className = 'highlightedP';
-                            // if (listId) {
-                            //     replacementText = `<span class="highlighted" data-list-id="${listId}" style="${colorStyle}">$&</span>`;
-                            //     newNode.setAttribute('data-list-id', listId);
-                            // }
-                            // const replacedText = text.replace(
-                            //     searchRegex,
-                            //     replacementText
-                            // );
-                            // newNode.innerHTML = replacedText;
-                            // node.parentNode.replaceChild(newNode, node);
                         }
                     }
                 } else if (
