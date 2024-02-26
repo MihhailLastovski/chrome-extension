@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const highlightBtn = document.getElementById('highlightBtn');
     const newListBtn = document.getElementById('newListBtn');
 
-    // const counterElem = document.getElementById('highlightedCount');
     const colorOptions = document.querySelectorAll('.color-option');
     selectedColor = localStorage.getItem('selectedColor') || 'defaultColor';
 

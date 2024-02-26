@@ -12,7 +12,7 @@ if (!window.hasRun) {
     const webPageCss = document.createElement('style');
     webPageCss.textContent = `
     .exa-radience-submenu {
-        height: 120px;
+        height: 185px;
         width: 240px;
         background-color: #FC0365;
         color: white;
@@ -43,7 +43,7 @@ if (!window.hasRun) {
         background-color: white;
         width: 200px;
         overflow-y: auto;
-        height: 50px;
+        height: 105px;
         margin-left: 20px;
         margin-top: 10px;
     }
@@ -121,12 +121,6 @@ if (!window.hasRun) {
             addNoteToElement(element);
         };
 
-        // const notificationDiv = document.createElement('div');
-        // notificationDiv.id = 'notifyDiv';
-        // notificationDiv.width = '100%';
-        // notificationDiv.style.display = 'none';
-        // notificationDiv.style.transition = 'opacity 0.5s ease-in-out';
-
         // Убрать статус
         const removeStatusBtn = document.createElement('button');
         removeStatusBtn.id = 'removeStatusBtn';
@@ -144,63 +138,54 @@ if (!window.hasRun) {
         var statusesContainer = document.createElement('div');
         statusesContainer.className = 'exa-radience-statuses-container';
 
-        // chrome.storage.local.get('customStatuses', function (result) {
-        //     const customStatuses = result.customStatuses || [];
-        //     customStatuses.forEach((status) => {
-        //         const div = document.createElement('div');
-        //         div.className = 'exa-radience-statuses-container-item';
-        //         div.textContent = status;
-        //         div.onclick = function () {
-        //             // Получаем все элементы с классом '.exa-radience-statuses-container-item'
-        //             var allItems = document.querySelectorAll(
-        //                 '.exa-radience-statuses-container-item'
-        //             );
-        //             // Применяем изменения ко всем элементам
-        //             allItems.forEach(function (elem) {
-        //                 elem.style.backgroundColor = '#FD68A4';
-        //             });
-        //             selectedValue = status;
-        //             changeWordStatus(element);
-        //             div.style.backgroundColor = '#3B1269';
-        //         };
-        //         statusesContainer.appendChild(div);
-        //     });
-        // });
+        chrome.storage.local.get('customStatuses', function (result) {
+            const customStatuses = result.customStatuses || [];
+            customStatuses.forEach((status) => {
+                const div = document.createElement('div');
+                div.id = 'statusDiv';
+                div.className = 'exa-radience-statuses-container-item';
+                div.textContent = status;
 
-        // chrome.storage.local.get('wordLists', function (result) {
-        //     const wordLists = result.wordLists || [];
-        //     const wordList = wordLists.find((list) => {
-        //         return (
-        //             list.words &&
-        //             list.words.find((wordObj) => {
-        //                 return (
-        //                     wordObj.word.trim().toLowerCase() ===
-        //                     element.innerHTML.trim().toLowerCase()
-        //                 );
-        //             })
-        //         );
-        //     });
+                chrome.storage.local.get('wordLists', function (result) {
+                    const wordLists = result.wordLists || [];
+                    const foundWord = wordLists.find((wordList) => {
+                        return (
+                            wordList.words &&
+                            wordList.words.find((wordObj) => {
+                                return (
+                                    wordObj.word.trim().toLowerCase() ===
+                                        element.innerHTML
+                                            .trim()
+                                            .toLowerCase() &&
+                                    wordObj.status === status
+                                );
+                            })
+                        );
+                    });
+                    if (foundWord) {
+                        div.style.backgroundColor = '#3B1269';
+                    }
+                });
 
-        //     if (wordList) {
-        //         const foundWord = wordList.words.find((wordObj) => {
-        //             return (
-        //                 wordObj.word.trim().toLowerCase() ===
-        //                 element.innerHTML.trim().toLowerCase()
-        //             );
-        //         });
-        //         if (foundWord && foundWord.status) {
-        //             statusesContainer.find((elem) => {
-        //                 if (elem.textContent === foundWord.status) {
-        //                     elem.style.backgroundColor = '#3B1269';
-        //                 }
-        //             });
-        //         }
-        //     }
-        // });
+                div.onclick = function () {
+                    // Получаем все элементы с классом '.exa-radience-statuses-container-item'
+                    var allItems = document.querySelectorAll(
+                        '.exa-radience-statuses-container-item'
+                    );
+                    // Применяем изменения ко всем элементам
+                    allItems.forEach(function (elem) {
+                        elem.style.backgroundColor = '#FD68A4';
+                    });
+                    selectedValue = status;
+                    changeWordStatus(element);
+                    div.style.backgroundColor = '#3B1269';
+                };
+                statusesContainer.appendChild(div);
+            });
+        });
 
         submenuContainer.appendChild(addNoteBtn);
         submenuContainer.appendChild(captureScreenshotBtn);
-        // submenuContainer.appendChild(notificationDiv);
         submenuContainer.appendChild(lineDiv);
 
         lineDiv.appendChild(statusesContainer);
@@ -221,22 +206,6 @@ if (!window.hasRun) {
     function sleep(ms) {
         return new Promise((resolve) => setTimeout(resolve, ms));
     }
-
-    // function showNotification(color, text) {
-    //     const notificationDiv = document.getElementById('notifyDiv');
-    //     notificationDiv.textContent = text;
-    //     notificationDiv.style.backgroundColor = color;
-    //     notificationDiv.style.display = 'block';
-    //     notificationDiv.style.opacity = '1';
-
-    //     // Hide the notification div after a certain duration
-    //     setTimeout(() => {
-    //         notificationDiv.style.opacity = '0'; // Fade out the notification div
-    //         setTimeout(() => {
-    //             notificationDiv.style.display = 'none'; // Hide after it fades out
-    //         }, 500);
-    //     }, 3000);
-    // }
 
     async function changeWordStatus(element) {
         if (selectedValue) {
@@ -269,84 +238,58 @@ if (!window.hasRun) {
                         chrome.storage.local.set({
                             wordLists: updatedWordLists,
                         });
-                        // showNotification('green', 'Status added');
                     });
                 }
             });
         } else {
-            // showNotification('red', 'Select status');
+            console.log('No status selected');
         }
     }
 
-    // async function removeWordsStatus(element) {
-    //     const styleAttribute = element.getAttribute('style');
-    //     if (!styleAttribute || !styleAttribute.includes('background-color')) {
-    //         showNotification('red', "Status is missing")
-    //     }
-    //     else {
-    //         const listId = element.getAttribute('data-list-id');
-    //         //const selectedContainer = document.getElementById('statusDropdown').innerHTML;
-
-    //         document.querySelectorAll('.highlighted').forEach((el) => {
-    //             if (
-    //                 el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
-    //             ) {
-    //                 //if (el.hasAttribute('status')) {
-    //                 el.style.backgroundColor = 'transparent';
-    //                 el.removeAttribute('status');
-    //                 chrome.storage.local.get('wordLists', (result) => {
-    //                     const wordLists = result.wordLists || [];
-
-    //                     const updatedWordLists = wordLists.map((wordList) => {
-    //                         if (wordList.words && wordList.id === listId) {
-    //                             wordList.words.forEach((wordObj) => {
-    //                                 if (
-    //                                     wordObj.word.trim().toLowerCase() ===
-    //                                     el.innerHTML.toLowerCase()
-    //                                 ) {
-    //                                     delete wordObj['status'];
-    //                                 }
-    //                             });
-    //                         }
-    //                         return wordList;
-    //                     });
-    //                     chrome.storage.local.set({
-    //                         wordLists: updatedWordLists,
-    //                     });
-    //                     showNotification('green',"Status removed")
-    // }
-
     async function removeWordsStatus(element) {
-        const listId = element.getAttribute('data-list-id');
+        const styleAttribute = element.getAttribute('style');
+        if (!styleAttribute || !styleAttribute.includes('background-color')) {
+            console.log('No status selected');
+        } else {
+            const listId = element.getAttribute('data-list-id');
 
-        document.querySelectorAll('.highlighted').forEach((el) => {
-            if (
-                el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
-            ) {
-                el.style.backgroundColor = 'transparent';
-                el.removeAttribute('status');
-                chrome.storage.local.get('wordLists', (result) => {
-                    const wordLists = result.wordLists || [];
+            document.querySelectorAll('.highlighted').forEach((el) => {
+                if (
+                    el.innerHTML.toLowerCase() ===
+                    element.innerHTML.toLowerCase()
+                ) {
+                    el.style.backgroundColor = 'transparent';
+                    el.removeAttribute('status');
+                    chrome.storage.local.get('wordLists', (result) => {
+                        const wordLists = result.wordLists || [];
 
-                    const updatedWordLists = wordLists.map((wordList) => {
-                        if (wordList.words && wordList.id === listId) {
-                            wordList.words.forEach((wordObj) => {
-                                if (
-                                    wordObj.word.trim().toLowerCase() ===
-                                    el.innerHTML.toLowerCase()
-                                ) {
-                                    delete wordObj['status'];
-                                }
-                            });
-                        }
-                        return wordList;
+                        const updatedWordLists = wordLists.map((wordList) => {
+                            if (wordList.words && wordList.id === listId) {
+                                wordList.words.forEach((wordObj) => {
+                                    if (
+                                        wordObj.word.trim().toLowerCase() ===
+                                        el.innerHTML.toLowerCase()
+                                    ) {
+                                        delete wordObj['status'];
+                                    }
+                                });
+                            }
+                            return wordList;
+                        });
+                        chrome.storage.local.set({
+                            wordLists: updatedWordLists,
+                        });
+                        const statusItems = document.querySelectorAll(
+                            '.exa-radience-statuses-container-item'
+                        );
+                        statusItems.forEach((item) => {
+                            item.style.backgroundColor = '#FD68A4';
+                        });
+                        console.log('Word status added');
                     });
-                    chrome.storage.local.set({
-                        wordLists: updatedWordLists,
-                    });
-                });
-            }
-        });
+                }
+            });
+        }
     }
 
     async function captureScreenshot(element) {
@@ -501,6 +444,7 @@ if (!window.hasRun) {
         return match ? match[1] : null;
     }
 }
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action === 'highlight') {
         highlightText(
@@ -561,15 +505,15 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         !isDescendantOfStyleOrScript(node)
                     ) {
                         if (searchRegex.test(text)) {
-                            const foundWord = findWordInWordLists(searchText);
+                            const foundWord =
+                                findWordInWordLists(searchText) || '';
                             const status = foundWord.status;
-                            const isValid = statusesLists.includes(status);
+                            const isValid =
+                                statusesLists.includes(status) || false;
 
                             const colorStyle = isValid
                                 ? `background-color: ${highlightColorRestore}; border: 4px solid ${highlightColor};`
                                 : `border: 4px solid ${highlightColor};`;
-
-                            // const colorStyle = `border: 4px solid ${highlightColor};`;
 
                             if (node.parentNode.className !== 'highlighted') {
                                 let replacementText = `<span class="highlighted" style="${colorStyle}">$&</span>`;

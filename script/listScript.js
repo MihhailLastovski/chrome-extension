@@ -174,6 +174,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ? 'line-through'
                 : 'none';
             statusLbl.textContent = foundWord?.status || '';
+            wordLabel.dataset.status = foundWord?.status || '';
         });
 
         const updateBtn = document.createElement('button');
