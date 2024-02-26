@@ -216,7 +216,8 @@ if (!window.hasRun) {
                     el.innerHTML.toLowerCase() ===
                     element.innerHTML.toLowerCase()
                 ) {
-                    el.style.backgroundColor = highlightColorRestore;
+                    //el.style.borderColor = highlightColorRestore; //highlightColorRestore
+                    el.style.backgroundColor = el.style.borderColor;
 
                     el.setAttribute('status', selectedValue);
                     chrome.storage.local.get('wordLists', (result) => {
@@ -511,7 +512,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                                 foundWord.status
                             );
                             const colorStyle = isValid
-                                ? `background-color: ${highlightColorRestore}; border: 4px solid ${highlightColor};`
+                                ? `background-color: ${highlightColor}; border: 4px solid ${highlightColor};`
                                 : `border: 4px solid ${highlightColor};`;
 
                             if (node.parentNode.className !== 'highlighted') {
