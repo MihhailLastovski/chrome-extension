@@ -471,7 +471,7 @@ if (!window.hasRun) {
                 console.log('Sending data:', data);
 
                 fetch(
-                    'https://script.google.com/macros/s/AKfycbwPvwuMovmRe6ADa48Do7PvoRpVB1xsEWehh-aPgKJroOTZeyb2XXJNY29xfMMWhisN/exec',
+                    'https://script.google.com/macros/s/AKfycbz3TnSqL1GZvSpyD_8hPWsysRCZBc-hoRWXr5quwVlSrgYnTVyYIWDTUlsPquyr8ptk/exec',
                     {
                         method: 'POST',
                         mode: 'no-cors',
@@ -502,6 +502,7 @@ if (!window.hasRun) {
 
     async function highlightText(searchText, highlightColor, listId = null) {
         highlightColorRestore = highlightColor;
+        
         const resultOld = await new Promise((resolve, reject) => {
             chrome.storage.local.get('isActive', (result) => {
                 resolve(result);

@@ -1,44 +1,57 @@
 var sheetName = 'zxc'
-function addNoteToElement(sheetId, note, textContent) {
+function addValueToSteps() {
     try {
-        // Открываем таблицу
-        var spreadsheet = SpreadsheetApp.openById(sheetId);
-        
-        // Получаем все листы
-        var sheets = spreadsheet.getSheets();
-        var targetTextContent = textContent;
+        // Extract spreadsheet ID from URL
+        var spreadsheetId = extractSheetIdFromURL("https://docs.google.com/spreadsheets/d/e/2PACX-1vQD05f_2B8FgCwE4krJhe_GAXGlPOt4SZrhH4UgHNKp7KM1SD35fXGWKLL6kMAUmHV7Ec-xLcCxGrH5/pubhtml?gid=54246032&single=true");
 
-        // Перебираем все листы
+        if (!spreadsheetId) {
+            Logger.log('Invalid spreadsheet ID.');
+            return;
+        }
+
+        // Open the spreadsheet
+        var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+        var sheets = spreadsheet.getSheets();
+        var targetTextContent = "R2";
+
+        // Iterate through all sheets
         for (var s = 0; s < sheets.length; s++) {
             var sheet = sheets[s];
 
-            // Получаем все данные в виде 2D массива
+            // Get all data as a 2D array
             var data = sheet.getDataRange().getValues();
 
-            // Ищем ячейку с полным совпадением значения
+            // Search for the cell with an exact match
             for (var i = 0; i < data.length; i++) {
                 for (var j = 0; j < data[i].length; j++) {
                     var cellValue = String(data[i][j]).toLowerCase().trim();
                     Logger.log('Comparing:', cellValue, 'with', targetTextContent.toLowerCase().trim());
 
                     if (cellValue === targetTextContent.toLowerCase().trim()) {
-                        // Нашли значение, добавляем заметку
-                        var cell = sheet.getRange(i + 1, j + 1);
-                        cell.setNote(note);
-                        Logger.log('Note added successfully.');
+                        // Found the value, add it to the next column ("Steps")
+                        var cell = sheet.getRange(i + 1, j + 2);
+                        cell.setValue("kek");
+                        Logger.log('Value added to Steps successfully.');
                         return;
                     }
                 }
             }
         }
 
-        // Если значение не найдено
+        // If the value is not found
         Logger.log('Value not found in any sheet:', targetTextContent);
 
     } catch (error) {
-        Logger.log('Error adding note:', error);
+        Logger.log('Error adding value to Steps:', error);
     }
 }
+
+function extractSheetIdFromURL(url) {
+    const regex = /\/d\/([a-zA-Z0-9-_]+)|\/e\/[a-zA-Z0-9-_]+\/pubhtml\?gid=([0-9]+)/;
+    const match = url.match(regex);
+    return match ? (match[1] || match[2]) : null;
+}
+
 
 
 
@@ -82,7 +95,7 @@ function doPost(e) {
         // Проверяем, какое действие нужно выполнить
         if (requestData.action === 'addNoteToElement') {
             // Вызываем функцию добавления заметки
-            addNoteToElement(requestData.sheetId, requestData.note, requestData.textContent);
+            addValueToSteps(requestData.sheetId, requestData.note, requestData.textContent);
 
             Logger.log('Note added via doPost:', requestData.note);
 
