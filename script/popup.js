@@ -15,7 +15,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const highlightBtn = document.getElementById('highlightBtn');
     const newListBtn = document.getElementById('newListBtn');
 
-    // const counterElem = document.getElementById('highlightedCount');
     const colorOptions = document.querySelectorAll('.color-option');
     selectedColor = localStorage.getItem('selectedColor') || 'defaultColor';
 
@@ -92,9 +91,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 ? '<i class="fa fa-pause" aria-hidden="true"></i>'
                 : '<i class="fa fa-play" aria-hidden="true"></i>';
             enableButton.addEventListener('click', function () {
-                chrome.action.setBadgeText({ text: '' });
-                chrome.storage.local.set({ count: 0 });
-                // counterUpdating();
+                // Обновление счётчика
+                chrome.runtime.sendMessage({
+                    action: 'updateBadge',
+                    count: 0,
+                });
                 const enable = !enabledLists.includes(list.id);
                 toggleWordList(list.id, enable);
                 renderWordLists(lists);
@@ -154,7 +155,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (enable) {
             if (!enabledLists.includes(listId)) {
                 enabledLists.push(listId);
-                highlightWordsFromList(listId);
+                chrome.runtime.sendMessage({
+                    action: 'updateLists',
+                    listId: listId,
+                });
             }
         } else {
             enabledLists = enabledLists.filter((id) => id !== listId);
@@ -165,40 +169,6 @@ document.addEventListener('DOMContentLoaded', function () {
             { enabledLists: enabledLists },
             function () {}
         );
-    }
-
-    function highlightWordsFromList(listId) {
-        chrome.storage.local.get('wordLists', function (data) {
-            const lists = data.wordLists || [];
-            const listToHighlight = lists.find((list) => list.id === listId);
-
-            if (listToHighlight) {
-                const sortedWords = listToHighlight.words.sort((a, b) => {
-                    return b.word.length - a.word.length;
-                });
-
-                sortedWords.forEach((wordObj) => {
-                    if (wordObj.enabled) {
-                        const searchText = wordObj.word.trim();
-                        chrome.tabs.query(
-                            { active: true, currentWindow: true },
-                            function (tabs) {
-                                chrome.scripting.executeScript({
-                                    target: { tabId: tabs[0].id },
-                                    files: ['./script/contentScript.js'],
-                                });
-                                chrome.tabs.sendMessage(tabs[0].id, {
-                                    action: 'highlight',
-                                    searchText: searchText,
-                                    highlightColor: listToHighlight.color,
-                                    listId: listId,
-                                });
-                            }
-                        );
-                    }
-                });
-            }
-        });
     }
 
     function deleteWordList(listId) {
@@ -224,6 +194,7 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = 'list.html';
     });
 
+    // Отображение версии проекта с manifest
     const version = document.getElementById('version');
     async function getProjectVersion() {
         try {

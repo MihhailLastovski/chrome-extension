@@ -17,3 +17,12 @@ v 1.1.4
 
 -   Status related bug in the update list menu is fixed
 -   Submenu displays statuses accordingly
+
+v 1.1.5
+
+-   About menu expanded
+
+v 1.2.1
+
+-   Highlighting works on page loading and updating when extension is closed
+-   Highlighting principle has been changed

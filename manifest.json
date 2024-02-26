@@ -1,15 +1,14 @@
 {
   "manifest_version": 3,
   "name": "Exa Radiance",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "permissions": [
     "identity",
     "activeTab",
     "scripting",
     "storage",
     "tabs",
-    "downloads",
-    "contextMenus"
+    "downloads"
   ],
   "action": {
     "default_popup": "pages/popup.html",
@@ -29,7 +28,8 @@
       "all_frames": true,
       "match_about_blank": true,
       "matches": ["<all_urls>"],
-      "js": [ "script/contentScript.js" ]
+      "js": [ "script/contentScript.js" ],
+      "run_at": "document_end"
     }
   ],
   "background": {
