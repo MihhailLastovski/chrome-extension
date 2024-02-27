@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 resolve(result);
             });
         });
-        console.log(result.isActive);
         active = result.isActive;
         updateUIState();
         toggleSwitch.checked = active;

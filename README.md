@@ -27,6 +27,7 @@ v 1.2.1
 -   Highlighting works on page loading and updating when extension is closed
 -   Highlighting principle has been changed
 
-v 1.2.2
+v 1.2.3
 
 -   Fixed a bug with highlighting a deleted word from the list
+-   Fixed a bug with screenshot and highlighting
