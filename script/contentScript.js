@@ -367,7 +367,10 @@ if (!window.hasRun) {
             const updatedWordLists = wordLists.map((wordList) => {
                 if (wordList.words && wordList.id === listId) {
                     wordList.words = wordList.words.filter((wordObj) => {
-                        return wordObj.word.trim() !== textContentToRemove;
+                        return (
+                            wordObj.word.trim().toLowerCase() !==
+                            textContentToRemove.toLowerCase()
+                        );
                     });
                 }
                 return wordList;
@@ -382,9 +385,10 @@ if (!window.hasRun) {
             if (el.style.borderColor === 'transparent') {
                 el.style.borderColor = `${highlightColorRestore}`;
             }
+
             if (el === element) {
-                el.style.borderColor = 'transparent';
-                el.style.backgroundColor = 'transparent';
+                const { textContent } = element;
+                element.outerHTML = textContent;
             }
         });
     }
