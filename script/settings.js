@@ -5,6 +5,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const wordDiv = document.getElementById('content');
     const wordLabel = document.getElementById('wordLabel');
     const saveNameBtn = document.getElementById('saveNameBtn');
+    const wordInput = document.createElement('textarea');
+    wordInput.type = 'text';
+    wordInput.className = 'word-input';
+    wordInput.style.width = '100px';
 
     chrome.storage.local.get('saveAs', function (data) {
         saveAsCheckbox.checked = data.saveAs || false;
@@ -40,17 +44,13 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     saveNameBtn.addEventListener('click', function () {
-        const wordInput = document.createElement('textarea');
-        wordInput.type = 'text';
-        wordInput.value = wordLabel.textContent;
-        wordInput.className = 'word-input';
-
-        if (wordDiv.contains(wordInput)) {
-            wordLabel.textContent = wordInput.value.trim();
-            wordDiv.replaceChild(wordLabel, wordInput);
+        if (wordDiv.contains(wordLabel)) {
+            wordInput.value = wordLabel.textContent;
+            wordDiv.replaceChild(wordInput, wordLabel);
             chrome.storage.local.set({ screenshotName: wordLabel.textContent });
         } else {
-            wordDiv.replaceChild(wordInput, wordLabel);
+            wordLabel.textContent = wordInput.value.trim();
+            wordDiv.replaceChild(wordLabel, wordInput);
         }
     });
 });
