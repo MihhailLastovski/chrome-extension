@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             );
         }
-        removeHighlight();
+        // removeHighlight(); убирает хайлайт при одиночном подчеркивание слов
         highlight();
     });
 
