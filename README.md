@@ -10,6 +10,7 @@
 
 v 1.2.4
 
+-   Added possibility to change the default screenshot name
 -   Fixed a bug with highlighting a single word by using the input field
 
 v 1.2.3
