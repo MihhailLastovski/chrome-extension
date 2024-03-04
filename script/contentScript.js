@@ -512,7 +512,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
                         const text = node.nodeValue;
                         if (searchRegex.test(text)) {
                             const foundWord = findWordInWordLists(searchText);
-                            const isValid = statusesLists.includes(
+                            const isValid = foundWord && statusesLists.includes(
                                 foundWord.status
                             );
                             const colorStyle = isValid

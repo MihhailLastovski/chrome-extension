@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Exa Radiance",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "permissions": [
     "identity",
     "activeTab",
@@ -28,7 +28,7 @@
       "all_frames": true,
       "match_about_blank": true,
       "matches": ["<all_urls>"],
-      "js": [ "script/contentScript.js" ],
+      "js": [ "script/contentScript.js"],
       "run_at": "document_end"
     }
   ],

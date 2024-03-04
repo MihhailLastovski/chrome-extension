@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.2.4
+
+-   Fixed a bug with highlighting a single word by using the input field
+
 v 1.2.3
 
 -   Fixed a bug with highlighting a deleted word from the list
