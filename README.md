@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.2.4
+
+-   Added possibility to change the default screenshot name
+
 v 1.2.3
 
 -   Fixed a bug with highlighting a deleted word from the list
