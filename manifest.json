@@ -28,7 +28,7 @@
       "all_frames": true,
       "match_about_blank": true,
       "matches": ["<all_urls>"],
-      "js": [ "script/contentScript.js"],
+      "js": [ "script/contentScript.js", "script/submenu.js", "script/status.js", "script/screenshot.js", "script/note.js"],
       "run_at": "document_end"
     }
   ],
