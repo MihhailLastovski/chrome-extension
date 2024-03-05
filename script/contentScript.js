@@ -1,5 +1,3 @@
-//import { showSubmenus } from './script/submenus.js';
-
 if (!window.hasRun) {
     var highlightColorRestore, submenuContainer, submenuIsActive;
     let selectedValue = '';
@@ -10,66 +8,7 @@ if (!window.hasRun) {
     iconsLink.rel = 'stylesheet';
     iconsLink.href =
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
-
-    const webPageCss = document.createElement('style');
-    webPageCss.textContent = `
-    .exa-radience-submenu {
-        height: 185px;
-        width: 240px;
-        background-color: #FC0365;
-        color: white;
-        border: 1px solid white;
-        border-radius: 5px;
-        font-family: 'Roboto', sans-serif !important;
-        font-size: 15px !important;
-        text-align: center;
-        position: absolute;
-    }
-
-    .exa-radience-submenu button {
-        cursor: pointer;
-        padding: 8px 12px;
-        margin: 3px;
-        color: white;
-        background-color: #FC0365;
-        border-color: white;
-        border-radius: 5px;
-    }
-
-    .exa-radience-submenu #removeStatusBtn {
-        border: none;
-        padding: 2px;
-    }
-
-    .exa-radience-statuses-container {
-        background-color: white;
-        width: 200px;
-        overflow-y: auto;
-        height: 105px;
-        margin-left: 20px;
-        margin-top: 10px;
-    }
-
-    .exa-radience-statuses-container-item {
-        cursor: pointer;
-        background-color: #FD68A4;
-        border: 1px solid white;
-        border-radius: 5px;
-        /*margin: 10px;*/
-        padding: 8px 12px;
-    }
-
-    .exa-radience-submenu button:hover {
-        background-color: #FD68A4;
-    }
-
-    .exa-radience-statuses-container-item:hover {
-        background-color: #FC0365;
-    }
-    `;
-
     document.head.appendChild(iconsLink);
-    document.head.appendChild(webPageCss);
 
     async function getBooleanFromLocalStorage() {
         const result = await new Promise((resolve, reject) => {
