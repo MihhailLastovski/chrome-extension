@@ -1,18 +1,11 @@
 var sheetName = 'zxc'
-function addValueToSteps() {
+function addValueToSteps(spreadsheetId, note, textContent) {
     try {
-        // Extract spreadsheet ID from URL
-        var spreadsheetId = extractSheetIdFromURL("https://docs.google.com/spreadsheets/d/e/2PACX-1vQD05f_2B8FgCwE4krJhe_GAXGlPOt4SZrhH4UgHNKp7KM1SD35fXGWKLL6kMAUmHV7Ec-xLcCxGrH5/pubhtml?gid=54246032&single=true");
-
-        if (!spreadsheetId) {
-            Logger.log('Invalid spreadsheet ID.');
-            return;
-        }
 
         // Open the spreadsheet
         var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
         var sheets = spreadsheet.getSheets();
-        var targetTextContent = "R2";
+        var targetTextContent = textContent;
 
         // Iterate through all sheets
         for (var s = 0; s < sheets.length; s++) {
@@ -25,12 +18,11 @@ function addValueToSteps() {
             for (var i = 0; i < data.length; i++) {
                 for (var j = 0; j < data[i].length; j++) {
                     var cellValue = String(data[i][j]).toLowerCase().trim();
-                    Logger.log('Comparing:', cellValue, 'with', targetTextContent.toLowerCase().trim());
 
                     if (cellValue === targetTextContent.toLowerCase().trim()) {
                         // Found the value, add it to the next column ("Steps")
                         var cell = sheet.getRange(i + 1, j + 2);
-                        cell.setValue("kek");
+                        cell.setValue(note);
                         Logger.log('Value added to Steps successfully.');
                         return;
                     }
@@ -45,14 +37,6 @@ function addValueToSteps() {
         Logger.log('Error adding value to Steps:', error);
     }
 }
-
-function extractSheetIdFromURL(url) {
-    const regex = /\/d\/([a-zA-Z0-9-_]+)|\/e\/[a-zA-Z0-9-_]+\/pubhtml\?gid=([0-9]+)/;
-    const match = url.match(regex);
-    return match ? (match[1] || match[2]) : null;
-}
-
-
 
 
 function doGet(req) {
