@@ -8,7 +8,13 @@
 
 ## Versions
 
-v 1.2.4
+v 1.2.8
+
+-   Contents of contentScript are separated into different module. File paths are updated
+-   CSS separated from contentScript to a separate css file
+-   Code is refactored. Asynchronous functions call optimised. Bugs are fixed
+
+v 1.2.5
 
 -   Added possibility to change the default screenshot name
 -   Fixed a bug with highlighting a single word by using the input field
