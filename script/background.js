@@ -78,7 +78,7 @@ function highlightWordsFromList(listId) {
                         function (tabs) {
                             chrome.scripting.executeScript({
                                 target: { tabId: tabs[0].id },
-                                files: ['./script/contentScript.js'],
+                                files: ['./script/contentScripts/contentScript.js'],
                             });
                             chrome.tabs.sendMessage(tabs[0].id, {
                                 action: 'highlight',
