@@ -47,9 +47,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (wordDiv.contains(wordLabel)) {
             wordInput.value = wordLabel.textContent;
             wordDiv.replaceChild(wordInput, wordLabel);
-            chrome.storage.local.set({ screenshotName: wordLabel.textContent });
         } else {
             wordLabel.textContent = wordInput.value.trim();
+            chrome.storage.local.set({ screenshotName: wordLabel.textContent });
             wordDiv.replaceChild(wordLabel, wordInput);
         }
     });

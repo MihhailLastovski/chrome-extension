@@ -166,11 +166,15 @@ chrome.runtime.onMessage.addListener(async function (
     sendResponse
 ) {
     if (request.action === 'highlight') {
-        await highlightText(
-            request.searchText,
-            request.highlightColor,
-            request.listId
-        );
+        try {
+            await highlightText(
+                request.searchText,
+                request.highlightColor,
+                request.listId
+            );
+        } catch (error) {
+            console.error('Ошибка при выделении слова', error);
+        }
     } else if (request.action === 'removeHighlight') {
         const listId = request.listId;
         const selector = listId
@@ -182,6 +186,10 @@ chrome.runtime.onMessage.addListener(async function (
             element.outerHTML = textContent;
         });
     } else if (request.action === 'submenuStatusUpdating') {
-        await getValuesFromLocalStorage();
+        try {
+            await getValuesFromLocalStorage();
+        } catch (error) {
+            console.error('Ошибка при обновлении данных', error);
+        }
     }
 });
