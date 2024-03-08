@@ -8,6 +8,9 @@ if (!window.hasRun) {
     let selectedValue = '';
     window.hasRun = true;
 
+    const nodesContainingWords = new Set();
+    
+
     // Внедрение CSS файла
     const iconsLink = document.createElement('link');
     iconsLink.rel = 'stylesheet';
@@ -51,6 +54,34 @@ async function getFromLocalStorage(key) {
         });
     });
 }
+
+// Preprocess function to identify nodes containing words
+
+function preprocessDocument() {
+    console.log(wordLists);
+    function findNodesContainingWords(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.nodeValue;
+            for (const wordList of wordLists) {
+                if (wordList.words) {
+                    for (const wordObj of wordList.words) {
+                        const searchText = wordObj.word.trim().toLowerCase();
+                        if (text.toLowerCase().includes(searchText)) {
+                            nodesContainingWords.add(node.parentNode);
+                        }
+                    }
+                }
+            }
+        } else if (node.nodeType === Node.ELEMENT_NODE && node.childNodes) {
+            node.childNodes.forEach(childNode => findNodesContainingWords(childNode));
+        }
+    }
+
+    findNodesContainingWords(document.body);
+}
+
+// Call preprocessDocument before highlighting
+preprocessDocument();
 
 async function highlightText(searchText, highlightColor, listId = null) {
     highlightColorRestore = highlightColor;
