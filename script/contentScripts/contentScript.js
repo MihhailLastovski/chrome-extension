@@ -163,19 +163,27 @@ async function getFromLocalStorage(key) {
 async function highlightAttributes(searchText, highlightColor, listId = null) {
     highlightColorRestore = highlightColor;
 
-    function findAttributeMatch(element) {
-        const attributes = element.attributes;
-        for (const attr of attributes) {
-            if (attr.value.trim().toLowerCase() === searchText.toLowerCase()) {
-                return element;
-            }
+    function findAttributeMatch(element, attributeName) {
+        const attribute = element.getAttribute(attributeName);
+        if (
+            attribute &&
+            attribute.toLowerCase().includes(searchText.toLowerCase())
+        ) {
+            return element;
         }
         return null;
+        // const attributes = element.attributes;
+        // for (const attr of attributes) {
+        //     if (attr.value.toLowerCase().includes(searchText.toLowerCase())) {
+        //         return element;
+        //     }
+        // }
+        // return null;
     }
 
     if (boolActive && searchText !== '') {
         function highlightElement(element) {
-            const matchedElement = findAttributeMatch(element);
+            const matchedElement = findAttributeMatch(element, 'class');
             if (matchedElement) {
                 if (matchedElement.parentNode.className !== 'highlighted') {
                     const colorStyle = `border: 4px solid ${highlightColor};`;
@@ -200,16 +208,14 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
         const elements = document.querySelectorAll('*');
         elements.forEach((element) => highlightElement(element));
 
-        // Update badge only if using listId
-        if (listId) {
-            const count = document.querySelectorAll(
-                `span.highlightedP[data-list-id="${listId}"]`
-            ).length;
-            chrome.runtime.sendMessage({
-                action: 'updateBadge',
-                count: count,
-            });
-        }
+        // Update badge only if using listId [data-list-id="${listId}"]
+        // if (listId) {
+        const count = document.querySelectorAll(`span.highlighted`).length;
+        chrome.runtime.sendMessage({
+            action: 'updateBadge',
+            count: count,
+        });
+        // }
     }
 }
 
