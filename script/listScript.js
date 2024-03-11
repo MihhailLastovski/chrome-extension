@@ -1,3 +1,5 @@
+//const { enabled } = require("express/lib/application");
+
 document.addEventListener('DOMContentLoaded', function () {
     const addListForm = document.getElementById('addListForm');
     const listNameInput = document.getElementById('listNameInput');
@@ -57,13 +59,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (listIndex !== -1) {
             const listToEdit = lists[listIndex];
-
+            
             listNameInput.value = listToEdit.name;
             colorPicker.value = listToEdit.color;
             highlightingColor = listToEdit.color;
 
             listToEdit.words.forEach((wordObj) => {
-                if (wordObj.word.trim() !== '') {
+                if (wordObj.word) {
                     addWord(wordObj.word, wordObj.enabled);
                 }
             });
@@ -111,8 +113,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (word !== '') {
                     editedWords.push({
                         word: word,
-                        enabled: enabled,
                         status: status,
+                        stringID: "stringID",
+                        enabled: enabled
                     });
                 }
             }
@@ -299,6 +302,7 @@ document.addEventListener('DOMContentLoaded', function () {
         divWithListImportSettigs,
         wordsContainer
     );
+    const wordsArray = [];
 
     // Чтение слов из CSV файла
     csvListBtn.addEventListener('click', function () {
@@ -309,35 +313,57 @@ document.addEventListener('DOMContentLoaded', function () {
         csvInput.id = 'textInput';
         csvInput.placeholder = 'Paste the link';
 
-        csvButton.addEventListener('click', function () {
+        csvButton.addEventListener('click', async function () {
             if (csvInput.value.trim() !== '') {
-                csvLink = csvInput.value.replace('/edit', '/export?format=csv');
-                chrome.storage.local.set({ dataURL: csvLink });
-                fetchDataAndProcessWords(csvLink, true);
+                // Извлекаем идентификатор таблицы из введенной ссылки
+                var spreadsheetId = extractSpreadsheetId(csvInput.value);
 
-                csvInput.value = '';
+                // Строим URL для выполнения запроса к функции getDataBySheetName
+                const data = {
+                    action: 'getDataBySheetName',
+                    sheetId: spreadsheetId,
+                };
+
+                console.log('Sending data:', data);
+
+                fetch
+                (
+                    'https://script.google.com/macros/s/AKfycbya6kRaa-zbZisTLG6RADGq9RDlBzh-0-9xYbYxQwBgoMOTKuVMrPUi3SCh_OLCTqxM/exec',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    }
+                )
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    // Здесь result содержит данные, которые возвращены из AppScript
+                    console.log('Received data:', result);
+            
+                    // Проходимся по результатам и заполняем массив wordsArray
+                    result.forEach(row => {
+                        addWord(row["Core Strings"]);
+                        wordsArray.push({
+                            stringID: row["String ID"],
+                            word: row["Core Strings"],
+                            status: row["Status"]
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             } else {
                 alert('Please enter link');
             }
         });
-        // divWithListImportSettigs.innerHTML = '';
-
-        // var csvInput = document.createElement('input');
-        // csvInput.type = 'text';
-        // csvInput.id = 'textInput';
-        // csvInput.placeholder = 'Paste the link';
-
-        // csvButton.addEventListener('click', function () {
-        //     if (csvInput.value.trim() !== '') {
-        //         const htmlLink = csvInput.value;
-        //         chrome.storage.local.set({ dataURL: htmlLink });
-        //         fetchDataAndProcessWords(htmlLink, true);
-
-        //         csvInput.value = '';
-        //     } else {
-        //         alert('Please enter link');
-        //     }
-        // });
 
         var csvh2 = document.createElement('h2');
         csvh2.textContent = 'Google Sheets assistant';
@@ -374,7 +400,52 @@ document.addEventListener('DOMContentLoaded', function () {
 
         divWithListImportSettigs.appendChild(refreshBtn);
     });
+    function extractSpreadsheetId(link) {
+        var regex = /\/d\/([a-zA-Z0-9-_]+)/;
+        var match = link.match(regex);
+        return match ? match[1] : null;
+    }
 
+    async function fetchDataAndProcessWords(url, readOnly) {
+        if (readOnly) {
+            try {
+                const response = await fetch(url);
+                const csvData = await response.text();
+
+                const rows = csvData.split('\n');
+                const wordsArray = rows.reduce((words, row) => {
+                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const wordsInRow = columns.map((cell) =>
+                        cell.trim().replace(/"/g, '')
+                    );
+                    return words.concat(
+                        wordsInRow.filter((word) => word !== '')
+                    );
+                }, []);
+
+                wordsArray.forEach((word) => {
+                    addWord(word.trim());
+                });
+            } catch (error) {
+                console.error('Error while retrieving data:', error);
+                alert('Error while retrieving data, please try again.');
+            }
+        } else {
+            try {
+                const response = await fetch(url);
+                const csvData = await response.json();
+
+                const wordsArray = csvData.map((rowData) => rowData.col1);
+
+                wordsArray.forEach((word) => {
+                    addWord(word.trim());
+                });
+            } catch (error) {
+                console.error('Ошибка при получении данных:', error);
+                alert('Ошибка при получении данных');
+            }
+        }
+    }
     // Изменение Google Sheets через Apps Script
     exportListBtn.addEventListener('click', function () {
         divWithListImportSettigs.innerHTML = '';
@@ -453,85 +524,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-    const wordsArray = [];
-
-    // async function fetchDataAndProcessWords(url, readOnly) {
-    //     try {
-    //         const response = await fetch(url);
-    //         const htmlData = await response.text();
-
-    //         const parser = new DOMParser();
-    //         const doc = parser.parseFromString(htmlData, 'text/html');
-
-    //         const coreStringsColumn = Array.from(
-    //             doc.querySelectorAll('.waffle tbody tr')
-    //         )
-    //             .slice(1)
-    //             .map((row, index) => {
-    //                 const word = row
-    //                     .querySelector('td:nth-child(7)')
-    //                     .textContent.trim();
-    //                 const wordId = row
-    //                     .querySelector('td:nth-child(6)')
-    //                     .textContent.trim();
-    //                 const status = row
-    //                     .querySelector('td:nth-child(10)')
-    //                     .textContent.trim();
-
-    //                 if (word !== '') {
-    //                     addWord(word);
-    //                     wordsArray.push({ word, id: wordId, status });
-    //                 }
-
-    //                 return { word, id: wordId, status };
-    //             });
-    //     } catch (error) {
-    //         console.error('Error while retrieving data:', error);
-    //         alert('Error while retrieving data, please try again.');
-    //     }
-    // }
-
-    async function fetchDataAndProcessWords(url, readOnly) {
-        if (readOnly) {
-            try {
-                const response = await fetch(url);
-                const csvData = await response.text();
-
-                const rows = csvData.split('\n');
-                const wordsArray = rows.reduce((words, row) => {
-                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    const wordsInRow = columns.map((cell) =>
-                        cell.trim().replace(/"/g, '')
-                    );
-                    return words.concat(
-                        wordsInRow.filter((word) => word !== '')
-                    );
-                }, []);
-
-                wordsArray.forEach((word) => {
-                    addWord(word.trim());
-                });
-            } catch (error) {
-                console.error('Error while retrieving data:', error);
-                alert('Error while retrieving data, please try again.');
-            }
-        } else {
-            try {
-                const response = await fetch(url);
-                const csvData = await response.json();
-
-                const wordsArray = csvData.map((rowData) => rowData.col1);
-
-                wordsArray.forEach((word) => {
-                    addWord(word.trim());
-                });
-            } catch (error) {
-                console.error('Ошибка при получении данных:', error);
-                alert('Ошибка при получении данных');
-            }
-        }
-    }
-
     function sendDataToGoogleAppsScript(url, data) {
         fetch(url, {
             method: 'POST',

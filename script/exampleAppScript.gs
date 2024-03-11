@@ -1,4 +1,3 @@
-var sheetName = 'zxc'
 function addValueToSteps(spreadsheetId, note, textContent) {
     try {
 
@@ -38,14 +37,14 @@ function addValueToSteps(spreadsheetId, note, textContent) {
     }
 }
 
-function getDataBySheetName(spreadsheetId, sheetName) {
+function getDataBySheetName(spreadsheetId) {
     try {
         // Открываем таблицу по идентификатору
         var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
-        var sheet = spreadsheet.getSheetByName(sheetName);
+        var sheet = spreadsheet.getSheetByName("Strings");
 
         if (!sheet) {
-            Logger.log('Sheet not found:', sheetName);
+            Logger.log('Sheet not found');
             return null;
         }
 
@@ -54,12 +53,16 @@ function getDataBySheetName(spreadsheetId, sheetName) {
 
         // Формируем объект с нужными данными, начиная со второй строки
         var result = data.slice(1).map(function(row) {
-            return {
-                "String ID": row[4], // Предположим, что String ID находится в пятом столбце
-                "Core Strings": row[5], // Предположим, что Core Strings находится в шестом столбце
-                "Status": row[8] // Предположим, что Status находится в девятом столбце
-            };
-        });
+            // Добавляем проверку на пустые строки перед добавлением данных
+            if (row[4] !== "") {
+                return {
+                    "String ID": row[4], // Предположим, что String ID находится в пятом столбце
+                    "Core Strings": row[5], // Предположим, что Core Strings находится в шестом столбце
+                    "Status": row[8] // Предположим, что Status находится в девятом столбце
+                };
+            }
+            return null; // Пропускаем пустые строки
+        }).filter(Boolean); // Фильтруем и удаляем null значения
 
         Logger.log('Data retrieved successfully:', result);
         return result;
@@ -67,20 +70,6 @@ function getDataBySheetName(spreadsheetId, sheetName) {
     } catch (error) {
         Logger.log('Error retrieving data:', error);
         return null;
-    }
-}
-
-// Пример использования:
-function testGetDataBySheetName() {
-    var spreadsheetId = '1SwC7tT9wNaHK5psxhDa5LUqdNU0dy6xk162bJSyDUSM';
-    var sheetNameToSearch = 'Strings'; // Пример названия листа
-    var result = getDataBySheetName(spreadsheetId, sheetNameToSearch);
-
-    if (result) {
-        // Выводим результат в журнал
-        Logger.log(result);
-    } else {
-        Logger.log('Data not found for sheet:', sheetNameToSearch);
     }
 }
 
@@ -134,6 +123,15 @@ function doPost(e) {
             return ContentService.createTextOutput(
                 'Заметка успешно добавлена в таблицу.'
             ).setMimeType(ContentService.MimeType.TEXT);
+        }else if (requestData.action === 'getDataBySheetName') {
+            // Вызываем функцию получения данных по имени листа
+            var spreadsheetId = requestData.sheetId;
+            var result = getDataBySheetName(spreadsheetId);
+
+            // Возвращаем полученные данные
+            return ContentService.createTextOutput(
+                JSON.stringify(result)
+            ).setMimeType(ContentService.MimeType.JSON);
         } else {
             var spreadsheet =
                 SpreadsheetApp.openById(requestData.sheetId);
