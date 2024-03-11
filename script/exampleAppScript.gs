@@ -1,42 +1,75 @@
-var sheetName = 'zxc'
-function addNoteToElement(sheetId, note, textContent) {
+function addValueToSteps(spreadsheetId, note, textContent) {
     try {
-        // Открываем таблицу
-        var spreadsheet = SpreadsheetApp.openById(sheetId);
-        
-        // Получаем все листы
+
+        // Open the spreadsheet
+        var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
         var sheets = spreadsheet.getSheets();
         var targetTextContent = textContent;
 
-        // Перебираем все листы
+        // Iterate through all sheets
         for (var s = 0; s < sheets.length; s++) {
             var sheet = sheets[s];
 
-            // Получаем все данные в виде 2D массива
+            // Get all data as a 2D array
             var data = sheet.getDataRange().getValues();
 
-            // Ищем ячейку с полным совпадением значения
+            // Search for the cell with an exact match
             for (var i = 0; i < data.length; i++) {
                 for (var j = 0; j < data[i].length; j++) {
                     var cellValue = String(data[i][j]).toLowerCase().trim();
-                    Logger.log('Comparing:', cellValue, 'with', targetTextContent.toLowerCase().trim());
 
                     if (cellValue === targetTextContent.toLowerCase().trim()) {
-                        // Нашли значение, добавляем заметку
-                        var cell = sheet.getRange(i + 1, j + 1);
-                        cell.setNote(note);
-                        Logger.log('Note added successfully.');
+                        // Found the value, add it to the next column ("Steps")
+                        var cell = sheet.getRange(i + 1, j + 2);
+                        cell.setValue(note);
+                        Logger.log('Value added to Steps successfully.');
                         return;
                     }
                 }
             }
         }
 
-        // Если значение не найдено
+        // If the value is not found
         Logger.log('Value not found in any sheet:', targetTextContent);
 
     } catch (error) {
-        Logger.log('Error adding note:', error);
+        Logger.log('Error adding value to Steps:', error);
+    }
+}
+
+function getDataBySheetName(spreadsheetId) {
+    try {
+        // Открываем таблицу по идентификатору
+        var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+        var sheet = spreadsheet.getSheetByName("Strings");
+
+        if (!sheet) {
+            Logger.log('Sheet not found');
+            return null;
+        }
+
+        // Получаем все данные в виде 2D массива
+        var data = sheet.getDataRange().getValues();
+
+        // Формируем объект с нужными данными, начиная со второй строки
+        var result = data.slice(1).map(function(row) {
+            // Добавляем проверку на пустые строки перед добавлением данных
+            if (row[4] !== "") {
+                return {
+                    "String ID": row[4], // Предположим, что String ID находится в пятом столбце
+                    "Core Strings": row[5], // Предположим, что Core Strings находится в шестом столбце
+                    "Status": row[8] // Предположим, что Status находится в девятом столбце
+                };
+            }
+            return null; // Пропускаем пустые строки
+        }).filter(Boolean); // Фильтруем и удаляем null значения
+
+        Logger.log('Data retrieved successfully:', result);
+        return result;
+
+    } catch (error) {
+        Logger.log('Error retrieving data:', error);
+        return null;
     }
 }
 
@@ -82,7 +115,7 @@ function doPost(e) {
         // Проверяем, какое действие нужно выполнить
         if (requestData.action === 'addNoteToElement') {
             // Вызываем функцию добавления заметки
-            addNoteToElement(requestData.sheetId, requestData.note, requestData.textContent);
+            addValueToSteps(requestData.sheetId, requestData.note, requestData.textContent);
 
             Logger.log('Note added via doPost:', requestData.note);
 
@@ -90,6 +123,15 @@ function doPost(e) {
             return ContentService.createTextOutput(
                 'Заметка успешно добавлена в таблицу.'
             ).setMimeType(ContentService.MimeType.TEXT);
+        }else if (requestData.action === 'getDataBySheetName') {
+            // Вызываем функцию получения данных по имени листа
+            var spreadsheetId = requestData.sheetId;
+            var result = getDataBySheetName(spreadsheetId);
+
+            // Возвращаем полученные данные
+            return ContentService.createTextOutput(
+                JSON.stringify(result)
+            ).setMimeType(ContentService.MimeType.JSON);
         } else {
             var spreadsheet =
                 SpreadsheetApp.openById(requestData.sheetId);
