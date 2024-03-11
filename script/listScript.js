@@ -455,82 +455,82 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     const wordsArray = [];
 
-    async function fetchDataAndProcessWords(url, readOnly) {
-        try {
-            const response = await fetch(url);
-            const htmlData = await response.text();
-
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlData, 'text/html');
-
-            const coreStringsColumn = Array.from(
-                doc.querySelectorAll('.waffle tbody tr')
-            )
-                .slice(1)
-                .map((row, index) => {
-                    const word = row
-                        .querySelector('td:nth-child(7)')
-                        .textContent.trim();
-                    const wordId = row
-                        .querySelector('td:nth-child(6)')
-                        .textContent.trim();
-                    const status = row
-                        .querySelector('td:nth-child(10)')
-                        .textContent.trim();
-
-                    if (word !== '') {
-                        addWord(word);
-                        wordsArray.push({ word, id: wordId, status });
-                    }
-
-                    return { word, id: wordId, status };
-                });
-        } catch (error) {
-            console.error('Error while retrieving data:', error);
-            alert('Error while retrieving data, please try again.');
-        }
-    }
-
     // async function fetchDataAndProcessWords(url, readOnly) {
-    //     if (readOnly) {
-    //         try {
-    //             const response = await fetch(url);
-    //             const csvData = await response.text();
+    //     try {
+    //         const response = await fetch(url);
+    //         const htmlData = await response.text();
 
-    //             const rows = csvData.split('\n');
-    //             const wordsArray = rows.reduce((words, row) => {
-    //                 const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-    //                 const wordsInRow = columns.map((cell) =>
-    //                     cell.trim().replace(/"/g, '')
-    //                 );
-    //                 return words.concat(
-    //                     wordsInRow.filter((word) => word !== '')
-    //                 );
-    //             }, []);
+    //         const parser = new DOMParser();
+    //         const doc = parser.parseFromString(htmlData, 'text/html');
 
-    //             wordsArray.forEach((word) => {
-    //                 addWord(word.trim());
+    //         const coreStringsColumn = Array.from(
+    //             doc.querySelectorAll('.waffle tbody tr')
+    //         )
+    //             .slice(1)
+    //             .map((row, index) => {
+    //                 const word = row
+    //                     .querySelector('td:nth-child(7)')
+    //                     .textContent.trim();
+    //                 const wordId = row
+    //                     .querySelector('td:nth-child(6)')
+    //                     .textContent.trim();
+    //                 const status = row
+    //                     .querySelector('td:nth-child(10)')
+    //                     .textContent.trim();
+
+    //                 if (word !== '') {
+    //                     addWord(word);
+    //                     wordsArray.push({ word, id: wordId, status });
+    //                 }
+
+    //                 return { word, id: wordId, status };
     //             });
-    //         } catch (error) {
-    //             console.error('Error while retrieving data:', error);
-    //             alert('Error while retrieving data, please try again.');
-    //         }
-    //     } else {
-    //         try {
-    //             const response = await fetch(url);
-    //             const csvData = await response.json();
-
-    //             const wordsArray = csvData.map((rowData) => rowData.col1);
-
-    //             wordsArray.forEach((word) => {
-    //                 addWord(word.trim());
-    //             });
-    //         } catch (error) {
-    //             console.error('Ошибка при получении данных:', error);
-    //             alert('Ошибка при получении данных');
-    //         }
+    //     } catch (error) {
+    //         console.error('Error while retrieving data:', error);
+    //         alert('Error while retrieving data, please try again.');
     //     }
     // }
+
+    async function fetchDataAndProcessWords(url, readOnly) {
+        if (readOnly) {
+            try {
+                const response = await fetch(url);
+                const csvData = await response.text();
+
+                const rows = csvData.split('\n');
+                const wordsArray = rows.reduce((words, row) => {
+                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    const wordsInRow = columns.map((cell) =>
+                        cell.trim().replace(/"/g, '')
+                    );
+                    return words.concat(
+                        wordsInRow.filter((word) => word !== '')
+                    );
+                }, []);
+
+                wordsArray.forEach((word) => {
+                    addWord(word.trim());
+                });
+            } catch (error) {
+                console.error('Error while retrieving data:', error);
+                alert('Error while retrieving data, please try again.');
+            }
+        } else {
+            try {
+                const response = await fetch(url);
+                const csvData = await response.json();
+
+                const wordsArray = csvData.map((rowData) => rowData.col1);
+
+                wordsArray.forEach((word) => {
+                    addWord(word.trim());
+                });
+            } catch (error) {
+                console.error('Ошибка при получении данных:', error);
+                alert('Ошибка при получении данных');
+            }
+        }
+    }
 
     function sendDataToGoogleAppsScript(url, data) {
         fetch(url, {

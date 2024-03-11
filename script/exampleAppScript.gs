@@ -38,6 +38,53 @@ function addValueToSteps(spreadsheetId, note, textContent) {
     }
 }
 
+function getDataBySheetName(spreadsheetId, sheetName) {
+    try {
+        // Открываем таблицу по идентификатору
+        var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+        var sheet = spreadsheet.getSheetByName(sheetName);
+
+        if (!sheet) {
+            Logger.log('Sheet not found:', sheetName);
+            return null;
+        }
+
+        // Получаем все данные в виде 2D массива
+        var data = sheet.getDataRange().getValues();
+
+        // Формируем объект с нужными данными, начиная со второй строки
+        var result = data.slice(1).map(function(row) {
+            return {
+                "String ID": row[4], // Предположим, что String ID находится в пятом столбце
+                "Core Strings": row[5], // Предположим, что Core Strings находится в шестом столбце
+                "Status": row[8] // Предположим, что Status находится в девятом столбце
+            };
+        });
+
+        Logger.log('Data retrieved successfully:', result);
+        return result;
+
+    } catch (error) {
+        Logger.log('Error retrieving data:', error);
+        return null;
+    }
+}
+
+// Пример использования:
+function testGetDataBySheetName() {
+    var spreadsheetId = '1SwC7tT9wNaHK5psxhDa5LUqdNU0dy6xk162bJSyDUSM';
+    var sheetNameToSearch = 'Strings'; // Пример названия листа
+    var result = getDataBySheetName(spreadsheetId, sheetNameToSearch);
+
+    if (result) {
+        // Выводим результат в журнал
+        Logger.log(result);
+    } else {
+        Logger.log('Data not found for sheet:', sheetNameToSearch);
+    }
+}
+
+
 
 function doGet(req) {
   try {
