@@ -4,7 +4,8 @@ if (!window.hasRun) {
         submenuIsActive,
         boolActive,
         wordLists,
-        statusesList;
+        statusesList,
+        attributesIsActive;
     let selectedValue = '';
     window.hasRun = true;
 
@@ -25,17 +26,20 @@ async function getValuesFromLocalStorage() {
             boolActiveResult,
             wordListsResult,
             statusesResult,
+            attributesResult,
         ] = await Promise.all([
             getFromLocalStorage('submenuIsActive'),
             getFromLocalStorage('isActive'),
             getFromLocalStorage('wordLists'),
             getFromLocalStorage('customStatuses'),
+            getFromLocalStorage('attributesIsActive'),
         ]);
 
         submenuIsActive = submenuResult.submenuIsActive || false;
         boolActive = boolActiveResult.isActive;
         wordLists = wordListsResult.wordLists || [];
         statusesList = statusesResult.customStatuses || [];
+        attributesIsActive = attributesResult.attributesIsActive || false;
     } catch (error) {
         console.error(
             'Ошибка при получении данных из локального хранилища:',
@@ -52,113 +56,114 @@ async function getFromLocalStorage(key) {
     });
 }
 
-// async function highlightText(searchText, highlightColor, listId = null) {
-//     highlightColorRestore = highlightColor;
+async function highlightText(searchText, highlightColor, listId = null) {
+    highlightColorRestore = highlightColor;
 
-//     function findWordInWordLists(word) {
-//         for (const wordList of wordLists) {
-//             if (wordList.words && wordList.id === listId) {
-//                 const foundWord = wordList.words.find(
-//                     (wordObj) =>
-//                         wordObj.word.trim().toLowerCase() === word.toLowerCase()
-//                 );
-//                 if (foundWord) {
-//                     return foundWord;
-//                 }
-//             }
-//         }
-//         return null;
-//     }
+    function findWordInWordLists(word) {
+        for (const wordList of wordLists) {
+            if (wordList.words && wordList.id === listId) {
+                const foundWord = wordList.words.find(
+                    (wordObj) =>
+                        wordObj.word.trim().toLowerCase() === word.toLowerCase()
+                );
+                if (foundWord) {
+                    return foundWord;
+                }
+            }
+        }
+        return null;
+    }
 
-//     if (boolActive && searchText !== '') {
-//         const searchRegex = new RegExp(searchText, 'gi');
+    if (boolActive && searchText !== '') {
+        const searchRegex = new RegExp(searchText, 'gi');
 
-//         function highlightTextNode(node) {
-//             if (
-//                 node.nodeType === Node.TEXT_NODE &&
-//                 !isDescendantOfStyleOrScript(node)
-//             ) {
-//                 const text = node.nodeValue;
-//                 if (searchRegex.test(text)) {
-//                     const foundWord = findWordInWordLists(searchText);
-//                     const isValid =
-//                         foundWord && statusesList.includes(foundWord.status);
-//                     const colorStyle = isValid
-//                         ? `background-color: ${highlightColor}; border: 4px solid ${highlightColor};`
-//                         : `border: 4px solid ${highlightColor};`;
+        function highlightTextNode(node) {
+            if (
+                node.nodeType === Node.TEXT_NODE &&
+                !isDescendantOfStyleOrScript(node)
+            ) {
+                const text = node.nodeValue;
+                if (searchRegex.test(text)) {
+                    const foundWord = findWordInWordLists(searchText);
+                    const isValid =
+                        foundWord && statusesList.includes(foundWord.status);
+                    const colorStyle = isValid
+                        ? `background-color: ${highlightColor}; border: 4px solid ${highlightColor};`
+                        : `border: 4px solid ${highlightColor};`;
 
-//                     if (node.parentNode.className !== 'highlighted') {
-//                         const wrapper = document.createElement('span');
-//                         wrapper.className = 'highlightedP';
-//                         wrapper.setAttribute('data-list-id', listId);
+                    if (node.parentNode.className !== 'highlighted') {
+                        const wrapper = document.createElement('span');
+                        wrapper.className = 'highlightedP';
+                        wrapper.setAttribute('data-list-id', listId);
 
-//                         let lastIndex = 0;
-//                         let match;
+                        let lastIndex = 0;
+                        let match;
 
-//                         searchRegex.lastIndex = 0;
-//                         while ((match = searchRegex.exec(text)) !== null) {
-//                             const beforeMatch = text.substring(
-//                                 lastIndex,
-//                                 match.index
-//                             );
+                        searchRegex.lastIndex = 0;
+                        while ((match = searchRegex.exec(text)) !== null) {
+                            const beforeMatch = text.substring(
+                                lastIndex,
+                                match.index
+                            );
 
-//                             wrapper.appendChild(
-//                                 document.createTextNode(beforeMatch)
-//                             );
+                            wrapper.appendChild(
+                                document.createTextNode(beforeMatch)
+                            );
 
-//                             const matchedText = document.createElement('span');
-//                             matchedText.className = 'highlighted';
-//                             matchedText.style.cssText = colorStyle;
-//                             matchedText.textContent = match[0];
-//                             if (listId) {
-//                                 matchedText.dataset.listId = listId;
-//                             }
-//                             wrapper.appendChild(matchedText);
-//                             lastIndex = match.index + match[0].length;
-//                         }
+                            const matchedText = document.createElement('span');
+                            matchedText.className = 'highlighted';
+                            matchedText.style.cssText = colorStyle;
+                            matchedText.textContent = match[0];
+                            if (listId) {
+                                matchedText.dataset.listId = listId;
+                            }
+                            wrapper.appendChild(matchedText);
+                            lastIndex = match.index + match[0].length;
+                        }
 
-//                         wrapper.appendChild(
-//                             document.createTextNode(text.substring(lastIndex))
-//                         );
+                        wrapper.appendChild(
+                            document.createTextNode(text.substring(lastIndex))
+                        );
 
-//                         node.parentNode.replaceChild(wrapper, node);
-//                     }
-//                 }
-//             } else if (
-//                 node.nodeType === Node.ELEMENT_NODE &&
-//                 !['style', 'script'].includes(node.tagName.toLowerCase()) &&
-//                 node.childNodes &&
-//                 node.childNodes.length > 0
-//             ) {
-//                 node.childNodes.forEach((childNode) =>
-//                     highlightTextNode(childNode)
-//                 );
-//             }
-//         }
+                        node.parentNode.replaceChild(wrapper, node);
+                    }
+                }
+            } else if (
+                node.nodeType === Node.ELEMENT_NODE &&
+                !['style', 'script'].includes(node.tagName.toLowerCase()) &&
+                node.childNodes &&
+                node.childNodes.length > 0
+            ) {
+                node.childNodes.forEach((childNode) =>
+                    highlightTextNode(childNode)
+                );
+            }
+        }
 
-//         // Проверка, является ли узел потомком элемента style или script
-//         function isDescendantOfStyleOrScript(node) {
-//             while (node.parentNode) {
-//                 node = node.parentNode;
-//                 if (
-//                     node.tagName &&
-//                     (node.tagName.toLowerCase() === 'style' ||
-//                         node.tagName.toLowerCase() === 'script')
-//                 ) {
-//                     return true;
-//                 }
-//             }
-//             return false;
-//         }
+        // Проверка, является ли узел потомком элемента style или script
+        function isDescendantOfStyleOrScript(node) {
+            while (node.parentNode) {
+                node = node.parentNode;
+                if (
+                    node.tagName &&
+                    (node.tagName.toLowerCase() === 'style' ||
+                        node.tagName.toLowerCase() === 'script')
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
-//         highlightTextNode(document.body);
-//     }
-//     // Отображение счётчика
-//     chrome.runtime.sendMessage({
-//         action: 'updateBadge',
-//         count: document.querySelectorAll('span.highlighted').length,
-//     });
-// }
+        highlightTextNode(document.body);
+    }
+    // Отображение счётчика
+    chrome.runtime.sendMessage({
+        action: 'updateBadge',
+        count: document.querySelectorAll('span.highlighted').length,
+        color: '#FC0365',
+    });
+}
 
 async function highlightAttributes(searchText, highlightColor, listId = null) {
     highlightColorRestore = highlightColor;
@@ -204,18 +209,15 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
                 }
             }
         }
-
         const elements = document.querySelectorAll('*');
         elements.forEach((element) => highlightElement(element));
 
-        // Update badge only if using listId [data-list-id="${listId}"]
-        // if (listId) {
-        const count = document.querySelectorAll(`span.highlighted`).length;
+        // Отображение счётчика
         chrome.runtime.sendMessage({
             action: 'updateBadge',
-            count: count,
+            count: document.querySelectorAll(`span.highlighted`).length,
+            color: '#3B1269',
         });
-        // }
     }
 }
 
@@ -226,16 +228,19 @@ chrome.runtime.onMessage.addListener(async function (
 ) {
     if (request.action === 'highlight') {
         try {
-            // await highlightText(
-            //     request.searchText,
-            //     request.highlightColor,
-            //     request.listId
-            // );
-            await highlightAttributes(
-                request.searchText,
-                request.highlightColor,
-                request.listId
-            );
+            if (attributesIsActive) {
+                await highlightAttributes(
+                    request.searchText,
+                    request.highlightColor,
+                    request.listId
+                );
+            } else {
+                await highlightText(
+                    request.searchText,
+                    request.highlightColor,
+                    request.listId
+                );
+            }
         } catch (error) {
             console.error('Ошибка при выделении слова', error);
         }
@@ -249,7 +254,7 @@ chrome.runtime.onMessage.addListener(async function (
             const { textContent } = element;
             element.outerHTML = textContent;
         });
-    } else if (request.action === 'submenuStatusUpdating') {
+    } else if (request.action === 'valuesStatusUpdating') {
         try {
             await getValuesFromLocalStorage();
         } catch (error) {

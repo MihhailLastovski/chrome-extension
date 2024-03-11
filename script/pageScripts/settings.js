@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const saveAsCheckbox = document.getElementById('saveAsCheckbox');
     const submenuCheckbox = document.getElementById('submenuCheckbox');
+    const attributesCheckbox = document.getElementById('attributesCheckbox');
 
     const wordDiv = document.getElementById('content');
     const wordLabel = document.getElementById('wordLabel');
@@ -15,18 +16,19 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     chrome.storage.local.get('submenuIsActive', function (data) {
-        const submenuIsActive = data.submenuIsActive;
-        submenuCheckbox.checked = submenuIsActive || false;
+        submenuCheckbox.checked = data.submenuIsActive || false;
     });
 
     chrome.storage.local.get('screenshotName', function (data) {
-        const name = data.screenshotName || 'screenshot';
-        wordLabel.textContent = name;
+        wordLabel.textContent = data.screenshotName || 'screenshot';
+    });
+
+    chrome.storage.local.get('attributesIsActive', function (data) {
+        attributesCheckbox.checked = data.attributesIsActive || false;
     });
 
     saveAsCheckbox.addEventListener('change', function () {
-        const saveAs = saveAsCheckbox.checked;
-        chrome.storage.local.set({ saveAs: saveAs });
+        chrome.storage.local.set({ saveAs: saveAsCheckbox.checked });
     });
 
     submenuCheckbox.addEventListener('change', function () {
@@ -36,8 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
             { active: true, currentWindow: true },
             function (tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {
-                    action: 'submenuStatusUpdating',
-                    submenuIsActive: submenuIsActive,
+                    action: 'valuesStatusUpdating',
                 });
             }
         );
@@ -52,5 +53,19 @@ document.addEventListener('DOMContentLoaded', function () {
             chrome.storage.local.set({ screenshotName: wordLabel.textContent });
             wordDiv.replaceChild(wordLabel, wordInput);
         }
+    });
+
+    attributesCheckbox.addEventListener('change', function () {
+        chrome.storage.local.set({
+            attributesIsActive: attributesCheckbox.checked,
+        });
+        chrome.tabs.query(
+            { active: true, currentWindow: true },
+            function (tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: 'valuesStatusUpdating',
+                });
+            }
+        );
     });
 });
