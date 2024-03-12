@@ -6,6 +6,7 @@ if (!window.hasRun) {
         wordLists,
         statusesList;
     let selectedValue = '';
+    var docBody = document.body;
     window.hasRun = true;
     
 
@@ -154,7 +155,7 @@ async function highlightText(searchText, highlightColor, listId = null) {
             return false;
         }
 
-        highlightTextNode(document.body);
+        highlightTextNode(docBody);
     }
     // Отображение счётчика
     chrome.runtime.sendMessage({
