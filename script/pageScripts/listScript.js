@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const tooltipsTextRightVersion = [];
 
     const saveChangesBtn = document.createElement('button');
+    var wordsArray = [];
+
     var highlightingColor;
 
     if (encodedDataString) {
@@ -98,8 +100,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function saveEditedList(index, lists) {
         const listName = listNameInput.value.trim();
-        const editedWords = [];
-
+        wordsArray = [];
         const wordDivs = document.querySelectorAll('#wordsContainer > div');
         wordDivs.forEach((wordDiv) => {
             const checkbox = wordDiv.querySelector('.word-checkbox');
@@ -111,7 +112,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const status = statusLabel.textContent;
 
                 if (word !== '') {
-                    editedWords.push({
+                    wordsArray.push({
                         word: word,
                         status: status,
                         stringID: "stringID",
@@ -121,10 +122,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        if (listName && editedWords.length > 0) {
+        if (listName && wordsArray.length > 0) {
             lists[index].name = listName;
             lists[index].color = highlightingColor;
-            lists[index].words = editedWords;
+            lists[index].words = wordsArray;
 
             chrome.storage.local.set({ wordLists: lists }, function () {});
         }
@@ -175,6 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 ? 'line-through'
                 : 'none';
             statusLbl.textContent = foundWord?.status || '';
+            wordLabel.dataset.status = foundWord?.status || '';
         });
 
         const updateBtn = document.createElement('button');
@@ -214,6 +216,16 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         const listName = listNameInput.value.trim();
 
+        chrome.tabs.query(
+            { active: true, currentWindow: true },
+            function (tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: 'removeHighlight',
+                    listId: listId,
+                });
+            }
+        );
+
         chrome.storage.local.get('dataURL', function (result) {
             const urlFromInput = result.dataURL;
 
@@ -224,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         name: listName,
                         color: highlightingColor || '#FC0365',
                         words: wordsArray,
-                        dataURL: urlFromInput,
+                        dataURL: urlFromInput
                     };
 
                     saveWordList(newList);
@@ -247,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     name: listName,
                     color: highlightingColor || '#FC0365',
                     words: wordsArray,
-                    dataURL: urlFromInput,
+                    dataURL: urlFromInput
                 };
                 if (listName && wordsArray.length > 0) {
                     saveWordList(newList);
@@ -266,6 +278,10 @@ document.addEventListener('DOMContentLoaded', function () {
         wordsArray.forEach((word) => {
             if (word !== '') {
                 addWord(word);
+                wordsArray.push({
+                    word: word,
+                    enabled: true
+                });
             }
         });
     });
@@ -276,6 +292,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const word = newWordInput.value.trim();
             if (word !== '') {
                 addWord(word);
+                wordsArray.push({
+                    word: word,
+                    enabled: true
+                });
                 newWordInput.value = '';
             }
         }
@@ -302,7 +322,6 @@ document.addEventListener('DOMContentLoaded', function () {
         divWithListImportSettigs,
         wordsContainer
     );
-    const wordsArray = [];
 
     // Чтение слов из CSV файла
     csvListBtn.addEventListener('click', function () {
@@ -312,9 +331,9 @@ document.addEventListener('DOMContentLoaded', function () {
         csvInput.type = 'text';
         csvInput.id = 'textInput';
         csvInput.placeholder = 'Paste the link';
-
         csvButton.addEventListener('click', async function () {
             if (csvInput.value.trim() !== '') {
+                chrome.storage.local.set({ dataURL: csvInput.value.trim() });
                 // Извлекаем идентификатор таблицы из введенной ссылки
                 var spreadsheetId = extractSpreadsheetId(csvInput.value);
 
@@ -353,7 +372,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         wordsArray.push({
                             stringID: row["String ID"],
                             word: row["Core Strings"],
-                            status: row["Status"]
+                            status: row["Status"],
+                            enabled: true
                         });
                     });
                 })

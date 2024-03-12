@@ -5,20 +5,17 @@ chrome.runtime.onInstalled.addListener(function () {
             chrome.storage.local.set({ firstOpen: true });
         }
     });
-
-    // chrome.contextMenus.create({
-    //   id: "myContextMenu",
-    //   title: "Take a screenshot",
-    //   contexts: ["all"]
-    // });
 });
 
-//Обновление иконки
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status === 'complete') {
-        console.log('Tab is updated');
-        chrome.action.setBadgeText({ text: '' });
-        chrome.storage.local.set({ count: 0 });
+        // Подсвечивание списков при обновлении страницы
+        chrome.storage.local.get('enabledLists', function (data) {
+            let enabledLists = data.enabledLists || [];
+            enabledLists.forEach((listId) => {
+                highlightWordsFromList(listId);
+            });
+        });
     }
 });
 
@@ -36,10 +33,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         const dataUrl = request.dataUrl;
         chrome.storage.local.get('saveAs', function (data) {
             const saveAs = data.saveAs || false;
-            chrome.downloads.download({
-                url: dataUrl,
-                filename: 'screenshots/screenshot.png',
-                saveAs: !saveAs,
+
+            chrome.storage.local.get('screenshotName', function (data) {
+                const screenshotName = data.screenshotName || 'screenshot';
+                chrome.downloads.download({
+                    url: dataUrl,
+                    filename: `screenshots/${screenshotName}.png`,
+                    saveAs: !saveAs,
+                });
             });
         });
         return true;
@@ -49,7 +50,9 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             text: count > 0 ? count.toString() : '',
         });
         chrome.action.setBadgeBackgroundColor({ color: '#FC0365' });
-        chrome.storage.local.set({ count: count });
+    } else if (request.action === 'updateLists') {
+        const listId = request.listId || 0;
+        highlightWordsFromList(listId);
     }
 });
 
@@ -57,9 +60,36 @@ chrome.storage.local.get('submenuIsActive', function (data) {
     chrome.storage.local.set({ submenuIsActive: data.submenuIsActive });
 });
 
-//Добавление высплывающего окна
-// chrome.contextMenus.onClicked.addListener(function (info, event) {
-//   if (info.menuItemId === "myContextMenu") {
-//     console.log("Context menu in clicked")
-//   }
-// });
+function highlightWordsFromList(listId) {
+    chrome.storage.local.get('wordLists', function (data) {
+        const lists = data.wordLists || [];
+        const listToHighlight = lists.find((list) => list.id === listId);
+
+        if (listToHighlight) {
+            const sortedWords = listToHighlight.words.sort((a, b) => {
+                return b.word.length - a.word.length;
+            });
+
+            sortedWords.forEach((wordObj) => {
+                if (wordObj.enabled) {
+                    const searchText = wordObj.word;
+                    chrome.tabs.query(
+                        { active: true, currentWindow: true },
+                        function (tabs) {
+                            chrome.scripting.executeScript({
+                                target: { tabId: tabs[0].id },
+                                files: ['./script/contentScripts/contentScript.js'],
+                            });
+                            chrome.tabs.sendMessage(tabs[0].id, {
+                                action: 'highlight',
+                                searchText: searchText,
+                                highlightColor: listToHighlight.color,
+                                listId: listId,
+                            });
+                        }
+                    );
+                }
+            });
+        }
+    });
+}
