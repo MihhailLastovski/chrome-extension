@@ -46,10 +46,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         return true;
     } else if (request.action === 'updateBadge') {
         const count = request.count || 0;
+        const searchModeColor = request.color || '#FC0365';
         chrome.action.setBadgeText({
             text: count > 0 ? count.toString() : '',
         });
-        chrome.action.setBadgeBackgroundColor({ color: '#FC0365' });
+        chrome.action.setBadgeBackgroundColor({ color: searchModeColor });
     } else if (request.action === 'updateLists') {
         const listId = request.listId || 0;
         highlightWordsFromList(listId);
@@ -78,7 +79,9 @@ function highlightWordsFromList(listId) {
                         function (tabs) {
                             chrome.scripting.executeScript({
                                 target: { tabId: tabs[0].id },
-                                files: ['./script/contentScripts/contentScript.js'],
+                                files: [
+                                    './script/contentScripts/contentScript.js',
+                                ],
                             });
                             chrome.tabs.sendMessage(tabs[0].id, {
                                 action: 'highlight',

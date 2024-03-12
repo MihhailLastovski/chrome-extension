@@ -4,7 +4,8 @@ if (!window.hasRun) {
         submenuIsActive,
         boolActive,
         wordLists,
-        statusesList;
+        statusesList,
+        attributesIsActive;
     let selectedValue = '';
     window.hasRun = true;
 
@@ -25,17 +26,20 @@ async function getValuesFromLocalStorage() {
             boolActiveResult,
             wordListsResult,
             statusesResult,
+            attributesResult,
         ] = await Promise.all([
             getFromLocalStorage('submenuIsActive'),
             getFromLocalStorage('isActive'),
             getFromLocalStorage('wordLists'),
             getFromLocalStorage('customStatuses'),
+            getFromLocalStorage('attributesIsActive'),
         ]);
 
         submenuIsActive = submenuResult.submenuIsActive || false;
         boolActive = boolActiveResult.isActive;
         wordLists = wordListsResult.wordLists || [];
         statusesList = statusesResult.customStatuses || [];
+        attributesIsActive = attributesResult.attributesIsActive || false;
     } catch (error) {
         console.error(
             'Ошибка при получении данных из локального хранилища:',
@@ -157,7 +161,64 @@ async function highlightText(searchText, highlightColor, listId = null) {
     chrome.runtime.sendMessage({
         action: 'updateBadge',
         count: document.querySelectorAll('span.highlighted').length,
+        color: '#FC0365',
     });
+}
+
+async function highlightAttributes(searchText, highlightColor, listId = null) {
+    highlightColorRestore = highlightColor;
+
+    function findAttributeMatch(element, attributeName) {
+        const attribute = element.getAttribute(attributeName);
+        if (
+            attribute &&
+            attribute.toLowerCase().includes(searchText.toLowerCase())
+        ) {
+            return element;
+        }
+        return null;
+        // const attributes = element.attributes;
+        // for (const attr of attributes) {
+        //     if (attr.value.toLowerCase().includes(searchText.toLowerCase())) {
+        //         return element;
+        //     }
+        // }
+        // return null;
+    }
+
+    if (boolActive && searchText !== '') {
+        function highlightElement(element) {
+            const matchedElement = findAttributeMatch(element, 'class');
+            if (matchedElement) {
+                if (matchedElement.parentNode.className !== 'highlighted') {
+                    const colorStyle = `border: 4px solid ${highlightColor};`;
+
+                    const wrapper = document.createElement('span');
+                    wrapper.className = 'highlighted';
+                    wrapper.style.cssText = colorStyle;
+                    wrapper.setAttribute('data-list-id', listId);
+
+                    const textNode = document.createTextNode(
+                        element.textContent
+                    );
+                    wrapper.appendChild(textNode);
+
+                    element.innerHTML = '';
+                    element.appendChild(wrapper);
+                    // element.parentNode.replaceChild(wrapper, element);
+                }
+            }
+        }
+        const elements = document.querySelectorAll('*');
+        elements.forEach((element) => highlightElement(element));
+
+        // Отображение счётчика
+        chrome.runtime.sendMessage({
+            action: 'updateBadge',
+            count: document.querySelectorAll(`span.highlighted`).length,
+            color: '#3B1269',
+        });
+    }
 }
 
 chrome.runtime.onMessage.addListener(async function (
@@ -167,11 +228,19 @@ chrome.runtime.onMessage.addListener(async function (
 ) {
     if (request.action === 'highlight') {
         try {
-            await highlightText(
-                request.searchText,
-                request.highlightColor,
-                request.listId
-            );
+            if (attributesIsActive) {
+                await highlightAttributes(
+                    request.searchText,
+                    request.highlightColor,
+                    request.listId
+                );
+            } else {
+                await highlightText(
+                    request.searchText,
+                    request.highlightColor,
+                    request.listId
+                );
+            }
         } catch (error) {
             console.error('Ошибка при выделении слова', error);
         }
@@ -185,7 +254,7 @@ chrome.runtime.onMessage.addListener(async function (
             const { textContent } = element;
             element.outerHTML = textContent;
         });
-    } else if (request.action === 'submenuStatusUpdating') {
+    } else if (request.action === 'valuesStatusUpdating') {
         try {
             await getValuesFromLocalStorage();
         } catch (error) {
