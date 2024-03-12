@@ -1,5 +1,3 @@
-//const { enabled } = require("express/lib/application");
-
 document.addEventListener('DOMContentLoaded', function () {
     const addListForm = document.getElementById('addListForm');
     const listNameInput = document.getElementById('listNameInput');
@@ -61,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (listIndex !== -1) {
             const listToEdit = lists[listIndex];
-            
+
             listNameInput.value = listToEdit.name;
             colorPicker.value = listToEdit.color;
             highlightingColor = listToEdit.color;
@@ -115,8 +113,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     wordsArray.push({
                         word: word,
                         status: status,
-                        stringID: "stringID",
-                        enabled: enabled
+                        stringID: 'stringID',
+                        enabled: enabled,
                     });
                 }
             }
@@ -236,7 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         name: listName,
                         color: highlightingColor || '#FC0365',
                         words: wordsArray,
-                        dataURL: urlFromInput
+                        dataURL: urlFromInput,
                     };
 
                     saveWordList(newList);
@@ -259,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     name: listName,
                     color: highlightingColor || '#FC0365',
                     words: wordsArray,
-                    dataURL: urlFromInput
+                    dataURL: urlFromInput,
                 };
                 if (listName && wordsArray.length > 0) {
                     saveWordList(newList);
@@ -280,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 addWord(word);
                 wordsArray.push({
                     word: word,
-                    enabled: true
+                    enabled: true,
                 });
             }
         });
@@ -294,7 +292,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 addWord(word);
                 wordsArray.push({
                     word: word,
-                    enabled: true
+                    enabled: true,
                 });
                 newWordInput.value = '';
             }
@@ -345,8 +343,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 console.log('Sending data:', data);
 
-                fetch
-                (
+                fetch(
                     'https://script.google.com/macros/s/AKfycbya6kRaa-zbZisTLG6RADGq9RDlBzh-0-9xYbYxQwBgoMOTKuVMrPUi3SCh_OLCTqxM/exec',
                     {
                         method: 'POST',
@@ -356,30 +353,32 @@ document.addEventListener('DOMContentLoaded', function () {
                         body: JSON.stringify(data),
                     }
                 )
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(result => {
-                    // Здесь result содержит данные, которые возвращены из AppScript
-                    console.log('Received data:', result);
-            
-                    // Проходимся по результатам и заполняем массив wordsArray
-                    result.forEach(row => {
-                        addWord(row["Core Strings"]);
-                        wordsArray.push({
-                            stringID: row["String ID"],
-                            word: row["Core Strings"],
-                            status: row["Status"],
-                            enabled: true
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(
+                                `HTTP error! Status: ${response.status}`
+                            );
+                        }
+                        return response.json();
+                    })
+                    .then((result) => {
+                        // Здесь result содержит данные, которые возвращены из AppScript
+                        console.log('Received data:', result);
+
+                        // Проходимся по результатам и заполняем массив wordsArray
+                        result.forEach((row) => {
+                            addWord(row['Core Strings']);
+                            wordsArray.push({
+                                stringID: row['String ID'],
+                                word: row['Core Strings'],
+                                status: row['Status'],
+                                enabled: true,
+                            });
                         });
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
                     });
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
             } else {
                 alert('Please enter link');
             }

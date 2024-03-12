@@ -7,7 +7,16 @@
 3. Upload it in Google Chrome Extension Manager by click "Load unpacked" (need to turn on developer mode)
 
 ## Versions
+
+v 1.4.3
+
+-   Extension searchs and highlights elements with expected values in attributes
+-   Highlighting allows to show the expected line and highlighted item in a screenshot
+-   Extension icon has a different counter indication for elements with strings in their attributes
+-   The extension's user interface allows you to list items and attribues that should be in the search area
+
 v 1.3.1
+
 -   String ID, Core String and Status are taken from google sheet using AppScript
 -   Note adds to steps column in google sheet
 
