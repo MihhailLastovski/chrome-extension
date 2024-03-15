@@ -62,12 +62,12 @@ document.addEventListener('DOMContentLoaded', function () {
         lists.forEach((list) => {
             const listItem = document.createElement('div');
             listItem.className = 'wordListsItem';
-            if (list.isAttributeList) {
-                const iconList = document.createElement('i');
-                iconList.innerHTML =
-                    '<i class="fa-2x fa fa-cubes" aria-hidden="true"></i>';
-                listItem.appendChild(iconList);
-            }
+
+            const iconList = document.createElement('i');
+            iconList.innerHTML = list.isAttributeList
+                ? '<i class="fa-2x fa fa-cubes" aria-hidden="true"></i>'
+                : '<i class="fa-2x fa fa-list" aria-hidden="true"></i>';
+            listItem.appendChild(iconList);
 
             const textContainer = document.createElement('div');
             textContainer.className = 'textContainer';
