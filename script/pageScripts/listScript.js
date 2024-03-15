@@ -8,46 +8,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const addWordBtn = document.getElementById('saveListBtn');
     const colorPicker = document.getElementById('colorPicker');
 
-    // const apiKey = 'AIzaSyBizfdeE-hxfeh-quvNXqEwAQSJa7WQuJk';
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const listId = urlParams.get('listId');
-    const encodedDataString = urlParams.get('data');
-    const encodedDataStringList = urlParams.get('dataList');
-    const fileData = urlParams.get('dataFile');
 
     const tooltipButtonsRightVersion = [];
     const tooltipsTextRightVersion = [];
 
     const saveChangesBtn = document.createElement('button');
     var wordsArray = [];
-
     var highlightingColor;
-
-    if (encodedDataString) {
-        const dataList = JSON.parse(decodeURIComponent(encodedDataString));
-        if (dataList && dataList.length > 0) {
-            dataList.forEach((word) => {
-                addWord(word, true);
-            });
-        }
-    }
-    if (encodedDataStringList) {
-        const data = decodeURIComponent(encodedDataStringList);
-        const rows = data.split('\n');
-        rows.forEach((row) => {
-            const columns = row.split('\t');
-            const word = columns[0].trim();
-            addWord(word, true);
-        });
-    }
-    if (fileData) {
-        const decodedData = decodeURIComponent(fileData);
-        const wordsArray = decodedData.split(',');
-        wordsArray.forEach((word) => {
-            addWord(word.trim(), true);
-        });
-    }
 
     colorPicker.addEventListener('input', function () {
         highlightingColor = colorPicker.value;
@@ -302,19 +272,13 @@ document.addEventListener('DOMContentLoaded', function () {
     /*************************************Google Sheets********************************************/
 
     const csvListBtn = document.getElementById('csvListBtn');
-    const exportListBtn = document.getElementById('exportListBtn');
     const fileListBtn = document.getElementById('fileListBtn');
     const attributeListBtn = document.getElementById('attributeListBtn');
-
-    var csvLink;
 
     const csvButton = document.createElement('button');
     csvButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
     csvButton.type = 'button';
 
-    const refreshBtn = document.createElement('button');
-    refreshBtn.type = 'button';
-    refreshBtn.innerHTML = '<i class="fa fa-refresh" aria-hidden="true"></i>';
 
     var divWithListImportSettigs = document.createElement('div');
     addListForm.lastElementChild.insertBefore(
@@ -405,20 +369,6 @@ document.addEventListener('DOMContentLoaded', function () {
         divWithListImportSettigs.appendChild(csvInput);
         divWithListImportSettigs.appendChild(csvButton);
 
-        refreshBtn.addEventListener('click', function () {
-            while (wordsContainer.firstChild) {
-                wordsContainer.removeChild(wordsContainer.firstChild);
-            }
-            wordsContainer.appendChild(lastListItem);
-
-            chrome.storage.local.get('dataURL', (result) => {
-                if (result.dataURL) {
-                    fetchDataAndProcessWords(result.dataURL, true);
-                }
-            });
-        });
-
-        divWithListImportSettigs.appendChild(refreshBtn);
     });
     function extractSpreadsheetId(link) {
         var regex = /\/d\/([a-zA-Z0-9-_]+)/;
@@ -426,142 +376,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return match ? match[1] : null;
     }
 
-    async function fetchDataAndProcessWords(url, readOnly) {
-        if (readOnly) {
-            try {
-                const response = await fetch(url);
-                const csvData = await response.text();
-
-                const rows = csvData.split('\n');
-                const wordsArray = rows.reduce((words, row) => {
-                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    const wordsInRow = columns.map((cell) =>
-                        cell.trim().replace(/"/g, '')
-                    );
-                    return words.concat(
-                        wordsInRow.filter((word) => word !== '')
-                    );
-                }, []);
-
-                wordsArray.forEach((word) => {
-                    addWord(word.trim());
-                });
-            } catch (error) {
-                console.error('Error while retrieving data:', error);
-                alert('Error while retrieving data, please try again.');
-            }
-        } else {
-            try {
-                const response = await fetch(url);
-                const csvData = await response.json();
-
-                const wordsArray = csvData.map((rowData) => rowData.col1);
-
-                wordsArray.forEach((word) => {
-                    addWord(word.trim());
-                });
-            } catch (error) {
-                console.error('Ошибка при получении данных:', error);
-                alert('Ошибка при получении данных');
-            }
-        }
-    }
-    // Изменение Google Sheets через Apps Script
-    exportListBtn.addEventListener('click', function () {
-        divWithListImportSettigs.innerHTML = '';
-
-        var csvInput = document.createElement('input');
-        csvInput.type = 'text';
-        csvInput.id = 'textInput';
-        csvInput.placeholder = 'Paste the link';
-
-        csvButton.addEventListener('click', function () {
-            if (csvInput.value.trim() !== '') {
-                csvLink = csvInput.value;
-
-                chrome.storage.local.set({ dataURL: csvLink });
-                fetchDataAndProcessWords(csvLink);
-
-                csvInput.value = '';
-            } else {
-                alert('Please enter link');
-            }
-        });
-
-        // refreshBtn.addEventListener('click', function () {
-        //     while (wordsContainer.firstChild) {
-        //         wordsContainer.removeChild(wordsContainer.firstChild);
-        //     }
-        //     wordsContainer.appendChild(lastListItem);
-
-        //     chrome.storage.local.get('dataURL', (result) => {
-        //         if (result.dataURL) {
-        //             fetchDataAndProcessWords(result.dataURL);
-        //         }
-        //     });
-        // });
-
-        var csvh2 = document.createElement('h2');
-        csvh2.textContent = 'Google Sheets assistant';
-        csvh2.style.textAlign = 'left';
-        csvh2.style.marginLeft = '13%'; //'18%'
-
-        csvh2.addEventListener('click', function () {
-            window.location.href = `guide.html?listId=${listId}`;
-        });
-
-        divWithListImportSettigs.appendChild(csvh2);
-        divWithListImportSettigs.appendChild(csvInput);
-        divWithListImportSettigs.appendChild(csvButton);
-        // divWithListImportSettigs.appendChild(refreshBtn);
-
-        const postBtn = document.createElement('button');
-        postBtn.innerHTML = 'Update Google Sheet';
-        postBtn.type = 'button';
-        divWithListImportSettigs.appendChild(postBtn);
-
-        postBtn.addEventListener('click', function () {
-            const wordsArray = [];
-
-            const wordDivs = document.querySelectorAll('#wordsContainer > div');
-            wordDivs.forEach((wordDiv) => {
-                const wordLabel = wordDiv.querySelector('.word-label');
-
-                if (wordLabel) {
-                    const word = wordLabel.textContent;
-                    if (word !== '') {
-                        wordsArray.push(word);
-                    }
-                }
-            });
-
-            const updatedData = wordsArray.map((word) => ({ col1: word }));
-            console.log(updatedData);
-
-            if (csvInput.value.trim() !== '') {
-                sendDataToGoogleAppsScript(csvInput.value, updatedData);
-                csvInput.value = '';
-            }
-        });
-    });
-    function sendDataToGoogleAppsScript(url, data) {
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        })
-            .then((response) => response.text())
-            .then((result) => {
-                console.log(result); // Результат выполнения запроса
-                alert('Данные обновлены.');
-            })
-            .catch((error) =>
-                console.error('Ошибка при отправке данных:', error)
-            );
-    }
-
+    
     // Выбор файла и перенос значений в список
     fileListBtn.addEventListener('click', function () {
         divWithListImportSettigs.innerHTML = '';
@@ -599,7 +414,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // function createTooltips() {
     //     const tooltipButtons = [
     //         csvButton,
-    //         refreshBtn,
     //         saveChangesBtn,
     //         cancelBtn,
     //         addWordBtn,
