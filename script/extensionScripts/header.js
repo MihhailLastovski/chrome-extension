@@ -106,18 +106,12 @@ document.addEventListener('DOMContentLoaded', function () {
     } else if (csvListBtn) {
         // list.html
         const fileListBtn = document.getElementById('fileListBtn');
-        const exportListBtn = document.getElementById('exportListBtn');
-        const attributeListBtn = document.getElementById('attributeListBtn');
 
         tooltipButtons.push(csvListBtn);
-        tooltipButtons.push(exportListBtn);
         tooltipButtons.push(fileListBtn);
-        tooltipButtons.push(attributeListBtn);
 
         tooltipsText.push('Import Google Sheets');
-        tooltipsText.push('Export Google Sheets');
         tooltipsText.push('Import file');
-        tooltipsText.push('Create attribute list');
     }
 
     tooltipButtons.forEach((button, index) => {

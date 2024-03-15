@@ -1,5 +1,10 @@
 let selectedColor;
 document.addEventListener('DOMContentLoaded', function () {
+    var attributesIsActive;
+    chrome.storage.local.get('attributesIsActive', function (data) {
+        attributesIsActive = data.attributesIsActive || false;
+    });
+
     chrome.storage.local.get('enabledLists', function (data) {
         let enabledLists = data.enabledLists || [];
 
