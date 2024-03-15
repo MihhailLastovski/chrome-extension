@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html data-theme="light">
+
+<head>
+	<title>List management</title>
+	<meta charset="UTF-8">
+	<link id="styleLink" rel="stylesheet" type="text/css" href="../style/styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="../script/extensionScripts/header.js"></script>
+    <script src="../script/extensionScripts/styleScript.js"></script>
+	<script src="../script/pageScripts/attributesList.js"></script>
+</head>
+
+<body>
+	<form id="addListForm"> 
+		<div class="content"> 
+			<input type="text" id="listNameInput" placeholder="List name" style="margin-top: 8%;" required>
+			<hr>
+			<div id="buttonsInLists">
+				<input type="color" value="#FC0365" id="colorPicker">		
+			</div>
+			<div id="wordsContainer" class="list-words">
+				<div id="lastListItem" class="list-wordsItem">
+					<input id="cbox" type="checkbox" class="word-checkbox">
+					<label for="cbox"></label>
+					<textarea class="word-input" id="newWordInput"></textarea>
+				</div>
+			</div>
+			<button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
+			<button type="submit" id="saveListBtn" class="listFormBtn">Add</button>
+		</div>
+	</form>
+</body>
+</html>
