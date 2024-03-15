@@ -304,6 +304,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const csvListBtn = document.getElementById('csvListBtn');
     const exportListBtn = document.getElementById('exportListBtn');
     const fileListBtn = document.getElementById('fileListBtn');
+    const attributeListBtn = document.getElementById('attributeListBtn');
 
     var csvLink;
 
@@ -595,101 +596,101 @@ document.addEventListener('DOMContentLoaded', function () {
 
     /*****************************************Tooltips**********************************************/
     /* Необходимо оптимизировать */
-    function createTooltips() {
-        const tooltipButtons = [
-            csvButton,
-            refreshBtn,
-            saveChangesBtn,
-            cancelBtn,
-            addWordBtn,
-        ];
-        const tooltipsText = [
-            'Search Google sheets',
-            'Synchronize list',
-            'Save changes in list',
-            'Go back',
-            'Add new list',
-        ];
+    // function createTooltips() {
+    //     const tooltipButtons = [
+    //         csvButton,
+    //         refreshBtn,
+    //         saveChangesBtn,
+    //         cancelBtn,
+    //         addWordBtn,
+    //     ];
+    //     const tooltipsText = [
+    //         'Search Google sheets',
+    //         'Synchronize list',
+    //         'Save changes in list',
+    //         'Go back',
+    //         'Add new list',
+    //     ];
 
-        while (tooltipsText.length > 0) {
-            tooltipButtonsRightVersion.push(tooltipButtons.shift());
-            tooltipsTextRightVersion.push(tooltipsText.shift());
-        }
+    //     while (tooltipsText.length > 0) {
+    //         tooltipButtonsRightVersion.push(tooltipButtons.shift());
+    //         tooltipsTextRightVersion.push(tooltipsText.shift());
+    //     }
 
-        // console.log(tooltipButtonsRightVersion);
-        console.log(tooltipsTextRightVersion);
-        let tooltipTimer;
+    //     // console.log(tooltipButtonsRightVersion);
+    //     console.log(tooltipsTextRightVersion);
+    //     let tooltipTimer;
 
-        // tooltipButtons.forEach((button, index) => {
-        //     const tooltip = document.createElement('div');
-        //     tooltip.className = 'tooltip';
-        //     tooltip.innerText = tooltipsText[index];
-        //     document.body.appendChild(tooltip);
+    //     // tooltipButtons.forEach((button, index) => {
+    //     //     const tooltip = document.createElement('div');
+    //     //     tooltip.className = 'tooltip';
+    //     //     tooltip.innerText = tooltipsText[index];
+    //     //     document.body.appendChild(tooltip);
 
-        //     button.addEventListener('mouseover', function () {
-        //         tooltipTimer = setTimeout(function () {
-        //             const rect = button.getBoundingClientRect();
-        //             const tooltipX = rect.left + window.pageXOffset;
-        //             var tooltipY;
-        //             if (
-        //                 button === cancelBtn ||
-        //                 button === addWordBtn ||
-        //                 button === saveChangesBtn
-        //             ) {
-        //                 tooltipY = rect.bottom + window.pageYOffset - 70;
-        //             } else {
-        //                 tooltipY = rect.bottom + window.pageYOffset + 5;
-        //             }
+    //     //     button.addEventListener('mouseover', function () {
+    //     //         tooltipTimer = setTimeout(function () {
+    //     //             const rect = button.getBoundingClientRect();
+    //     //             const tooltipX = rect.left + window.pageXOffset;
+    //     //             var tooltipY;
+    //     //             if (
+    //     //                 button === cancelBtn ||
+    //     //                 button === addWordBtn ||
+    //     //                 button === saveChangesBtn
+    //     //             ) {
+    //     //                 tooltipY = rect.bottom + window.pageYOffset - 70;
+    //     //             } else {
+    //     //                 tooltipY = rect.bottom + window.pageYOffset + 5;
+    //     //             }
 
-        //             tooltip.style.left = `${tooltipX}px`;
-        //             tooltip.style.top = `${tooltipY}px`;
+    //     //             tooltip.style.left = `${tooltipX}px`;
+    //     //             tooltip.style.top = `${tooltipY}px`;
 
-        //             tooltip.style.display = 'inline-block';
-        //             tooltip.style.opacity = 1;
-        //         }, 500);
-        //     });
+    //     //             tooltip.style.display = 'inline-block';
+    //     //             tooltip.style.opacity = 1;
+    //     //         }, 500);
+    //     //     });
 
-        //     button.addEventListener('mouseout', function () {
-        //         clearTimeout(tooltipTimer);
-        //         tooltip.style.display = 'none';
-        //         tooltip.style.opacity = 0;
-        //     });
-        // });
+    //     //     button.addEventListener('mouseout', function () {
+    //     //         clearTimeout(tooltipTimer);
+    //     //         tooltip.style.display = 'none';
+    //     //         tooltip.style.opacity = 0;
+    //     //     });
+    //     // });
 
-        tooltipButtonsRightVersion.forEach((button, index) => {
-            const tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.innerText = tooltipsTextRightVersion[index];
-            document.body.appendChild(tooltip);
+    //     tooltipButtonsRightVersion.forEach((button, index) => {
+    //         const tooltip = document.createElement('div');
+    //         tooltip.className = 'tooltip';
+    //         tooltip.innerText = tooltipsTextRightVersion[index];
+    //         document.body.appendChild(tooltip);
 
-            button.addEventListener('mouseover', function () {
-                tooltipTimer = setTimeout(function () {
-                    const rect = button.getBoundingClientRect();
-                    const tooltipX = rect.left + window.pageXOffset;
-                    var tooltipY;
-                    if (
-                        button === cancelBtn ||
-                        button === addWordBtn ||
-                        button === saveChangesBtn
-                    ) {
-                        tooltipY = rect.bottom + window.pageYOffset - 70;
-                    } else {
-                        tooltipY = rect.bottom + window.pageYOffset + 5;
-                    }
+    //         button.addEventListener('mouseover', function () {
+    //             tooltipTimer = setTimeout(function () {
+    //                 const rect = button.getBoundingClientRect();
+    //                 const tooltipX = rect.left + window.pageXOffset;
+    //                 var tooltipY;
+    //                 if (
+    //                     button === cancelBtn ||
+    //                     button === addWordBtn ||
+    //                     button === saveChangesBtn
+    //                 ) {
+    //                     tooltipY = rect.bottom + window.pageYOffset - 70;
+    //                 } else {
+    //                     tooltipY = rect.bottom + window.pageYOffset + 5;
+    //                 }
 
-                    tooltip.style.left = `${tooltipX}px`;
-                    tooltip.style.top = `${tooltipY}px`;
+    //                 tooltip.style.left = `${tooltipX}px`;
+    //                 tooltip.style.top = `${tooltipY}px`;
 
-                    tooltip.style.display = 'inline-block';
-                    tooltip.style.opacity = 1;
-                }, 500);
-            });
+    //                 tooltip.style.display = 'inline-block';
+    //                 tooltip.style.opacity = 1;
+    //             }, 500);
+    //         });
 
-            button.addEventListener('mouseout', function () {
-                clearTimeout(tooltipTimer);
-                tooltip.style.display = 'none';
-                tooltip.style.opacity = 0;
-            });
-        });
-    }
+    //         button.addEventListener('mouseout', function () {
+    //             clearTimeout(tooltipTimer);
+    //             tooltip.style.display = 'none';
+    //             tooltip.style.opacity = 0;
+    //         });
+    //     });
+    // }
 });

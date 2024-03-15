@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 <a href="popup.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
                 <a href="guide.html"><i class="fa fa-file-text" aria-hidden="true"></i> Apps Script guide</a>
                 <a href="statuses.html"><i class="fa fa-book" aria-hidden="true"></i> Statuses</a>
+                <a href="attributes.html"><i class="fa fa-cube" aria-hidden="true"></i> Attributes</a>
                 <a href="settings.html"><i class="fa fa-cog" aria-hidden="true"></i> Settings</a>
                 <a href="about.html"><i class="fa fa-info-circle" aria-hidden="true"></i> About</a>
             </div>
@@ -106,31 +107,17 @@ document.addEventListener('DOMContentLoaded', function () {
         // list.html
         const fileListBtn = document.getElementById('fileListBtn');
         const exportListBtn = document.getElementById('exportListBtn');
-        // const cancelBtn = document.getElementById('cancelBtn');
-        // const addWordBtn = document.getElementById('saveListBtn');
+        const attributeListBtn = document.getElementById('attributeListBtn');
+
         tooltipButtons.push(csvListBtn);
         tooltipButtons.push(exportListBtn);
         tooltipButtons.push(fileListBtn);
-        // tooltipButtons.push(cancelBtn);
-        // tooltipButtons.push(addWordBtn);
+        tooltipButtons.push(attributeListBtn);
+
         tooltipsText.push('Import Google Sheets');
         tooltipsText.push('Export Google Sheets');
         tooltipsText.push('Import file');
-        // tooltipsText.push('Go back');
-        // tooltipsText.push('Add new list');
-        // const csvButton = document.querySelector('.fa.fa-search');
-        // const refreshBtn = document.querySelector('.fa.fa-refresh');
-        // if (csvButton && refreshBtn) {
-        //     tooltipButtons.push(csvButton);
-        //     tooltipButtons.push(refreshBtn);
-        //     tooltipsText.push('Search Google sheets');
-        //     tooltipsText.push('Save changes in list');
-        // }
-        // const saveChangesBtn = document.getElementById('saveChangesBtn');
-        // if (saveChangesBtn) {
-        //     tooltipButtons.push(saveChangesBtn);
-        //     tooltipsText.push('Save changes in list');
-        // }
+        tooltipsText.push('Create attribute list');
     }
 
     tooltipButtons.forEach((button, index) => {
@@ -144,21 +131,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 const rect = button.getBoundingClientRect();
                 const tooltipX = rect.left + window.pageXOffset;
                 const tooltipY = rect.bottom + window.pageYOffset + 5;
-                // var tooltipY;
-
-                // if (csvListBtn) {
-                //     if (
-                //         button === cancelBtn ||
-                //         button === addWordBtn ||
-                //         button === saveChangesBtn
-                //     ) {
-                //         tooltipY = rect.bottom + window.pageYOffset - 70;
-                //     } else {
-                //         tooltipY = rect.bottom + window.pageYOffset + 5;
-                //     }
-                // } else {
-                //     tooltipY = rect.bottom + window.pageYOffset + 5;
-                // }
 
                 tooltip.style.left = `${tooltipX}px`;
                 tooltip.style.top = `${tooltipY}px`;
