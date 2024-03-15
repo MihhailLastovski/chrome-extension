@@ -62,9 +62,10 @@ document.addEventListener('DOMContentLoaded', function () {
         lists.forEach((list) => {
             const listItem = document.createElement('div');
             listItem.className = 'wordListsItem';
-            if (list.icon) {
+            if (list.isAttributeList) {
                 const iconList = document.createElement('i');
-                iconList.innerHTML = '<i>Icon</i>';
+                iconList.innerHTML =
+                    '<i class="fa-2x fa fa-cubes" aria-hidden="true"></i>';
                 listItem.appendChild(iconList);
             }
 
@@ -103,7 +104,9 @@ document.addEventListener('DOMContentLoaded', function () {
             updateButton.innerHTML =
                 '<i class="fa fa-pencil" aria-hidden="true"></i>';
             updateButton.addEventListener('click', function () {
-                window.location.href = `list.html?listId=${list.id}`;
+                window.location.href = list.isAttributeList
+                    ? `attributesList.html?listId=${list.id}`
+                    : `list.html?listId=${list.id}`;
             });
             buttons.appendChild(updateButton);
             listItem.appendChild(textContainer);
@@ -179,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     newListBtn.addEventListener('click', function () {
-        window.location.href = 'list.html';
+        window.location.href = 'newList.html';
     });
 
     // Отображение версии проекта с manifest

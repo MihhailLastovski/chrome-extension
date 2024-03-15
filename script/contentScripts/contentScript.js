@@ -159,7 +159,12 @@ async function highlightText(searchText, highlightColor, listId = null) {
     }
 }
 
-async function highlightAttributes(searchText, highlightColor, listId = null) {
+async function highlightAttributes(
+    searchText,
+    searchAttribute,
+    highlightColor,
+    listId = null
+) {
     highlightColorRestore = highlightColor;
 
     function findAttributeMatch(element, attributeName) {
@@ -172,7 +177,7 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
 
     if (boolActive && searchText !== '') {
         function highlightElement(element) {
-            const matchedElement = findAttributeMatch(element, 'class');
+            const matchedElement = findAttributeMatch(element, searchAttribute);
             if (matchedElement) {
                 if (matchedElement.parentNode.className !== 'highlighted') {
                     const colorStyle = `border: 4px solid ${highlightColor};`;
@@ -209,6 +214,7 @@ chrome.runtime.onMessage.addListener(async function (
             if (attributesIsActive) {
                 await highlightAttributes(
                     request.searchText,
+                    request.searchAttribute,
                     request.highlightColor,
                     request.listId
                 );

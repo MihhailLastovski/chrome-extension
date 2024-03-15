@@ -13,7 +13,7 @@ v 1.4.3
 -   Extension searchs and highlights elements with expected values in attributes
 -   Highlighting allows to show the expected line and highlighted item in a screenshot
 -   Extension icon has a different counter indication for elements with strings in their attributes
--   The extension's user interface allows you to list items and attribues that should be in the search area
+-   The extension's user interface allows you to list items and attributes that should be in the search area
 
 v 1.3.1
 
