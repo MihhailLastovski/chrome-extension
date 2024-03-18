@@ -157,38 +157,27 @@ async function highlightText(searchText, highlightColor, listId = null) {
 
         highlightTextNode(document.body);
     }
-    // Отображение счётчика
-    chrome.runtime.sendMessage({
-        action: 'updateBadge',
-        count: document.querySelectorAll('span.highlighted').length,
-        color: '#FC0365',
-    });
 }
 
-async function highlightAttributes(searchText, highlightColor, listId = null) {
+async function highlightAttributes(
+    searchText,
+    searchAttribute,
+    highlightColor,
+    listId = null
+) {
     highlightColorRestore = highlightColor;
 
     function findAttributeMatch(element, attributeName) {
         const attribute = element.getAttribute(attributeName);
-        if (
-            attribute &&
-            attribute.toLowerCase().includes(searchText.toLowerCase())
-        ) {
+        if (attribute && attribute.toLowerCase() === searchText.toLowerCase()) {
             return element;
         }
         return null;
-        // const attributes = element.attributes;
-        // for (const attr of attributes) {
-        //     if (attr.value.toLowerCase().includes(searchText.toLowerCase())) {
-        //         return element;
-        //     }
-        // }
-        // return null;
     }
 
     if (boolActive && searchText !== '') {
         function highlightElement(element) {
-            const matchedElement = findAttributeMatch(element, 'class');
+            const matchedElement = findAttributeMatch(element, searchAttribute);
             if (matchedElement) {
                 if (matchedElement.parentNode.className !== 'highlighted') {
                     const colorStyle = `border: 4px solid ${highlightColor};`;
@@ -203,7 +192,7 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
                     );
                     wrapper.appendChild(textNode);
 
-                    element.innerHTML = '';
+                    element.textContent = '';
                     element.appendChild(wrapper);
                     // element.parentNode.replaceChild(wrapper, element);
                 }
@@ -211,13 +200,6 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
         }
         const elements = document.querySelectorAll('*');
         elements.forEach((element) => highlightElement(element));
-
-        // Отображение счётчика
-        chrome.runtime.sendMessage({
-            action: 'updateBadge',
-            count: document.querySelectorAll(`span.highlighted`).length,
-            color: '#3B1269',
-        });
     }
 }
 
@@ -228,19 +210,30 @@ chrome.runtime.onMessage.addListener(async function (
 ) {
     if (request.action === 'highlight') {
         try {
+            var searchModeColor;
             if (attributesIsActive) {
                 await highlightAttributes(
                     request.searchText,
+                    request.searchAttribute,
                     request.highlightColor,
                     request.listId
                 );
+                searchModeColor = '#3B1269';
             } else {
                 await highlightText(
                     request.searchText,
                     request.highlightColor,
                     request.listId
                 );
+                searchModeColor = '#FC0365';
             }
+
+            // Отображение счётчика
+            chrome.runtime.sendMessage({
+                action: 'updateBadge',
+                count: document.querySelectorAll('span.highlighted').length,
+                color: searchModeColor,
+            });
         } catch (error) {
             console.error('Ошибка при выделении слова', error);
         }

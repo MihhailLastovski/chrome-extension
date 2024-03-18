@@ -74,6 +74,7 @@ function highlightWordsFromList(listId) {
             sortedWords.forEach((wordObj) => {
                 if (wordObj.enabled) {
                     const searchText = wordObj.word;
+                    const searchAttribute = wordObj.attribute || '';
                     chrome.tabs.query(
                         { active: true, currentWindow: true },
                         function (tabs) {
@@ -86,6 +87,7 @@ function highlightWordsFromList(listId) {
                             chrome.tabs.sendMessage(tabs[0].id, {
                                 action: 'highlight',
                                 searchText: searchText,
+                                searchAttribute: searchAttribute,
                                 highlightColor: listToHighlight.color,
                                 listId: listId,
                             });

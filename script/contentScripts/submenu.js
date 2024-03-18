@@ -58,51 +58,51 @@ function createSubmenu(element) {
     var statusesContainer = document.createElement('div');
     statusesContainer.className = 'exa-radience-statuses-container';
 
-    chrome.storage.local.get('customStatuses', function (result) {
-        const customStatuses = result.customStatuses || [];
-        customStatuses.forEach((status) => {
-            const div = document.createElement('div');
-            div.id = 'statusDiv';
-            div.className = 'exa-radience-statuses-container-item';
-            div.textContent = status;
+    //chrome.storage.local.get('customStatuses', function (result) {
+    // const customStatuses = result.customStatuses || [];
 
-            chrome.storage.local.get('wordLists', function (result) {
-                const wordLists = result.wordLists || [];
-                const foundWord = wordLists.find((wordList) => {
-                    return (
-                        wordList.words &&
-                        wordList.words.find((wordObj) => {
-                            return (
-                                wordObj.word.trim().toLowerCase() ===
-                                    element.innerHTML
-                                        .trim()
-                                        .toLowerCase() &&
-                                wordObj.status === status
-                            );
-                        })
-                    );
-                });
-                if (foundWord) {
-                    div.style.backgroundColor = '#3B1269';
-                }
-            });
+    // customStatuses.forEach((status) => {
+    statusesList.forEach((status) => {
+        const div = document.createElement('div');
+        div.id = 'statusDiv';
+        div.className = 'exa-radience-statuses-container-item';
+        div.textContent = status;
 
-            div.onclick = function () {
-                // Получаем все элементы с классом '.exa-radience-statuses-container-item'
-                var allItems = document.querySelectorAll(
-                    '.exa-radience-statuses-container-item'
+        chrome.storage.local.get('wordLists', function (result) {
+            const wordLists = result.wordLists || [];
+            const foundWord = wordLists.find((wordList) => {
+                return (
+                    wordList.words &&
+                    wordList.words.find((wordObj) => {
+                        return (
+                            wordObj.word.trim().toLowerCase() ===
+                                element.innerHTML.trim().toLowerCase() &&
+                            wordObj.status === status
+                        );
+                    })
                 );
-                // Применяем изменения ко всем элементам
-                allItems.forEach(function (elem) {
-                    elem.style.backgroundColor = '#FD68A4';
-                });
-                selectedValue = status;
-                changeWordStatus(element);
+            });
+            if (foundWord) {
                 div.style.backgroundColor = '#3B1269';
-            };
-            statusesContainer.appendChild(div);
+            }
         });
+
+        div.onclick = function () {
+            // Получаем все элементы с классом '.exa-radience-statuses-container-item'
+            var allItems = document.querySelectorAll(
+                '.exa-radience-statuses-container-item'
+            );
+            // Применяем изменения ко всем элементам
+            allItems.forEach(function (elem) {
+                elem.style.backgroundColor = '#FD68A4';
+            });
+            selectedValue = status;
+            changeWordStatus(element);
+            div.style.backgroundColor = '#3B1269';
+        };
+        statusesContainer.appendChild(div);
     });
+    //});
 
     submenuContainer.appendChild(addNoteBtn);
     submenuContainer.appendChild(captureScreenshotBtn);
@@ -111,9 +111,7 @@ function createSubmenu(element) {
     lineDiv.appendChild(statusesContainer);
     lineDiv.appendChild(removeStatusBtn);
 
-    submenuContainer.style.left = `${
-        element.getBoundingClientRect().left
-    }px`;
+    submenuContainer.style.left = `${element.getBoundingClientRect().left}px`;
     submenuContainer.style.top = `${
         element.getBoundingClientRect().top + window.scrollY + 30
     }px`;
