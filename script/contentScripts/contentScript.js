@@ -78,7 +78,12 @@ async function highlightText(searchText, highlightColor, listId = null) {
         function highlightTextNode(node) {
             if (
                 node.nodeType === Node.TEXT_NODE &&
-                !isDescendantOfStyleOrScript(node)
+                //!isDescendantOfStyleOrScript(node)
+                !(
+                    node.parentNode &&
+                    (node.parentNode.tagName.toLowerCase() === 'style' ||
+                        node.parentNode.tagName.toLowerCase() === 'script')
+                )
             ) {
                 const text = node.nodeValue;
                 if (searchRegex.test(text)) {
