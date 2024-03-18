@@ -279,7 +279,6 @@ document.addEventListener('DOMContentLoaded', function () {
     csvButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
     csvButton.type = 'button';
 
-
     var divWithListImportSettigs = document.createElement('div');
     addListForm.lastElementChild.insertBefore(
         divWithListImportSettigs,
@@ -368,7 +367,6 @@ document.addEventListener('DOMContentLoaded', function () {
         divWithListImportSettigs.appendChild(csvp);
         divWithListImportSettigs.appendChild(csvInput);
         divWithListImportSettigs.appendChild(csvButton);
-
     });
     function extractSpreadsheetId(link) {
         var regex = /\/d\/([a-zA-Z0-9-_]+)/;
@@ -376,7 +374,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return match ? match[1] : null;
     }
 
-    
     // Выбор файла и перенос значений в список
     fileListBtn.addEventListener('click', function () {
         divWithListImportSettigs.innerHTML = '';
