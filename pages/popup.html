@@ -24,11 +24,20 @@
 			<input type="radio" name="highlightColor" value="#3B1269" class="color-option blueviolet">
 		</div>	
 		<hr>
-		<div class="divsWithText">    
-			<label>New List</label>
-			<button id="newListBtn"><i class="fa fa-plus" aria-hidden="true"></i></button>
-		</div>
-		<div id="wordLists"></div>
+		<div class="divsWithText" style="display: flex; justify-content: center; height: 40px;">  	 			
+			<div style="display: flex;">
+				<label style="width: 80px; height: 35px; margin-top: 5px;">New List</label>
+				<button id="newListBtn"><i class="fa fa-plus" aria-hidden="true"></i></button>
+			</div>
+			<div style="height: 35px; margin-top: 3px; margin-left: 15px;">
+				<label id="searchLabel" style="width: 53px; font-size: 10pt;"></label>
+				<label class="switch">
+					<input id="attributesCheckbox" class="toggleSwitch" type="checkbox">
+					<span id="searchSlider" class="slider"></span>
+				</label>
+			</div>			
+		</div>		
+		<div id="wordListsContainer" style="margin-top: 10px;"></div>
 		<br/>		
 	</div>
 	<footer>

@@ -12,6 +12,18 @@ v 1.4.4
 
 -   Word highlighting process optimized for faster and smoother user expirience
 
+v 1.4.3
+
+-   Extension searchs and highlights elements with expected values in attributes
+-   Highlighting allows to show the expected line and highlighted item in a screenshot
+-   Extension icon has a different counter indication for elements with strings in their attributes
+-   The extension's user interface allows you to list items and attributes that should be in the search area
+
+v 1.3.1
+
+-   String ID, Core String and Status are taken from google sheet using AppScript
+-   Note adds to steps column in google sheet
+
 v 1.2.8
 
 -   Contents of contentScript are separated into different module. File paths are updated

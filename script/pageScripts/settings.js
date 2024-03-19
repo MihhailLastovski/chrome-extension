@@ -15,18 +15,15 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     chrome.storage.local.get('submenuIsActive', function (data) {
-        const submenuIsActive = data.submenuIsActive;
-        submenuCheckbox.checked = submenuIsActive || false;
+        submenuCheckbox.checked = data.submenuIsActive || false;
     });
 
     chrome.storage.local.get('screenshotName', function (data) {
-        const name = data.screenshotName || 'screenshot';
-        wordLabel.textContent = name;
+        wordLabel.textContent = data.screenshotName || 'screenshot';
     });
 
     saveAsCheckbox.addEventListener('change', function () {
-        const saveAs = saveAsCheckbox.checked;
-        chrome.storage.local.set({ saveAs: saveAs });
+        chrome.storage.local.set({ saveAs: saveAsCheckbox.checked });
     });
 
     submenuCheckbox.addEventListener('change', function () {
@@ -36,8 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
             { active: true, currentWindow: true },
             function (tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {
-                    action: 'submenuStatusUpdating',
-                    submenuIsActive: submenuIsActive,
+                    action: 'valuesStatusUpdating',
                 });
             }
         );

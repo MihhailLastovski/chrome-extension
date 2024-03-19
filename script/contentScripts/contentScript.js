@@ -4,7 +4,8 @@ if (!window.hasRun) {
         submenuIsActive,
         boolActive,
         wordLists,
-        statusesList;
+        statusesList,
+        attributesIsActive;
     let selectedValue = '';
     var docBody = document.body;
     window.hasRun = true;
@@ -27,17 +28,20 @@ async function getValuesFromLocalStorage() {
             boolActiveResult,
             wordListsResult,
             statusesResult,
+            attributesResult,
         ] = await Promise.all([
             getFromLocalStorage('submenuIsActive'),
             getFromLocalStorage('isActive'),
             getFromLocalStorage('wordLists'),
             getFromLocalStorage('customStatuses'),
+            getFromLocalStorage('attributesIsActive'),
         ]);
 
         submenuIsActive = submenuResult.submenuIsActive || false;
         boolActive = boolActiveResult.isActive;
         wordLists = wordListsResult.wordLists || [];
         statusesList = statusesResult.customStatuses || [];
+        attributesIsActive = attributesResult.attributesIsActive || false;
     } catch (error) {
         console.error(
             'Ошибка при получении данных из локального хранилища:',
@@ -75,8 +79,15 @@ async function highlightText(searchText, highlightColor, listId = null) {
     if (boolActive && searchText !== '') {
         const searchRegex = new RegExp(searchText, 'gi');
 
-        function highlightTextInNode(node) {
-            if (node.nodeType === Node.TEXT_NODE) {
+        function highlightTextNode(node) {
+            if (
+                node.nodeType === Node.TEXT_NODE &&
+                !(
+                    node.parentNode &&
+                    (node.parentNode.tagName.toLowerCase() === 'style' ||
+                        node.parentNode.tagName.toLowerCase() === 'script')
+                )
+            ) {
                 const text = node.nodeValue;
                 if (searchRegex.test(text)) {
                     const foundWord = findWordInWordLists(searchText);
@@ -162,14 +173,51 @@ async function highlightText(searchText, highlightColor, listId = null) {
             highlightTextInNode(allElements[i]);
         }
     }
-
-    // Update the badge count
-    chrome.runtime.sendMessage({
-        action: 'updateBadge',
-        count: document.querySelectorAll('span.highlighted').length,
-    });
 }
 
+async function highlightAttributes(
+    searchText,
+    searchAttribute,
+    highlightColor,
+    listId = null
+) {
+    highlightColorRestore = highlightColor;
+
+    function findAttributeMatch(element, attributeName) {
+        const attribute = element.getAttribute(attributeName);
+        if (attribute && attribute.toLowerCase() === searchText.toLowerCase()) {
+            return element;
+        }
+        return null;
+    }
+
+    if (boolActive && searchText !== '') {
+        function highlightElement(element) {
+            const matchedElement = findAttributeMatch(element, searchAttribute);
+            if (matchedElement) {
+                if (matchedElement.parentNode.className !== 'highlighted') {
+                    const colorStyle = `border: 4px solid ${highlightColor};`;
+
+                    const wrapper = document.createElement('span');
+                    wrapper.className = 'highlighted';
+                    wrapper.style.cssText = colorStyle;
+                    wrapper.setAttribute('data-list-id', listId);
+
+                    const textNode = document.createTextNode(
+                        element.textContent
+                    );
+                    wrapper.appendChild(textNode);
+
+                    element.textContent = '';
+                    element.appendChild(wrapper);
+                    // element.parentNode.replaceChild(wrapper, element);
+                }
+            }
+        }
+        const elements = document.querySelectorAll('*');
+        elements.forEach((element) => highlightElement(element));
+    }
+}
 
 chrome.runtime.onMessage.addListener(async function (
     request,
@@ -178,11 +226,30 @@ chrome.runtime.onMessage.addListener(async function (
 ) {
     if (request.action === 'highlight') {
         try {
-            await highlightText(
-                request.searchText,
-                request.highlightColor,
-                request.listId
-            );
+            var searchModeColor;
+            if (attributesIsActive) {
+                await highlightAttributes(
+                    request.searchText,
+                    request.searchAttribute,
+                    request.highlightColor,
+                    request.listId
+                );
+                searchModeColor = '#3B1269';
+            } else {
+                await highlightText(
+                    request.searchText,
+                    request.highlightColor,
+                    request.listId
+                );
+                searchModeColor = '#FC0365';
+            }
+
+            // Отображение счётчика
+            chrome.runtime.sendMessage({
+                action: 'updateBadge',
+                count: document.querySelectorAll('span.highlighted').length,
+                color: searchModeColor,
+            });
         } catch (error) {
             console.error('Ошибка при выделении слова', error);
         }
@@ -196,7 +263,7 @@ chrome.runtime.onMessage.addListener(async function (
             const { textContent } = element;
             element.outerHTML = textContent;
         });
-    } else if (request.action === 'submenuStatusUpdating') {
+    } else if (request.action === 'valuesStatusUpdating') {
         try {
             await getValuesFromLocalStorage();
         } catch (error) {

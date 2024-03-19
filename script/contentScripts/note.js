@@ -25,7 +25,7 @@ function addNoteToElement(element) {
             console.log('Sending data:', data);
 
             fetch(
-                'https://script.google.com/macros/s/AKfycbx3M7piLw8ceBgFuVfE9EAl92q2_EwJidSQXP32FUkQ3C_2mJxdEfn2vLIwqd5_c96e/exec',
+                'https://script.google.com/macros/s/AKfycbya6kRaa-zbZisTLG6RADGq9RDlBzh-0-9xYbYxQwBgoMOTKuVMrPUi3SCh_OLCTqxM/exec',
                 {
                     method: 'POST',
                     mode: 'no-cors',

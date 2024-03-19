@@ -3,6 +3,10 @@ chrome.runtime.onInstalled.addListener(function () {
         if (!data.firstOpen) {
             chrome.storage.local.set({ theme: 'light' });
             chrome.storage.local.set({ firstOpen: true });
+            const existingAttributes = ['id', 'class', 'type'];
+            chrome.storage.local.set({
+                customAttributes: existingAttributes,
+            });
         }
     });
 });
@@ -46,10 +50,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         return true;
     } else if (request.action === 'updateBadge') {
         const count = request.count || 0;
+        const searchModeColor = request.color || '#FC0365';
         chrome.action.setBadgeText({
             text: count > 0 ? count.toString() : '',
         });
-        chrome.action.setBadgeBackgroundColor({ color: '#FC0365' });
+        chrome.action.setBadgeBackgroundColor({ color: searchModeColor });
     } else if (request.action === 'updateLists') {
         const listId = request.listId || 0;
         highlightWordsFromList(listId);
@@ -72,20 +77,26 @@ function highlightWordsFromList(listId) {
 
             sortedWords.forEach((wordObj) => {
                 if (wordObj.enabled) {
-                    const searchText = wordObj.word.trim();
+                    const searchText = wordObj.word;
+                    const searchAttribute = wordObj.attribute || '';
                     chrome.tabs.query(
                         { active: true, currentWindow: true },
                         function (tabs) {
-                            chrome.scripting.executeScript({
-                                target: { tabId: tabs[0].id },
-                                files: ['./script/contentScripts/contentScript.js'],
-                            });
-                            chrome.tabs.sendMessage(tabs[0].id, {
-                                action: 'highlight',
-                                searchText: searchText,
-                                highlightColor: listToHighlight.color,
-                                listId: listId,
-                            });
+                            if (tabs && tabs[0]) {
+                                chrome.scripting.executeScript({
+                                    target: { tabId: tabs[0].id },
+                                    files: [
+                                        './script/contentScripts/contentScript.js',
+                                    ],
+                                });
+                                chrome.tabs.sendMessage(tabs[0].id, {
+                                    action: 'highlight',
+                                    searchText: searchText,
+                                    searchAttribute: searchAttribute,
+                                    highlightColor: listToHighlight.color,
+                                    listId: listId,
+                                });
+                            }
                         }
                     );
                 }
