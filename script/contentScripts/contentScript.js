@@ -75,16 +75,8 @@ async function highlightText(searchText, highlightColor, listId = null) {
     if (boolActive && searchText !== '') {
         const searchRegex = new RegExp(searchText, 'gi');
 
-        function highlightTextNode(node) {
-            if (
-                node.nodeType === Node.TEXT_NODE &&
-                //!isDescendantOfStyleOrScript(node)
-                !(
-                    node.parentNode &&
-                    (node.parentNode.tagName.toLowerCase() === 'style' ||
-                        node.parentNode.tagName.toLowerCase() === 'script')
-                )
-            ) {
+        function highlightTextInNode(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
                 const text = node.nodeValue;
                 if (searchRegex.test(text)) {
                     const foundWord = findWordInWordLists(searchText);
@@ -94,80 +86,90 @@ async function highlightText(searchText, highlightColor, listId = null) {
                         ? `background-color: ${highlightColor}; border: 4px solid ${highlightColor};`
                         : `border: 4px solid ${highlightColor};`;
 
-                    if (node.parentNode.className !== 'highlighted') {
-                        const wrapper = document.createElement('span');
-                        wrapper.className = 'highlightedP';
-                        wrapper.setAttribute('data-list-id', listId);
-
-                        let lastIndex = 0;
-                        let match;
-
-                        searchRegex.lastIndex = 0;
-                        while ((match = searchRegex.exec(text)) !== null) {
-                            const beforeMatch = text.substring(
-                                lastIndex,
-                                match.index
-                            );
-
-                            wrapper.appendChild(
-                                document.createTextNode(beforeMatch)
-                            );
-
-                            const matchedText = document.createElement('span');
-                            matchedText.className = 'highlighted';
-                            matchedText.style.cssText = colorStyle;
-                            matchedText.textContent = match[0];
-                            if (listId) {
-                                matchedText.dataset.listId = listId;
+                        if (node.parentNode.className !== 'highlighted') {
+                            const wrapper = document.createElement('span');
+                            wrapper.className = 'highlightedP';
+                            wrapper.setAttribute('data-list-id', listId);
+    
+                            let lastIndex = 0;
+                            let match;
+    
+                            searchRegex.lastIndex = 0;
+                            while ((match = searchRegex.exec(text)) !== null) {
+                                const beforeMatch = text.substring(
+                                    lastIndex,
+                                    match.index
+                                );
+    
+                                wrapper.appendChild(
+                                    document.createTextNode(beforeMatch)
+                                );
+    
+                                const matchedText = document.createElement('span');
+                                matchedText.className = 'highlighted';
+                                matchedText.style.cssText = colorStyle;
+                                matchedText.textContent = match[0];
+                                if (listId) {
+                                    matchedText.dataset.listId = listId;
+                                }
+                                wrapper.appendChild(matchedText);
+                                lastIndex = match.index + match[0].length;
                             }
-                            wrapper.appendChild(matchedText);
-                            lastIndex = match.index + match[0].length;
+    
+                            wrapper.appendChild(
+                                document.createTextNode(text.substring(lastIndex))
+                            );
+    
+                            node.parentNode.replaceChild(wrapper, node);
                         }
-
-                        wrapper.appendChild(
-                            document.createTextNode(text.substring(lastIndex))
-                        );
-
-                        node.parentNode.replaceChild(wrapper, node);
+                }
+            } else if (node.nodeType === Node.ELEMENT_NODE && 
+                       !['style', 'script'].includes(node.tagName.toLowerCase())) {
+                for (const childNode of node.childNodes) {
+                    highlightTextInNode(childNode);
+                }
+            }
+        }
+        function findElementsByText(targetText) {
+            // Array to store matching elements
+            var matchingElements = [];
+            const searchRegex = new RegExp(targetText, 'gi');
+            // Function to traverse through each element
+            function traverseElement(element) {
+                // Check if the element has children
+                if (element.childNodes.length > 0) {
+                    // Iterate through child nodes
+                    for (var i = 0; i < element.childNodes.length; i++) {
+                        // Recursively call traverseElement for each child node
+                        traverseElement(element.childNodes[i]);
                     }
                 }
-            } else if (
-                node.nodeType === Node.ELEMENT_NODE &&
-                !['style', 'script'].includes(node.tagName.toLowerCase()) &&
-                node.childNodes &&
-                node.childNodes.length > 0
-            ) {
-                //works slow
-                node.childNodes.forEach((childNode) =>
-                    highlightTextNode(childNode)
-                ); 
-                //really slow
-            }
-        }
-
-        // Проверка, является ли узел потомком элемента style или script
-        function isDescendantOfStyleOrScript(node) {
-            while (node.parentNode) {
-                node = node.parentNode;
-                if (
-                    node.tagName &&
-                    (node.tagName.toLowerCase() === 'style' ||
-                        node.tagName.toLowerCase() === 'script')
-                ) {
-                    return true;
+                
+                // Check if the element is a text node and its content matches the target text
+                if (element.nodeType === Node.TEXT_NODE && searchRegex.test(element.nodeValue.trim())) {
+                    // Add the parent element to the matching elements array
+                    matchingElements.push(element.parentNode);
                 }
             }
-            return false;
+        
+            // Start traversing from document.body
+            traverseElement(document.body);
+        
+            return matchingElements;
         }
-
-        highlightTextNode(docBody);
+        const allElements = findElementsByText(searchText)
+        for (let i = 0; i < allElements.length; i++) {
+            highlightTextInNode(allElements[i]);
+        }
     }
-    // Отображение счётчика
+
+    // Update the badge count
     chrome.runtime.sendMessage({
         action: 'updateBadge',
         count: document.querySelectorAll('span.highlighted').length,
     });
 }
+
 
 chrome.runtime.onMessage.addListener(async function (
     request,
