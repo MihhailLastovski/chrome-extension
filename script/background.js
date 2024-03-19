@@ -3,6 +3,10 @@ chrome.runtime.onInstalled.addListener(function () {
         if (!data.firstOpen) {
             chrome.storage.local.set({ theme: 'light' });
             chrome.storage.local.set({ firstOpen: true });
+            const existingAttributes = ['id', 'class', 'type'];
+            chrome.storage.local.set({
+                customAttributes: existingAttributes,
+            });
         }
     });
 });

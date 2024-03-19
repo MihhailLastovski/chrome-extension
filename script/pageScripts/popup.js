@@ -4,9 +4,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const newListBtn = document.getElementById('newListBtn');
     const attributesCheckbox = document.getElementById('attributesCheckbox');
     const searchLabel = document.getElementById('searchLabel');
+    const searchSlider = document.getElementById('searchSlider');
+    const wordListsContainer = document.getElementById('wordListsContainer');
+    const version = document.getElementById('version');
     const colorOptions = document.querySelectorAll('.color-option');
 
     var attributesIsActive, wordLists, selectedColor;
+    let enabledLists = [];
     selectedColor = localStorage.getItem('selectedColor') || 'defaultColor';
 
     chrome.storage.local.get('attributesIsActive', function (data) {
@@ -22,6 +26,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     chrome.storage.local.get('enabledLists', function (data) {
         enabledLists = data.enabledLists || [];
+        // enabledLists.forEach((listId) => {
+        //     toggleWordList(listId, true);
+        // });
     });
 
     attributesCheckbox.addEventListener('change', function () {
@@ -42,9 +49,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateLabels() {
         attributesIsActive = attributesCheckbox.checked;
-        searchLabel.textContent = attributesIsActive
-            ? 'Attribute search'
-            : 'Default search';
+        searchLabel.textContent = attributesIsActive ? 'Attribute' : 'Default';
+        searchSlider.style.backgroundColor = attributesIsActive
+            ? '#3B1269'
+            : '#FC0365';
     }
 
     colorOptions.forEach((option) => {
@@ -75,9 +83,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         );
     });
-
-    const wordListsContainer = document.getElementById('wordListsContainer');
-    let enabledLists = [];
 
     function renderWordLists(lists) {
         wordListsContainer.innerHTML = '';
@@ -178,7 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Отображение версии проекта с manifest
-    const version = document.getElementById('version');
     async function getProjectVersion() {
         try {
             // Загрузка manifest.json
