@@ -9,8 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const version = document.getElementById('version');
     const colorOptions = document.querySelectorAll('.color-option');
 
-    var attributesIsActive, wordLists, selectedColor;
-    let enabledLists = [];
+    var attributesIsActive, wordLists, selectedColor, enabledLists;
     selectedColor = localStorage.getItem('selectedColor') || 'defaultColor';
 
     chrome.storage.local.get('attributesIsActive', function (data) {
@@ -18,17 +17,14 @@ document.addEventListener('DOMContentLoaded', function () {
         updateLabels();
     });
 
+    chrome.storage.local.get('enabledLists', function (data) {
+        enabledLists = data.enabledLists || [];
+    });
+
     chrome.storage.local.get('wordLists', function (data) {
         wordLists = data.wordLists || [];
         renderWordLists(wordLists);
         console.log(wordLists);
-    });
-
-    chrome.storage.local.get('enabledLists', function (data) {
-        enabledLists = data.enabledLists || [];
-        // enabledLists.forEach((listId) => {
-        //     toggleWordList(listId, true);
-        // });
     });
 
     attributesCheckbox.addEventListener('change', function () {
@@ -121,12 +117,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 deleteButton.innerHTML =
                     '<i class="fa fa-trash" aria-hidden="true"></i>';
                 deleteButton.addEventListener('click', function () {
-                    let updatedLists = wordLists.filter(
+                    wordLists = wordLists.filter(
                         (wordList) => wordList.id !== list.id
                     );
-                    chrome.storage.local.set({ wordLists: updatedLists });
+                    chrome.storage.local.set({ wordLists: wordLists });
                     removeHighlight(list.id);
-                    renderWordLists(updatedLists);
+                    renderWordLists(wordLists);
                 });
                 buttons.appendChild(deleteButton);
 
@@ -159,11 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
             enabledLists = enabledLists.filter((id) => id !== listId);
             removeHighlight(listId);
         }
-
-        chrome.storage.local.set(
-            { enabledLists: enabledLists },
-            function () {}
-        );
+        chrome.storage.local.set({ enabledLists: enabledLists });
     }
 
     function removeHighlight(listId) {

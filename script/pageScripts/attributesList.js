@@ -188,15 +188,25 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         const listName = listNameInput.value.trim();
 
-        chrome.tabs.query(
-            { active: true, currentWindow: true },
-            function (tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {
-                    action: 'removeHighlight',
+        chrome.storage.local.get('enabledLists', function (data) {
+            var enabledLists = data.enabledLists || [];
+            if (enabledLists.includes(listId)) {
+                chrome.tabs.query(
+                    { active: true, currentWindow: true },
+                    function (tabs) {
+                        chrome.tabs.sendMessage(tabs[0].id, {
+                            action: 'removeHighlight',
+                            listId: listId,
+                        });
+                    }
+                );
+
+                chrome.runtime.sendMessage({
+                    action: 'updateLists',
                     listId: listId,
                 });
             }
-        );
+        });
 
         chrome.storage.local.get('dataURL', function (result) {
             const urlFromInput = result.dataURL;

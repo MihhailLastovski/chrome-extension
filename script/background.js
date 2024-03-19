@@ -82,19 +82,21 @@ function highlightWordsFromList(listId) {
                     chrome.tabs.query(
                         { active: true, currentWindow: true },
                         function (tabs) {
-                            chrome.scripting.executeScript({
-                                target: { tabId: tabs[0].id },
-                                files: [
-                                    './script/contentScripts/contentScript.js',
-                                ],
-                            });
-                            chrome.tabs.sendMessage(tabs[0].id, {
-                                action: 'highlight',
-                                searchText: searchText,
-                                searchAttribute: searchAttribute,
-                                highlightColor: listToHighlight.color,
-                                listId: listId,
-                            });
+                            if (tabs && tabs[0]) {
+                                chrome.scripting.executeScript({
+                                    target: { tabId: tabs[0].id },
+                                    files: [
+                                        './script/contentScripts/contentScript.js',
+                                    ],
+                                });
+                                chrome.tabs.sendMessage(tabs[0].id, {
+                                    action: 'highlight',
+                                    searchText: searchText,
+                                    searchAttribute: searchAttribute,
+                                    highlightColor: listToHighlight.color,
+                                    listId: listId,
+                                });
+                            }
                         }
                     );
                 }
