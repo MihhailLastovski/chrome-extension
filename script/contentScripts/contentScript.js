@@ -7,9 +7,7 @@ if (!window.hasRun) {
         statusesList,
         attributesIsActive;
     let selectedValue = '';
-    var docBody = document.body;
     window.hasRun = true;
-    
 
     // Внедрение CSS файла
     const iconsLink = document.createElement('link');
@@ -97,45 +95,47 @@ async function highlightText(searchText, highlightColor, listId = null) {
                         ? `background-color: ${highlightColor}; border: 4px solid ${highlightColor};`
                         : `border: 4px solid ${highlightColor};`;
 
-                        if (node.parentNode.className !== 'highlighted') {
-                            const wrapper = document.createElement('span');
-                            wrapper.className = 'highlightedP';
-                            wrapper.setAttribute('data-list-id', listId);
-    
-                            let lastIndex = 0;
-                            let match;
-    
-                            searchRegex.lastIndex = 0;
-                            while ((match = searchRegex.exec(text)) !== null) {
-                                const beforeMatch = text.substring(
-                                    lastIndex,
-                                    match.index
-                                );
-    
-                                wrapper.appendChild(
-                                    document.createTextNode(beforeMatch)
-                                );
-    
-                                const matchedText = document.createElement('span');
-                                matchedText.className = 'highlighted';
-                                matchedText.style.cssText = colorStyle;
-                                matchedText.textContent = match[0];
-                                if (listId) {
-                                    matchedText.dataset.listId = listId;
-                                }
-                                wrapper.appendChild(matchedText);
-                                lastIndex = match.index + match[0].length;
-                            }
-    
-                            wrapper.appendChild(
-                                document.createTextNode(text.substring(lastIndex))
+                    if (node.parentNode.className !== 'highlighted') {
+                        const wrapper = document.createElement('span');
+                        wrapper.className = 'highlightedP';
+                        wrapper.setAttribute('data-list-id', listId);
+
+                        let lastIndex = 0;
+                        let match;
+
+                        searchRegex.lastIndex = 0;
+                        while ((match = searchRegex.exec(text)) !== null) {
+                            const beforeMatch = text.substring(
+                                lastIndex,
+                                match.index
                             );
-    
-                            node.parentNode.replaceChild(wrapper, node);
+
+                            wrapper.appendChild(
+                                document.createTextNode(beforeMatch)
+                            );
+
+                            const matchedText = document.createElement('span');
+                            matchedText.className = 'highlighted';
+                            matchedText.style.cssText = colorStyle;
+                            matchedText.textContent = match[0];
+                            if (listId) {
+                                matchedText.dataset.listId = listId;
+                            }
+                            wrapper.appendChild(matchedText);
+                            lastIndex = match.index + match[0].length;
                         }
+
+                        wrapper.appendChild(
+                            document.createTextNode(text.substring(lastIndex))
+                        );
+
+                        node.parentNode.replaceChild(wrapper, node);
+                    }
                 }
-            } else if (node.nodeType === Node.ELEMENT_NODE && 
-                       !['style', 'script'].includes(node.tagName.toLowerCase())) {
+            } else if (
+                node.nodeType === Node.ELEMENT_NODE &&
+                !['style', 'script'].includes(node.tagName.toLowerCase())
+            ) {
                 for (const childNode of node.childNodes) {
                     highlightTextInNode(childNode);
                 }
@@ -155,20 +155,23 @@ async function highlightText(searchText, highlightColor, listId = null) {
                         traverseElement(element.childNodes[i]);
                     }
                 }
-                
+
                 // Check if the element is a text node and its content matches the target text
-                if (element.nodeType === Node.TEXT_NODE && searchRegex.test(element.nodeValue.trim())) {
+                if (
+                    element.nodeType === Node.TEXT_NODE &&
+                    searchRegex.test(element.nodeValue.trim())
+                ) {
                     // Add the parent element to the matching elements array
                     matchingElements.push(element.parentNode);
                 }
             }
-        
+
             // Start traversing from document.body
             traverseElement(document.body);
-        
+
             return matchingElements;
         }
-        const allElements = findElementsByText(searchText)
+        const allElements = findElementsByText(searchText);
         for (let i = 0; i < allElements.length; i++) {
             highlightTextInNode(allElements[i]);
         }
