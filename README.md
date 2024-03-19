@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.4.4
+
+-   Word highlighting process optimized for faster and smoother user expirience
+
 v 1.2.8
 
 -   Contents of contentScript are separated into different module. File paths are updated
