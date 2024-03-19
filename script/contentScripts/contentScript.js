@@ -79,7 +79,7 @@ async function highlightText(searchText, highlightColor, listId = null) {
     if (boolActive && searchText !== '') {
         const searchRegex = new RegExp(searchText, 'gi');
 
-        function highlightTextNode(node) {
+        function highlightTextInNode(node) {
             if (
                 node.nodeType === Node.TEXT_NODE &&
                 !(
