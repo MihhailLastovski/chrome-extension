@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.4.4
+
+-   Word highlighting process optimized for faster and smoother user expirience
+
 v 1.4.3
 
 -   Extension searchs and highlights elements with expected values in attributes
