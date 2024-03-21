@@ -327,33 +327,35 @@ document.addEventListener('DOMContentLoaded', function () {
                         body: JSON.stringify(data),
                     }
                 )
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(
-                                `HTTP error! Status: ${response.status}`
-                            );
-                        }
-                        return response.json();
-                    })
-                    .then((result) => {
-                        // Здесь result содержит данные, которые возвращены из AppScript
-                        console.log('Received data:', result);
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error! Status: ${response.status}`
+                        );
+                    }
+                    return response.json();
+                })
+                .then((result) => {
+                    // Здесь result содержит данные, которые возвращены из AppScript
+                    console.log('Received data:', result);
 
-                        // Проходимся по результатам и заполняем массив wordsArray
-                        result.forEach((row) => {
-                            addWord(row['Core Strings']);
-                            wordsArray.push({
-                                stringID: row['String ID'],
-                                word: row['Core Strings'],
-                                status: row['Status'],
-                                enabled: true,
-                            });
+                    // Проходимся по результатам и заполняем массив wordsArray
+                    result.forEach((row) => {
+                        addWord(row['Core Strings']);
+                        wordsArray.push({
+                            stringID: row['String ID'],
+                            word: row['Core Strings'],
+                            status: row['Status'],
+                            enabled: true,
                         });
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
                     });
-            } else {
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            } 
+            else 
+            {
                 alert('Please enter link');
             }
         });

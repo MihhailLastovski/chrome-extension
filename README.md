@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.4.5
+
+-   Google table synchronizes with the list every 15 minutes by id from the list updating the rows in it
+
 v 1.4.4
 
 -   Word highlighting process optimized for faster and smoother user expirience
