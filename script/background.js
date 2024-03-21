@@ -9,6 +9,7 @@ chrome.runtime.onInstalled.addListener(function () {
             });
         }
     });
+    chrome.alarms.create('updateDataAlarm', { periodInMinutes: 15 });
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
@@ -215,4 +216,8 @@ function extractSpreadsheetId(link) {
 }
 
 // Запускаем обновление списков слов из Google таблицы каждые 15 минут
-setInterval(updateWordListsFromGoogleSheets, 15 * 60 * 1000);
+chrome.alarms.onAlarm.addListener(function(alarm) {
+    if (alarm.name === 'updateDataAlarm') {
+        updateWordListsFromGoogleSheets();
+    }
+});
