@@ -58,6 +58,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     } else if (request.action === 'updateLists') {
         const listId = request.listId || 0;
         highlightWordsFromList(listId);
+    } else if (request.action === 'syncData'){
+        updateWordListsFromGoogleSheets();
     }
 });
 

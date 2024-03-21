@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const wordListsContainer = document.getElementById('wordListsContainer');
     const version = document.getElementById('version');
     const colorOptions = document.querySelectorAll('.color-option');
+    const syncButton = document.getElementById('syncButton')
 
     var attributesIsActive, wordLists, selectedColor, enabledLists;
     selectedColor = localStorage.getItem('selectedColor') || 'defaultColor';
@@ -172,6 +173,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     newListBtn.addEventListener('click', function () {
         window.location.href = 'newList.html';
+    });
+
+    syncButton.addEventListener('click', function () {
+        chrome.runtime.sendMessage({ action: 'syncData' });
     });
 
     // Отображение версии проекта с manifest

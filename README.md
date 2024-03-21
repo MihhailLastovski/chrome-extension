@@ -8,9 +8,10 @@
 
 ## Versions
 
-v 1.4.5
+v 1.4.6
 
 -   Google table synchronizes with the list every 15 minutes by id from the list updating the rows in it
+-   Added button in popup.html to manually synchronize listings with google table
 
 v 1.4.4
 
