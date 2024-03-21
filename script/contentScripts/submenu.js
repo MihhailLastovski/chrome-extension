@@ -2,7 +2,7 @@ document.addEventListener('mouseover', showSubmenus);
 
 function showSubmenus(event) {
     const target = event.target;
-    if (target.classList.contains('highlighted')) {
+    if (target.classList.contains('exa-radience-highlighted')) {
         createSubmenu(target);
         if (submenuIsActive === false) {
             submenuContainer.style.display = 'none';

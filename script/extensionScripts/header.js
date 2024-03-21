@@ -98,11 +98,21 @@ document.addEventListener('DOMContentLoaded', function () {
     if (highlightBtn) {
         // popup.html
         const newListBtn = document.getElementById('newListBtn');
+        const listIcon = document.querySelector('.fa.fa-list');
+        const searchSlider = document.getElementById('searchSlider');
+        const cubesIcon = document.querySelector('.fa.fa-cubes');
+
         tooltipButtons.push(highlightBtn);
         tooltipButtons.push(newListBtn);
+        tooltipButtons.push(listIcon);
+        tooltipButtons.push(searchSlider);
+        tooltipButtons.push(cubesIcon);
 
         tooltipsText.push('Search');
         tooltipsText.push('Add new list');
+        tooltipsText.push('Default search');
+        tooltipsText.push('Change search mode');
+        tooltipsText.push('Attribute search');
     } else if (csvListBtn) {
         // list.html
         const fileListBtn = document.getElementById('fileListBtn');

@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const highlightBtn = document.getElementById('highlightBtn');
     const newListBtn = document.getElementById('newListBtn');
     const attributesCheckbox = document.getElementById('attributesCheckbox');
-    const searchLabel = document.getElementById('searchLabel');
     const searchSlider = document.getElementById('searchSlider');
     const wordListsContainer = document.getElementById('wordListsContainer');
     const version = document.getElementById('version');
@@ -40,12 +39,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         );
-        renderWordLists(wordLists);
+
+        // Подсвечивание включенных списков
+        enabledLists.forEach((listId) => {
+            removeHighlight(listId);
+            chrome.runtime.sendMessage({
+                action: 'updateLists',
+                listId: listId,
+            });
+        });
     });
 
     function updateLabels() {
         attributesIsActive = attributesCheckbox.checked;
-        searchLabel.textContent = attributesIsActive ? 'Attribute' : 'Default';
         searchSlider.style.backgroundColor = attributesIsActive
             ? '#3B1269'
             : '#FC0365';
@@ -83,62 +89,51 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderWordLists(lists) {
         wordListsContainer.innerHTML = '';
         lists.forEach((list) => {
-            if (
-                (attributesIsActive && list.isAttributeList) ||
-                (!attributesIsActive && !list.isAttributeList)
-            ) {
-                const listItem = document.createElement('div');
-                listItem.className = 'wordListsItem';
+            const listItem = document.createElement('div');
+            listItem.className = 'wordListsItem';
 
-                const iconList = document.createElement('i');
-                iconList.innerHTML = list.isAttributeList
-                    ? '<i class="fa-2x fa fa-cubes" aria-hidden="true"></i>'
-                    : '<i class="fa-2x fa fa-list" aria-hidden="true"></i>';
-                listItem.appendChild(iconList);
+            const textContainer = document.createElement('div');
+            textContainer.className = 'textContainer';
+            textContainer.textContent = list.name;
 
-                const textContainer = document.createElement('div');
-                textContainer.className = 'textContainer';
-                textContainer.textContent = list.name;
+            const buttons = document.createElement('div');
+            buttons.className = 'buttonsContainer';
+            const enableButton = document.createElement('button');
+            enableButton.innerHTML = enabledLists.includes(list.id)
+                ? '<i class="fa fa-pause" aria-hidden="true"></i>'
+                : '<i class="fa fa-play" aria-hidden="true"></i>';
+            enableButton.addEventListener('click', function () {
+                const enable = !enabledLists.includes(list.id);
+                toggleWordList(list.id, enable);
+                renderWordLists(lists);
+            });
+            buttons.appendChild(enableButton);
 
-                const buttons = document.createElement('div');
-                buttons.className = 'buttonsContainer';
-                const enableButton = document.createElement('button');
-                enableButton.innerHTML = enabledLists.includes(list.id)
-                    ? '<i class="fa fa-pause" aria-hidden="true"></i>'
-                    : '<i class="fa fa-play" aria-hidden="true"></i>';
-                enableButton.addEventListener('click', function () {
-                    const enable = !enabledLists.includes(list.id);
-                    toggleWordList(list.id, enable);
-                    renderWordLists(lists);
-                });
-                buttons.appendChild(enableButton);
+            const deleteButton = document.createElement('button');
+            deleteButton.innerHTML =
+                '<i class="fa fa-trash" aria-hidden="true"></i>';
+            deleteButton.addEventListener('click', function () {
+                wordLists = wordLists.filter(
+                    (wordList) => wordList.id !== list.id
+                );
+                chrome.storage.local.set({ wordLists: wordLists });
+                removeHighlight(list.id);
+                renderWordLists(wordLists);
+            });
+            buttons.appendChild(deleteButton);
 
-                const deleteButton = document.createElement('button');
-                deleteButton.innerHTML =
-                    '<i class="fa fa-trash" aria-hidden="true"></i>';
-                deleteButton.addEventListener('click', function () {
-                    wordLists = wordLists.filter(
-                        (wordList) => wordList.id !== list.id
-                    );
-                    chrome.storage.local.set({ wordLists: wordLists });
-                    removeHighlight(list.id);
-                    renderWordLists(wordLists);
-                });
-                buttons.appendChild(deleteButton);
-
-                const updateButton = document.createElement('button');
-                updateButton.innerHTML =
-                    '<i class="fa fa-pencil" aria-hidden="true"></i>';
-                updateButton.addEventListener('click', function () {
-                    window.location.href = list.isAttributeList
-                        ? `attributesList.html?listId=${list.id}`
-                        : `list.html?listId=${list.id}`;
-                });
-                buttons.appendChild(updateButton);
-                listItem.appendChild(textContainer);
-                listItem.appendChild(buttons);
-                wordListsContainer.appendChild(listItem);
-            }
+            const updateButton = document.createElement('button');
+            updateButton.innerHTML =
+                '<i class="fa fa-pencil" aria-hidden="true"></i>';
+            updateButton.addEventListener('click', function () {
+                window.location.href = list.isAttributeList
+                    ? `attributesList.html?listId=${list.id}`
+                    : `list.html?listId=${list.id}`;
+            });
+            buttons.appendChild(updateButton);
+            listItem.appendChild(textContainer);
+            listItem.appendChild(buttons);
+            wordListsContainer.appendChild(listItem);
         });
     }
 
@@ -171,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     newListBtn.addEventListener('click', function () {
-        window.location.href = 'newList.html';
+        window.location.href = 'list.html';
     });
 
     // Отображение версии проекта с manifest
