@@ -2,34 +2,33 @@ async function changeWordStatus(element) {
     if (selectedValue) {
         const listId = element.getAttribute('data-list-id');
 
-        document.querySelectorAll('.highlighted').forEach((el) => {
+        document.querySelectorAll('.exa-radience-highlighted').forEach((el) => {
             if (
                 el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
             ) {
-                //el.style.borderColor = highlightColorRestore; //highlightColorRestore
                 el.style.backgroundColor = el.style.borderColor;
-
                 el.setAttribute('status', selectedValue);
-                chrome.storage.local.get('wordLists', (result) => {
-                    const wordLists = result.wordLists || [];
 
-                    const updatedWordLists = wordLists.map((wordList) => {
-                        if (wordList.words && wordList.id === listId) {
-                            wordList.words.forEach((wordObj) => {
-                                if (
-                                    wordObj.word.trim().toLowerCase() ===
-                                    el.innerHTML.toLowerCase()
-                                ) {
-                                    updateStatus(wordList.dataURL, selectedValue, wordObj.word)
-                                    wordObj['status'] = selectedValue;
-                                }
-                            });
-                        }
-                        return wordList;
-                    });
-                    chrome.storage.local.set({
-                        wordLists: updatedWordLists,
-                    });
+                const updatedWordLists = wordLists.map((wordList) => {
+                    if (wordList.words && wordList.id === listId) {
+                        wordList.words.forEach((wordObj) => {
+                            if (
+                                wordObj.word.trim().toLowerCase() ===
+                                el.innerHTML.toLowerCase()
+                            ) {
+                                // updateStatus(
+                                //     wordList.dataURL,
+                                //     selectedValue,
+                                //     wordObj.word
+                                // );
+                                wordObj['status'] = selectedValue;
+                            }
+                        });
+                    }
+                    return wordList;
+                });
+                chrome.storage.local.set({
+                    wordLists: updatedWordLists,
                 });
             }
         });
@@ -45,40 +44,40 @@ async function removeWordsStatus(element) {
     } else {
         const listId = element.getAttribute('data-list-id');
 
-        document.querySelectorAll('.highlighted').forEach((el) => {
+        document.querySelectorAll('.exa-radience-highlighted').forEach((el) => {
             if (
                 el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
             ) {
                 el.style.backgroundColor = 'transparent';
                 el.removeAttribute('status');
-                chrome.storage.local.get('wordLists', (result) => {
-                    const wordLists = result.wordLists || [];
-
-                    const updatedWordLists = wordLists.map((wordList) => {
-                        if (wordList.words && wordList.id === listId) {
-                            wordList.words.forEach((wordObj) => {
-                                if (
-                                    wordObj.word.trim().toLowerCase() ===
-                                    el.innerHTML.toLowerCase()
-                                ) {
-                                    updateStatus(wordList.dataURL, '', wordObj.word)
-                                    delete wordObj['status'];
-                                }
-                            });
-                        }
-                        return wordList;
-                    });
-                    chrome.storage.local.set({
-                        wordLists: updatedWordLists,
-                    });
-                    const statusItems = document.querySelectorAll(
-                        '.exa-radience-statuses-container-item'
-                    );
-                    statusItems.forEach((item) => {
-                        item.style.backgroundColor = '#FD68A4';
-                    });
-                    console.log('Word status added');
+                const updatedWordLists = wordLists.map((wordList) => {
+                    if (wordList.words && wordList.id === listId) {
+                        wordList.words.forEach((wordObj) => {
+                            if (
+                                wordObj.word.trim().toLowerCase() ===
+                                el.innerHTML.toLowerCase()
+                            ) {
+                                // updateStatus(
+                                //     wordList.dataURL,
+                                //     '',
+                                //     wordObj.word
+                                // );
+                                delete wordObj['status'];
+                            }
+                        });
+                    }
+                    return wordList;
                 });
+                chrome.storage.local.set({
+                    wordLists: updatedWordLists,
+                });
+                const statusItems = document.querySelectorAll(
+                    '.exa-radience-statuses-container-item'
+                );
+                statusItems.forEach((item) => {
+                    item.style.backgroundColor = '#FD68A4';
+                });
+                console.log('Word status added');
             }
         });
     }
