@@ -8,6 +8,11 @@
 
 ## Versions
 
+v 1.4.9
+
+-   Added additional button for better navigation
+-   Main logo now redirects user to the main page
+
 v 1.4.8
 
 -   When you give a status to a row, it immediately sends it directly to the google table in the Status column
