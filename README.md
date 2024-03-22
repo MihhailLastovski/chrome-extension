@@ -8,9 +8,11 @@
 
 ## Versions
 
-v 1.4.9
+v 1.4.11
 
--   Fixed import words from txt. file
+-   Fixed import words from .txt file
+-   Added additional button for better navigation
+-   Main logo now redirects user to the main page
 
 v 1.4.8
 

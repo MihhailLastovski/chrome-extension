@@ -4,8 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const wordsContainer = document.getElementById('wordsContainer');
     const newWordInput = document.getElementById('newWordInput');
     const cancelBtn = document.getElementById('cancelBtn');
+    const cancelDownBtn = document.getElementById('cancelDownBtn');
     const lastListItem = document.getElementById('lastListItem');
     const addWordBtn = document.getElementById('saveListBtn');
+    const addWordDownBtn = document.getElementById('saveListDownBtn');
     const colorPicker = document.getElementById('colorPicker');
 
     const queryString = window.location.search;
@@ -16,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const tooltipsTextRightVersion = [];
 
     const saveChangesBtn = document.createElement('button');
+    const saveChangesDownBtn = document.createElement('button');
     var wordsArray = [];
     var highlightingColor;
 
@@ -42,15 +45,28 @@ document.addEventListener('DOMContentLoaded', function () {
 
             saveChangesBtn.id = 'saveChangesBtn';
             saveChangesBtn.type = 'submit';
+            saveChangesBtn.className = 'listFormBtn';
             saveChangesBtn.textContent = 'Save Changes';
             saveChangesBtn.addEventListener('click', function () {
+                saveEditedList(listIndex, lists);
+            });
+
+            saveChangesDownBtn.id = 'saveChangesDownBtn';
+            saveChangesDownBtn.type = 'submit';
+            saveChangesDownBtn.className = 'listFormBtn';
+            saveChangesDownBtn.textContent = 'Save Changes';
+            saveChangesDownBtn.addEventListener('click', function () {
                 saveEditedList(listIndex, lists);
             });
 
             if (addWordBtn) {
                 addWordBtn.style.display = 'none';
             }
-            addListForm.lastElementChild.appendChild(saveChangesBtn);
+            if (addWordDownBtn) {
+                addWordDownBtn.style.display = 'none';
+            }
+            cancelBtn.insertAdjacentElement('afterend', saveChangesBtn);
+            cancelDownBtn.insertAdjacentElement('afterend', saveChangesDownBtn);
             newWordInput.addEventListener('keydown', function (event) {
                 if (event.key === 'Enter') {
                     event.preventDefault();
@@ -61,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             });
-
             //createTooltips();
         }
     });
@@ -419,6 +434,10 @@ document.addEventListener('DOMContentLoaded', function () {
     
 
     cancelBtn.addEventListener('click', function () {
+        window.location.href = 'popup.html';
+    });
+
+    cancelDownBtn.addEventListener('click', function () {
         window.location.href = 'popup.html';
     });
 
