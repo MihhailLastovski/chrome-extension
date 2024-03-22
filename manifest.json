@@ -1,14 +1,15 @@
 {
   "manifest_version": 3,
   "name": "Exa Radiance",
-  "version": "1.4.4",
+  "version": "1.4.8",
   "permissions": [
     "identity",
     "activeTab",
     "scripting",
     "storage",
     "tabs",
-    "downloads"
+    "downloads",
+    "alarms"
   ],
   "action": {
     "default_popup": "pages/popup.html",

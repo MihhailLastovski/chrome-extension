@@ -318,7 +318,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('Sending data:', data);
 
                 fetch(
-                    'https://script.google.com/macros/s/AKfycbya6kRaa-zbZisTLG6RADGq9RDlBzh-0-9xYbYxQwBgoMOTKuVMrPUi3SCh_OLCTqxM/exec',
+                    'https://script.google.com/macros/s/AKfycbypdoPeV_hb2SREfmw6F4ULW7HxxRUdXfuxKmlU7mnE4K_fHAwBL67R5nUa96aIfD5X/exec',
                     {
                         method: 'POST',
                         headers: {
@@ -327,33 +327,35 @@ document.addEventListener('DOMContentLoaded', function () {
                         body: JSON.stringify(data),
                     }
                 )
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(
-                                `HTTP error! Status: ${response.status}`
-                            );
-                        }
-                        return response.json();
-                    })
-                    .then((result) => {
-                        // Здесь result содержит данные, которые возвращены из AppScript
-                        console.log('Received data:', result);
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error! Status: ${response.status}`
+                        );
+                    }
+                    return response.json();
+                })
+                .then((result) => {
+                    // Здесь result содержит данные, которые возвращены из AppScript
+                    console.log('Received data:', result);
 
-                        // Проходимся по результатам и заполняем массив wordsArray
-                        result.forEach((row) => {
-                            addWord(row['Core Strings']);
-                            wordsArray.push({
-                                stringID: row['String ID'],
-                                word: row['Core Strings'],
-                                status: row['Status'],
-                                enabled: true,
-                            });
+                    // Проходимся по результатам и заполняем массив wordsArray
+                    result.forEach((row) => {
+                        addWord(row['Core Strings']);
+                        wordsArray.push({
+                            stringID: row['String ID'],
+                            word: row['Core Strings'],
+                            status: row['Status'],
+                            enabled: true,
                         });
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
                     });
-            } else {
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            } 
+            else 
+            {
                 alert('Please enter link');
             }
         });
