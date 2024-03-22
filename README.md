@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.4.9
+
+-   Fixed import words from txt. file
+
 v 1.4.8
 
 -   When you give a status to a row, it immediately sends it directly to the google table in the Status column
