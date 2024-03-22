@@ -1,4 +1,4 @@
-function addValueToSteps(spreadsheetId, note, textContent) {
+function addValueToStepsStatus(spreadsheetId, note, textContent, isSteps) {
     try {
 
         // Open the spreadsheet
@@ -20,9 +20,15 @@ function addValueToSteps(spreadsheetId, note, textContent) {
 
                     if (cellValue === targetTextContent.toLowerCase().trim()) {
                         // Found the value, add it to the next column ("Steps")
-                        var cell = sheet.getRange(i + 1, j + 2);
+                        var cell;
+                        if(isSteps){
+                          cell = sheet.getRange(i + 1, j + 2);
+                        }
+                        else{
+                          cell = sheet.getRange(i + 1, j + 4);
+                        }
+                         
                         cell.setValue(note);
-                        Logger.log('Value added to Steps successfully.');
                         return;
                     }
                 }
@@ -33,7 +39,7 @@ function addValueToSteps(spreadsheetId, note, textContent) {
         Logger.log('Value not found in any sheet:', targetTextContent);
 
     } catch (error) {
-        Logger.log('Error adding value to Steps:', error);
+        Logger.log('Error adding value:', error);
     }
 }
 
@@ -115,7 +121,7 @@ function doPost(e) {
         // Проверяем, какое действие нужно выполнить
         if (requestData.action === 'addNoteToElement') {
             // Вызываем функцию добавления заметки
-            addValueToSteps(requestData.sheetId, requestData.note, requestData.textContent);
+            addValueToStepsStatus(requestData.sheetId, requestData.note, requestData.textContent, requestData.isSteps);
 
             Logger.log('Note added via doPost:', requestData.note);
 
