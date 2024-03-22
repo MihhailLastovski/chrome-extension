@@ -1,6 +1,29 @@
 document.addEventListener('DOMContentLoaded', function () {
     const statusInput = document.getElementById('status');
     const customStatusList = document.getElementById('customStatusList');
+    var customStatuses;
+
+    // Get existing statuses from Chrome storage.local
+    chrome.storage.local.get('customStatuses', function (result) {
+        customStatuses = result.customStatuses || [];
+
+        // Render the existing statuses in the list
+        customStatuses.forEach((status) => {
+            addCustomStatus(status);
+        });
+    });
+
+    function updateStatuses() {
+        chrome.storage.local.set({ customStatuses: customStatuses });
+        chrome.tabs.query(
+            { active: true, currentWindow: true },
+            function (tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: 'valuesStatusUpdating',
+                });
+            }
+        );
+    }
 
     function addCustomStatus(status) {
         if (status !== '') {
@@ -26,29 +49,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Get existing statuses from Chrome storage.local
-    chrome.storage.local.get('customStatuses', function (result) {
-        const existingStatuses = result.customStatuses || [];
-
-        // Render the existing statuses in the list
-        existingStatuses.forEach((status) => {
-            addCustomStatus(status);
-        });
-    });
-
     function deleteCustomStatus(status, listItem) {
-        chrome.storage.local.get('customStatuses', function (result) {
-            const existingStatuses = result.customStatuses || [];
-            const updatedStatuses = existingStatuses.filter(
-                (s) => s !== status
-            );
-            chrome.storage.local.set(
-                { customStatuses: updatedStatuses },
-                function () {
-                    listItem.remove();
-                }
-            );
-        });
+        customStatuses = customStatuses.filter((s) => s !== status);
+        updateStatuses();
+        listItem.remove();
     }
 
     statusInput.addEventListener('keypress', function (event) {
@@ -58,12 +62,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const status = statusInput.value.trim();
             addCustomStatus(status);
 
-            // Save the custom status in Chrome storage.local
-            chrome.storage.local.get('customStatuses', function (result) {
-                const existingStatuses = result.customStatuses || [];
-                existingStatuses.push(status);
-                chrome.storage.local.set({ customStatuses: existingStatuses });
-            });
+            customStatuses.push(status);
+            updateStatuses();
 
             statusInput.value = '';
         }

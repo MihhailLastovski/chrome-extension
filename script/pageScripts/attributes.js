@@ -3,6 +3,29 @@ document.addEventListener('DOMContentLoaded', function () {
     const customAttributesList = document.getElementById(
         'customAttributesList'
     );
+    var customAttributes;
+
+    // Get existing attributes from Chrome storage.local
+    chrome.storage.local.get('customAttributes', function (result) {
+        customAttributes = result.customAttributes || [];
+
+        // Render the existing attributes in the list
+        customAttributes.forEach((attribute) => {
+            addCustomAttribute(attribute);
+        });
+    });
+
+    function updateAttributes() {
+        chrome.storage.local.set({ customAttributes: customAttributes });
+        chrome.tabs.query(
+            { active: true, currentWindow: true },
+            function (tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: 'valuesStatusUpdating',
+                });
+            }
+        );
+    }
 
     function addCustomAttribute(attribute) {
         if (attribute !== '') {
@@ -28,29 +51,10 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Get existing attributes from Chrome storage.local
-    chrome.storage.local.get('customAttributes', function (result) {
-        const existingAttributes = result.customAttributes || [];
-
-        // Render the existing attributes in the list
-        existingAttributes.forEach((attribute) => {
-            addCustomAttribute(attribute);
-        });
-    });
-
     function deleteCustomAttribute(attribute, listItem) {
-        chrome.storage.local.get('customAttributes', function (result) {
-            const existingAttributes = result.customAttributes || [];
-            const updatedAttributes = existingAttributes.filter(
-                (s) => s !== attribute
-            );
-            chrome.storage.local.set(
-                { customAttributes: updatedAttributes },
-                function () {
-                    listItem.remove();
-                }
-            );
-        });
+        customAttributes = existingAttributes.filter((s) => s !== attribute);
+        updateAttributes();
+        listItem.remove();
     }
 
     attributeInput.addEventListener('keypress', function (event) {
@@ -60,14 +64,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const attribute = attributeInput.value.trim();
             addCustomAttribute(attribute);
 
-            // Save the custom attribute in Chrome storage.local
-            chrome.storage.local.get('customAttributes', function (result) {
-                const existingAttributes = result.customAttributes || [];
-                existingAttributes.push(attribute);
-                chrome.storage.local.set({
-                    customAttributes: existingAttributes,
-                });
-            });
+            customAttributes.push(attribute);
+            updateAttributes();
 
             attributeInput.value = '';
         }

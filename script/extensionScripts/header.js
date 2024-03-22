@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
     body.insertBefore(div, body.firstChild);
 
     const toggleSwitch = document.getElementById('highlightCheckbox');
-    //const heading = document.querySelector('.heading');
     const searchTextInput = document.getElementById('searchText');
     const highlightBtn = document.getElementById('highlightBtn');
     let active;
@@ -61,7 +60,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function updateUIState() {
-        //heading.innerText = active ? 'Highlight On' : 'Highlight Off';
         searchTextInput &&
             highlightBtn &&
             (searchTextInput.disabled = highlightBtn.disabled = !active);
