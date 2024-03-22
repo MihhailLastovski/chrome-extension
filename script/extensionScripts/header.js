@@ -24,9 +24,14 @@ document.addEventListener('DOMContentLoaded', function () {
     body.insertBefore(div, body.firstChild);
 
     const toggleSwitch = document.getElementById('highlightCheckbox');
+    const image = document.getElementById('alphaLogo');
     const searchTextInput = document.getElementById('searchText');
     const highlightBtn = document.getElementById('highlightBtn');
     let active;
+
+    image.addEventListener("click", function() {
+        window.location.href = "popup.html";
+      });
 
     async function toggleSwitchIsActive() {
         const result = await new Promise((resolve, reject) => {
