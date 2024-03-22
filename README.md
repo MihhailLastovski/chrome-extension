@@ -8,6 +8,12 @@
 
 ## Versions
 
+v 1.4.7
+
+-   Google table synchronizes with the list every 15 minutes by id from the list updating the rows in it
+-   Added button in popup.html to manually synchronize listings with google table
+-   The setInterval function has been changed to chrome.alarms due to google chrome's limitation on setInterval
+
 v 1.4.4
 
 -   Word highlighting process optimized for faster and smoother user expirience

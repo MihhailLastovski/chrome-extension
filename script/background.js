@@ -9,6 +9,7 @@ chrome.runtime.onInstalled.addListener(function () {
             });
         }
     });
+    chrome.alarms.create('updateDataAlarm', { periodInMinutes: 15 });
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
@@ -58,6 +59,8 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     } else if (request.action === 'updateLists') {
         const listId = request.listId || 0;
         highlightWordsFromList(listId);
+    } else if (request.action === 'syncData'){
+        updateWordListsFromGoogleSheets();
     }
 });
 
@@ -104,3 +107,117 @@ function highlightWordsFromList(listId) {
         }
     });
 }
+
+function updateWordListsFromGoogleSheets() {
+    chrome.storage.local.get('wordLists', function (data) {
+        if (chrome.runtime.lastError) {
+            console.error(
+                'Error fetching wordLists from storage:',
+                chrome.runtime.lastError
+            );
+            return;
+        }
+
+        if (!data.wordLists || !Array.isArray(data.wordLists)) {
+            console.error('Invalid wordLists data:', data.wordLists);
+            return;
+        }
+        // Обходим каждый список
+        data.wordLists.forEach(function (list) {
+            var spreadsheetId = extractSpreadsheetId(list.dataURL);
+            if (!spreadsheetId) {
+                console.error(
+                    'Failed to extract spreadsheetId from dataURL:',
+                    list.dataURL
+                );
+                return;
+            }
+
+            // Формируем запрос к Google Apps Script для получения данных по текущему списку
+            var data = {
+                action: 'getDataBySheetName',
+                sheetId: spreadsheetId,
+            };
+
+            fetch(
+                'https://script.google.com/macros/s/AKfycbya6kRaa-zbZisTLG6RADGq9RDlBzh-0-9xYbYxQwBgoMOTKuVMrPUi3SCh_OLCTqxM/exec',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                }
+            )
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error! Status: ${response.status}`
+                        );
+                    }
+                    return response.json();
+                })
+                .then((result) => {
+                    // Проверяем, является ли результат массивом объектов
+                    // Очищаем текущий список слов
+                    list.words = [];
+                    // Обходим полученные данные и добавляем слова в список
+                    result.forEach((row) => {
+                        list.words.push({
+                            stringID: row['String ID'],
+                            word: row['Core Strings'],
+                            status: row['Status'],
+                            enabled: true,
+                        });
+                    });
+                    // Сохраняем список
+                    chrome.storage.local.get('wordLists', function (data) {
+                        if (chrome.runtime.lastError) {
+                            console.error(
+                                'Error fetching wordLists from storage:',
+                                chrome.runtime.lastError
+                            );
+                            return;
+                        }
+
+                        data.wordLists.forEach((storedList, index) => {
+                            if (storedList.id === list.id) {
+                                data.wordLists[index] = list;
+                            }
+                        });
+
+                        chrome.storage.local.set(
+                            { wordLists: data.wordLists },
+                            function () {
+                                if (chrome.runtime.lastError) {
+                                    console.error(
+                                        'Error saving wordLists to storage:',
+                                        chrome.runtime.lastError
+                                    );
+                                }
+                            }
+                        );
+                    });
+                })
+                .catch((error) => {
+                    console.error(
+                        'Error fetching data from Google Sheets:',
+                        error
+                    );
+                });
+        });
+    });
+}
+
+function extractSpreadsheetId(link) {
+    var regex = /\/d\/([a-zA-Z0-9-_]+)/;
+    var match = link.match(regex);
+    return match ? match[1] : null;
+}
+
+// Запускаем обновление списков слов из Google таблицы каждые 15 минут
+chrome.alarms.onAlarm.addListener(function(alarm) {
+    if (alarm.name === 'updateDataAlarm') {
+        updateWordListsFromGoogleSheets();
+    }
+});
