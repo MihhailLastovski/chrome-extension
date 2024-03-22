@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.4.8
+
+-   When you give a status to a row, it immediately sends it directly to the google table in the Status column
+
 v 1.4.7
 
 -   Google table synchronizes with the list every 15 minutes by id from the list updating the rows in it

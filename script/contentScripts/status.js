@@ -4,8 +4,7 @@ async function changeWordStatus(element) {
 
         document.querySelectorAll('.highlighted').forEach((el) => {
             if (
-                el.innerHTML.toLowerCase() ===
-                element.innerHTML.toLowerCase()
+                el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
             ) {
                 //el.style.borderColor = highlightColorRestore; //highlightColorRestore
                 el.style.backgroundColor = el.style.borderColor;
@@ -21,6 +20,7 @@ async function changeWordStatus(element) {
                                     wordObj.word.trim().toLowerCase() ===
                                     el.innerHTML.toLowerCase()
                                 ) {
+                                    updateStatus(wordList.dataURL, selectedValue, wordObj.word)
                                     wordObj['status'] = selectedValue;
                                 }
                             });
@@ -47,8 +47,7 @@ async function removeWordsStatus(element) {
 
         document.querySelectorAll('.highlighted').forEach((el) => {
             if (
-                el.innerHTML.toLowerCase() ===
-                element.innerHTML.toLowerCase()
+                el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
             ) {
                 el.style.backgroundColor = 'transparent';
                 el.removeAttribute('status');
@@ -62,6 +61,7 @@ async function removeWordsStatus(element) {
                                     wordObj.word.trim().toLowerCase() ===
                                     el.innerHTML.toLowerCase()
                                 ) {
+                                    updateStatus(wordList.dataURL, '', wordObj.word)
                                     delete wordObj['status'];
                                 }
                             });
@@ -82,4 +82,41 @@ async function removeWordsStatus(element) {
             }
         });
     }
+}
+
+function updateStatus(listId, selectedValue, word) {
+    const sheetId = extractSheetIdFromURL(listId);
+
+    const data = {
+        action: 'addNoteToElement',
+        note: selectedValue,
+        textContent: word,
+        sheetId: sheetId,
+        isSteps: false,
+    };
+
+    console.log('Sending data:', data);
+
+    fetch(
+        'https://script.google.com/macros/s/AKfycbypdoPeV_hb2SREfmw6F4ULW7HxxRUdXfuxKmlU7mnE4K_fHAwBL67R5nUa96aIfD5X/exec',
+        {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        }
+    )
+        .then((response) => response.text())
+        .then((result) => {
+            console.log('Response from server:', result);
+        })
+        .catch((error) => console.error('Error sending note:', error));
+}
+
+function extractSheetIdFromURL(url) {
+    const regex = /\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
 }
