@@ -222,7 +222,6 @@ chrome.runtime.onMessage.addListener(async function (
     sendResponse
 ) {
     if (request.action === 'highlight' && boolActive) {
-        console.log(request.listId);
         try {
             var searchModeColor;
             if (attributesIsActive) {

@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.4.14
+
+-   When a screenshot is taken, it is saved in a google table under Lec ID + .png and downloaded with the same name
+
 v 1.4.13
 
 -   Fixed function to paste text into the list 

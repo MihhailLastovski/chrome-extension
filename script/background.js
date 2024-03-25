@@ -41,14 +41,20 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         const dataUrl = request.dataUrl;
         chrome.storage.local.get('saveAs', function (data) {
             const saveAs = data.saveAs || false;
-
-            chrome.storage.local.get('screenshotName', function (data) {
-                const screenshotName = data.screenshotName || 'screenshot';
-                chrome.downloads.download({
-                    url: dataUrl,
-                    filename: `screenshots/${screenshotName}.png`,
-                    saveAs: !saveAs,
+            var screenshotName;
+            if(request.lecID){
+                screenshotName = request.lecID
+            }
+            else{
+                chrome.storage.local.get('screenshotName', function (data) {
+                    screenshotName = data.screenshotName || 'screenshot';
+                    
                 });
+            }
+            chrome.downloads.download({
+                url: dataUrl,
+                filename: `screenshots/${screenshotName}.png`,
+                saveAs: !saveAs,
             });
         });
         return true;
