@@ -333,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('Sending data:', data);
 
                 fetch(
-                    'https://script.google.com/macros/s/AKfycbypdoPeV_hb2SREfmw6F4ULW7HxxRUdXfuxKmlU7mnE4K_fHAwBL67R5nUa96aIfD5X/exec',
+                    'https://script.google.com/macros/s/AKfycbw3t593DWTzX5Fzo0Au8K-5d_l_RvhoEDV_u5SRvAFkRUuweO5KpVRmKBbPcooenDk7/exec',
                     {
                         method: 'POST',
                         headers: {
@@ -358,6 +358,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     result.forEach((row) => {
                         addWord(row['Core Strings']);
                         wordsArray.push({
+                            lecID: row['Lec ID'],
                             stringID: row['String ID'],
                             word: row['Core Strings'],
                             status: row['Status'],

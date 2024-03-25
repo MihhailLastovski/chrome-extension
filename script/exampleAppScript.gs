@@ -66,6 +66,7 @@ function getDataBySheetName(spreadsheetId) {
             // Добавляем проверку на пустые строки перед добавлением данных
             if (row[4] !== "") {
                 return {
+                    "Lec ID": row[2], // Предположим, что Lec ID находится в третьем столбце
                     "String ID": row[4], // Предположим, что String ID находится в пятом столбце
                     "Core Strings": row[5], // Предположим, что Core Strings находится в шестом столбце
                     "Status": row[8] // Предположим, что Status находится в девятом столбце

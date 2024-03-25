@@ -141,7 +141,7 @@ function updateWordListsFromGoogleSheets() {
             };
 
             fetch(
-                'https://script.google.com/macros/s/AKfycbya6kRaa-zbZisTLG6RADGq9RDlBzh-0-9xYbYxQwBgoMOTKuVMrPUi3SCh_OLCTqxM/exec',
+                'https://script.google.com/macros/s/AKfycbw3t593DWTzX5Fzo0Au8K-5d_l_RvhoEDV_u5SRvAFkRUuweO5KpVRmKBbPcooenDk7/exec',
                 {
                     method: 'POST',
                     headers: {
