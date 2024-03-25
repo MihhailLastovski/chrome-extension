@@ -8,7 +8,7 @@
 
 ## Versions
 
-v 1.4.9
+v 1.4.10
 
 -   Counter's counting process improved
 
