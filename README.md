@@ -10,6 +10,10 @@
 
 v 1.4.9
 
+-   Counter's counting process improved
+
+v 1.4.9
+
 -   Added additional button for better navigation
 -   Main logo now redirects user to the main page
 
