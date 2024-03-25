@@ -19,7 +19,7 @@ function addValueToStepsStatus(spreadsheetId, note, textContent, choice) {
                     var cellValue = String(data[i][j]).toLowerCase().trim();
 
                     if (cellValue === targetTextContent.toLowerCase().trim()) {
-                        // Found the value, add it to the next column ("Steps")
+                        // Found the value, add it to the next column 
                         var cell;
                         if(choice === 'steps'){
                           cell = sheet.getRange(i + 1, j + 3);

@@ -141,7 +141,7 @@ function updateWordListsFromGoogleSheets() {
             };
 
             fetch(
-                'https://script.google.com/macros/s/AKfycbw3t593DWTzX5Fzo0Au8K-5d_l_RvhoEDV_u5SRvAFkRUuweO5KpVRmKBbPcooenDk7/exec',
+                'https://script.google.com/macros/s/AKfycbwYb2OHQIdKXMIrd8OjyI4YqOjmQPKTinAHNgaFav_ZyLWIEpMGv35tywv6afYrpC49/exec',
                 {
                     method: 'POST',
                     headers: {
@@ -165,6 +165,7 @@ function updateWordListsFromGoogleSheets() {
                     // Обходим полученные данные и добавляем слова в список
                     result.forEach((row) => {
                         list.words.push({
+                            lecID: row['Lec ID'],
                             stringID: row['String ID'],
                             word: row['Core Strings'],
                             status: row['Status'],

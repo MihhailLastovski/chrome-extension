@@ -16,11 +16,11 @@ async function changeWordStatus(element) {
                                 wordObj.word.trim().toLowerCase() ===
                                 el.innerHTML.toLowerCase()
                             ) {
-                                // updateStatus(
-                                //     wordList.dataURL,
-                                //     selectedValue,
-                                //     wordObj.word
-                                // );
+                                updateStatus(
+                                    wordList.dataURL,
+                                    selectedValue,
+                                    wordObj.stringID
+                                );
                                 wordObj['status'] = selectedValue;
                             }
                         });
@@ -57,11 +57,11 @@ async function removeWordsStatus(element) {
                                 wordObj.word.trim().toLowerCase() ===
                                 el.innerHTML.toLowerCase()
                             ) {
-                                // updateStatus(
-                                //     wordList.dataURL,
-                                //     '',
-                                //     wordObj.word
-                                // );
+                                updateStatus(
+                                    wordList.dataURL,
+                                    '',
+                                    wordObj.stringID
+                                );
                                 delete wordObj['status'];
                             }
                         });
@@ -91,13 +91,13 @@ function updateStatus(listId, selectedValue, word) {
         note: selectedValue,
         textContent: word,
         sheetId: sheetId,
-        isSteps: false,
+        choice: 'status',
     };
 
     console.log('Sending data:', data);
 
     fetch(
-        'https://script.google.com/macros/s/AKfycbw3t593DWTzX5Fzo0Au8K-5d_l_RvhoEDV_u5SRvAFkRUuweO5KpVRmKBbPcooenDk7/exec',
+        'https://script.google.com/macros/s/AKfycbwYb2OHQIdKXMIrd8OjyI4YqOjmQPKTinAHNgaFav_ZyLWIEpMGv35tywv6afYrpC49/exec',
         {
             method: 'POST',
             mode: 'no-cors',
