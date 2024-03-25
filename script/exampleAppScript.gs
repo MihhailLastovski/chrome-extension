@@ -1,4 +1,4 @@
-function addValueToStepsStatus(spreadsheetId, note, textContent, isSteps) {
+function addValueToStepsStatus(spreadsheetId, note, textContent, choice) {
     try {
 
         // Open the spreadsheet
@@ -21,13 +21,17 @@ function addValueToStepsStatus(spreadsheetId, note, textContent, isSteps) {
                     if (cellValue === targetTextContent.toLowerCase().trim()) {
                         // Found the value, add it to the next column ("Steps")
                         var cell;
-                        if(isSteps){
-                          cell = sheet.getRange(i + 1, j + 2);
+                        if(choice === 'steps'){
+                          cell = sheet.getRange(i + 1, j + 3);
                         }
-                        else{
+                        else if (choice === 'status'){
+                          cell = sheet.getRange(i + 1, j + 5);
+                        }
+                        else if (choice === 'screenshot'){
                           cell = sheet.getRange(i + 1, j + 4);
+                          cell.setValue(String(data[i][j-2]) + '.png');
+                          return;
                         }
-                         
                         cell.setValue(note);
                         return;
                     }
