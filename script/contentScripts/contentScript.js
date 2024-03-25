@@ -268,6 +268,12 @@ chrome.runtime.onMessage.addListener(async function (
                 element.outerHTML = textContent;
             });
         }
+        chrome.runtime.sendMessage({
+            action: 'updateBadge',
+            count: document.querySelectorAll('.exa-radience-highlighted')
+                .length,
+            color: searchModeColor,
+        });
     } else if (request.action === 'valuesStatusUpdating') {
         try {
             await getValuesFromLocalStorage();
