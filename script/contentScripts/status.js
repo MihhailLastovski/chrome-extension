@@ -12,15 +12,21 @@ async function changeWordStatus(element) {
                 const updatedWordLists = wordLists.map((wordList) => {
                     if (wordList.words && wordList.id === listId) {
                         wordList.words.forEach((wordObj) => {
+                            const word = wordObj.word.trim().toLowerCase();
+
                             if (
-                                wordObj.word.trim().toLowerCase() ===
-                                el.innerHTML.toLowerCase()
+                                word === el.innerHTML.toLowerCase() ||
+                                (attributesIsActive &&
+                                    Array.from(element.attributes).some(
+                                        (attr) => attr.value.includes(word)
+                                    ))
                             ) {
                                 // updateStatus(
                                 //     wordList.dataURL,
                                 //     selectedValue,
                                 //     wordObj.word
                                 // );
+                                // console.log(wordObj);
                                 wordObj['status'] = selectedValue;
                             }
                         });
@@ -53,9 +59,13 @@ async function removeWordsStatus(element) {
                 const updatedWordLists = wordLists.map((wordList) => {
                     if (wordList.words && wordList.id === listId) {
                         wordList.words.forEach((wordObj) => {
+                            const word = wordObj.word.trim().toLowerCase();
                             if (
-                                wordObj.word.trim().toLowerCase() ===
-                                el.innerHTML.toLowerCase()
+                                word === el.innerHTML.toLowerCase() ||
+                                (attributesIsActive &&
+                                    Array.from(element.attributes).some(
+                                        (attr) => attr.value.includes(word)
+                                    ))
                             ) {
                                 // updateStatus(
                                 //     wordList.dataURL,

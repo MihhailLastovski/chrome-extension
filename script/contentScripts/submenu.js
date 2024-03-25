@@ -68,10 +68,13 @@ function createSubmenu(element) {
             return (
                 wordList.words &&
                 wordList.words.find((wordObj) => {
+                    const word = wordObj.word.trim().toLowerCase();
                     return (
-                        wordObj.word.trim().toLowerCase() ===
-                            element.innerHTML.trim().toLowerCase() &&
-                        wordObj.status === status
+                        wordObj.status === status &&
+                        (word === element.innerHTML.trim().toLowerCase() ||
+                            Array.from(element.attributes).some((attr) =>
+                                attr.value.includes(word)
+                            ))
                     );
                 })
             );
