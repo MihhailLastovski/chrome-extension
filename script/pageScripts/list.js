@@ -408,26 +408,30 @@ document.addEventListener('DOMContentLoaded', function () {
         var fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = '.txt';
-
+    
         fileInput.addEventListener('change', function (event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (event) {
                     const content = event.target.result;
-                    const words = content
-                        .split(/\s+/)
-                        .filter((word) => word.trim() !== '');
-                    words.forEach((word) => {
-                        addWord(word.trim());
+                    const lines = content.split(/\r?\n/); 
+                    lines.forEach((line) => {
+                        addWord(line.trim()); 
+                        wordsArray.push({
+                            word: line.trim(),
+                            status: '',
+                            enabled: true,
+                        });
                     });
                 };
                 reader.readAsText(file);
             }
         });
-
+    
         divWithListImportSettigs.appendChild(fileInput);
     });
+    
 
     cancelBtn.addEventListener('click', function () {
         window.location.href = 'popup.html';

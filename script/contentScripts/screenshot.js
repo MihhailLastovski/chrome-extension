@@ -3,7 +3,7 @@ function sleep(ms) {
 }
 
 async function captureScreenshot(element) {
-    document.querySelectorAll('.highlighted').forEach((el) => {
+    document.querySelectorAll('.exa-radience-highlighted').forEach((el) => {
         if (el !== element) {
             el.style.borderColor = 'transparent';
             el.style.backgroundColor = 'transparent';
@@ -90,7 +90,7 @@ function removeFromList(element) {
 }
 
 function restoreHighlight(element) {
-    document.querySelectorAll('.highlighted').forEach((el) => {
+    document.querySelectorAll('.exa-radience-highlighted').forEach((el) => {
         if (el.style.borderColor === 'transparent') {
             el.style.borderColor = `${highlightColorRestore}`;
         }

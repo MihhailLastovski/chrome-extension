@@ -6,8 +6,8 @@ if (!window.hasRun) {
         wordLists,
         statusesList,
         attributesIsActive,
-        attributesList;
-    let selectedValue = '';
+        attributesList,
+        selectedValue;
     window.hasRun = true;
 
     // Внедрение CSS файла
@@ -200,6 +200,10 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
             matchedElement.parentNode.className !== 'exa-radience-highlighted'
         ) {
             element.classList.add('exa-radience-highlighted');
+            // const foundWord = findWordInWordLists(searchText);
+            // const isValid =
+            //     foundWord && statusesList.includes(foundWord.status);
+
             element.style.borderColor = highlightColor;
 
             if (listId) {
@@ -218,6 +222,7 @@ chrome.runtime.onMessage.addListener(async function (
     sendResponse
 ) {
     if (request.action === 'highlight' && boolActive) {
+        console.log(request.listId);
         try {
             var searchModeColor;
             if (attributesIsActive) {

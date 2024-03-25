@@ -6,47 +6,40 @@ function addNoteToElement(element) {
     }
 
     const listId = element.getAttribute('data-list-id');
+    const targetList = wordLists.find((list) => list.id === listId);
 
-    chrome.storage.local.get('wordLists', function (data) {
-        const wordLists = data.wordLists || [];
+    if (targetList && targetList.dataURL) {
+        const sheetId = extractSheetIdFromURL(targetList.dataURL);
 
-        const targetList = wordLists.find((list) => list.id === listId);
+        const data = {
+            action: 'addNoteToElement',
+            note: note,
+            textContent: element.textContent,
+            sheetId: sheetId,
+            isSteps: true,
+        };
 
-        if (targetList) {
-            const sheetId = extractSheetIdFromURL(targetList.dataURL);
+        console.log('Sending data:', data);
 
-            const data = {
-                action: 'addNoteToElement',
-                note: note,
-                textContent: element.textContent,
-                sheetId: sheetId,
-                isSteps: true
-            };
-
-            console.log('Sending data:', data);
-
-            fetch(
-                'https://script.google.com/macros/s/AKfycbypdoPeV_hb2SREfmw6F4ULW7HxxRUdXfuxKmlU7mnE4K_fHAwBL67R5nUa96aIfD5X/exec',
-                {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                }
-            )
-                .then((response) => response.text())
-                .then((result) => {
-                    console.log('Response from server:', result);
-                })
-                .catch((error) =>
-                    console.error('Error sending note:', error)
-                );
-        } else {
-            console.error('List not found in localStorage');
-        }
-    });
+        fetch(
+            'https://script.google.com/macros/s/AKfycbypdoPeV_hb2SREfmw6F4ULW7HxxRUdXfuxKmlU7mnE4K_fHAwBL67R5nUa96aIfD5X/exec',
+            {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            }
+        )
+            .then((response) => response.text())
+            .then((result) => {
+                console.log('Response from server:', result);
+            })
+            .catch((error) => console.error('Error sending note:', error));
+    } else {
+        console.error('List not found in localStorage');
+    }
 }
 
 function extractSheetIdFromURL(url) {

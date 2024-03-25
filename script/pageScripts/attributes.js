@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function deleteCustomAttribute(attribute, listItem) {
-        customAttributes = existingAttributes.filter((s) => s !== attribute);
+        customAttributes = customAttributes.filter((s) => s !== attribute);
         updateAttributes();
         listItem.remove();
     }
