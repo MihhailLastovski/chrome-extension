@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.4.12
+
+-   Fixed function to paste text into the list 
+
 v 1.4.11
 
 -   Fixed import words from .txt file

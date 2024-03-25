@@ -266,9 +266,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const pastedText = (
             event.clipboardData || window.clipboardData
         ).getData('text');
-        const wordsArray = pastedText.split('\n').map((word) => word.trim());
+        const wordsArrayPasted = pastedText.split('\n').map((word) => word.trim());
 
-        wordsArray.forEach((word) => {
+        wordsArrayPasted.forEach((word) => {
             if (word !== '') {
                 addWord(word);
                 wordsArray.push({
