@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const wordListsContainer = document.getElementById('wordListsContainer');
     const version = document.getElementById('version');
     const colorOptions = document.querySelectorAll('.color-option');
-    const syncButton = document.getElementById('syncButton')
+    const syncButton = document.getElementById('syncButton');
 
     var attributesIsActive, wordLists, selectedColor, enabledLists;
     selectedColor = localStorage.getItem('selectedColor') || 'defaultColor';
@@ -127,9 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
             updateButton.innerHTML =
                 '<i class="fa fa-pencil" aria-hidden="true"></i>';
             updateButton.addEventListener('click', function () {
-                window.location.href = list.isAttributeList
-                    ? `attributesList.html?listId=${list.id}`
-                    : `list.html?listId=${list.id}`;
+                window.location.href = `list.html?listId=${list.id}`;
             });
             buttons.appendChild(updateButton);
             listItem.appendChild(textContainer);

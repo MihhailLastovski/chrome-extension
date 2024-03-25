@@ -60,24 +60,24 @@ async function getFromLocalStorage(key) {
     });
 }
 
-function findWordInWordLists(word) {
-    for (const wordList of wordLists) {
-        if (wordList.words && wordList.id === listId) {
-            const foundWord = wordList.words.find(
-                (wordObj) =>
-                    wordObj.word.trim().toLowerCase() === word.toLowerCase()
-            );
-            if (foundWord) {
-                return foundWord;
-            }
-        }
-    }
-    return null;
-}
-
 async function highlightText(searchText, highlightColor, listId = null) {
     highlightColorRestore = highlightColor;
     const searchRegex = new RegExp(searchText, 'gi');
+
+    function findWordInWordLists(word) {
+        for (const wordList of wordLists) {
+            if (wordList.words && wordList.id === listId) {
+                const foundWord = wordList.words.find(
+                    (wordObj) =>
+                        wordObj.word.trim().toLowerCase() === word.toLowerCase()
+                );
+                if (foundWord) {
+                    return foundWord;
+                }
+            }
+        }
+        return null;
+    }
 
     function highlightTextInNode(node) {
         if (
@@ -222,6 +222,7 @@ chrome.runtime.onMessage.addListener(async function (
     sendResponse
 ) {
     if (request.action === 'highlight' && boolActive) {
+        console.log(request.listId);
         try {
             var searchModeColor;
             if (attributesIsActive) {
@@ -272,6 +273,12 @@ chrome.runtime.onMessage.addListener(async function (
                 element.outerHTML = textContent;
             });
         }
+        chrome.runtime.sendMessage({
+            action: 'updateBadge',
+            count: document.querySelectorAll('.exa-radience-highlighted')
+                .length,
+            color: searchModeColor,
+        });
     } else if (request.action === 'valuesStatusUpdating') {
         try {
             await getValuesFromLocalStorage();

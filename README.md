@@ -8,9 +8,13 @@
 
 ## Versions
 
-v 1.4.12
+v 1.4.13
 
 -   Fixed function to paste text into the list 
+
+v 1.4.12
+
+-   Counter's counting process improved
 
 v 1.4.11
 
