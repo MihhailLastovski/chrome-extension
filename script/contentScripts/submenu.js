@@ -58,34 +58,27 @@ function createSubmenu(element) {
     var statusesContainer = document.createElement('div');
     statusesContainer.className = 'exa-radience-statuses-container';
 
-    //chrome.storage.local.get('customStatuses', function (result) {
-    // const customStatuses = result.customStatuses || [];
-
-    // customStatuses.forEach((status) => {
     statusesList.forEach((status) => {
         const div = document.createElement('div');
         div.id = 'statusDiv';
         div.className = 'exa-radience-statuses-container-item';
         div.textContent = status;
 
-        chrome.storage.local.get('wordLists', function (result) {
-            const wordLists = result.wordLists || [];
-            const foundWord = wordLists.find((wordList) => {
-                return (
-                    wordList.words &&
-                    wordList.words.find((wordObj) => {
-                        return (
-                            wordObj.word.trim().toLowerCase() ===
-                                element.innerHTML.trim().toLowerCase() &&
-                            wordObj.status === status
-                        );
-                    })
-                );
-            });
-            if (foundWord) {
-                div.style.backgroundColor = '#3B1269';
-            }
+        const foundWord = wordLists.find((wordList) => {
+            return (
+                wordList.words &&
+                wordList.words.find((wordObj) => {
+                    return (
+                        wordObj.word.trim().toLowerCase() ===
+                            element.innerHTML.trim().toLowerCase() &&
+                        wordObj.status === status
+                    );
+                })
+            );
         });
+        if (foundWord) {
+            div.style.backgroundColor = '#3B1269';
+        }
 
         div.onclick = function () {
             // Получаем все элементы с классом '.exa-radience-statuses-container-item'
@@ -102,7 +95,6 @@ function createSubmenu(element) {
         };
         statusesContainer.appendChild(div);
     });
-    //});
 
     submenuContainer.appendChild(addNoteBtn);
     submenuContainer.appendChild(captureScreenshotBtn);

@@ -6,8 +6,8 @@ if (!window.hasRun) {
         wordLists,
         statusesList,
         attributesIsActive,
-        attributesList;
-    let selectedValue = '';
+        attributesList,
+        selectedValue;
     window.hasRun = true;
 
     // Внедрение CSS файла
@@ -60,24 +60,24 @@ async function getFromLocalStorage(key) {
     });
 }
 
+function findWordInWordLists(word) {
+    for (const wordList of wordLists) {
+        if (wordList.words && wordList.id === listId) {
+            const foundWord = wordList.words.find(
+                (wordObj) =>
+                    wordObj.word.trim().toLowerCase() === word.toLowerCase()
+            );
+            if (foundWord) {
+                return foundWord;
+            }
+        }
+    }
+    return null;
+}
+
 async function highlightText(searchText, highlightColor, listId = null) {
     highlightColorRestore = highlightColor;
     const searchRegex = new RegExp(searchText, 'gi');
-
-    function findWordInWordLists(word) {
-        for (const wordList of wordLists) {
-            if (wordList.words && wordList.id === listId) {
-                const foundWord = wordList.words.find(
-                    (wordObj) =>
-                        wordObj.word.trim().toLowerCase() === word.toLowerCase()
-                );
-                if (foundWord) {
-                    return foundWord;
-                }
-            }
-        }
-        return null;
-    }
 
     function highlightTextInNode(node) {
         if (
@@ -200,6 +200,10 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
             matchedElement.parentNode.className !== 'exa-radience-highlighted'
         ) {
             element.classList.add('exa-radience-highlighted');
+            // const foundWord = findWordInWordLists(searchText);
+            // const isValid =
+            //     foundWord && statusesList.includes(foundWord.status);
+
             element.style.borderColor = highlightColor;
 
             if (listId) {
