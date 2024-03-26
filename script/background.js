@@ -138,6 +138,9 @@ function updateWordListsFromGoogleSheets() {
         }
         // Обходим каждый список
         data.wordLists.forEach(function (list) {
+            if(!list.dataURL){
+                return;
+            }
             var spreadsheetId = extractSpreadsheetId(list.dataURL);
             if (!spreadsheetId) {
                 console.error(
@@ -233,6 +236,6 @@ function extractSpreadsheetId(link) {
 // Запускаем обновление списков слов из Google таблицы каждые 15 минут
 chrome.alarms.onAlarm.addListener(function (alarm) {
     if (alarm.name === 'updateDataAlarm') {
-        // updateWordListsFromGoogleSheets();
+        updateWordListsFromGoogleSheets();
     }
 });
