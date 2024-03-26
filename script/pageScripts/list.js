@@ -93,12 +93,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 const word = wordLabel.textContent;
                 const enabled = checkbox.checked;
                 const status = statusLabel.textContent;
+                const lecID = wordLabel.dataset.lecID;
+                const stringID = wordLabel.dataset.stringID;
 
                 if (word !== '') {
                     wordsArray.push({
+                        lecID: lecID,
                         word: word,
                         status: status,
-                        stringID: 'stringID',
+                        stringID: stringID,
                         enabled: enabled,
                     });
                 }
@@ -160,6 +163,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 : 'none';
             statusLbl.textContent = foundWord?.status || '';
             wordLabel.dataset.status = foundWord?.status || '';
+            wordLabel.dataset.stringID = foundWord?.stringID || '';
+            wordLabel.dataset.lecID = foundWord?.lecID || '';
         });
 
         const updateBtn = document.createElement('button');

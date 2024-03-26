@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.4.17
+
+-   When changing the list, the values of word lecID and stringID are saved
+
 v 1.4.16
 
 -   When a screenshot is taken, it is saved in a google table under Lec ID + .png and downloaded with the same name
