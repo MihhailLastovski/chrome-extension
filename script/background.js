@@ -12,7 +12,7 @@ chrome.runtime.onInstalled.addListener(function () {
             });
         }
     });
-    chrome.alarms.create('updateDataAlarm', { periodInMinutes: 15 });
+    // chrome.alarms.create('updateDataAlarm', { periodInMinutes: 15 });
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
@@ -63,7 +63,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         const listId = request.listId || 0;
         highlightWordsFromList(listId);
     } else if (request.action === 'syncData') {
-        updateWordListsFromGoogleSheets();
+        // updateWordListsFromGoogleSheets();
     }
 });
 

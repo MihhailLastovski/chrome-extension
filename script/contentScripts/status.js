@@ -21,12 +21,13 @@ async function changeWordStatus(element) {
                                         (attr) => attr.value.includes(word)
                                     ))
                             ) {
-                                // updateStatus(
-                                //     wordList.dataURL,
-                                //     selectedValue,
-                                //     wordObj.word
-                                // );
-                                // console.log(wordObj);
+                                if (wordList.dataURL) {
+                                    updateStatus(
+                                        wordList.dataURL,
+                                        selectedValue,
+                                        wordObj.word
+                                    );
+                                }
                                 wordObj['status'] = selectedValue;
                             }
                         });
@@ -67,11 +68,13 @@ async function removeWordsStatus(element) {
                                         (attr) => attr.value.includes(word)
                                     ))
                             ) {
-                                // updateStatus(
-                                //     wordList.dataURL,
-                                //     '',
-                                //     wordObj.word
-                                // );
+                                if (wordList.dataURL) {
+                                    updateStatus(
+                                        wordList.dataURL,
+                                        '',
+                                        wordObj.word
+                                    );
+                                }
                                 delete wordObj['status'];
                             }
                         });
