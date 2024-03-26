@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const listId = urlParams.get('listId');
-
+    var dataURL;
     const tooltipButtonsRightVersion = [];
     const tooltipsTextRightVersion = [];
 
@@ -224,46 +224,38 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
-        chrome.storage.local.get('dataURL', function (result) {
-            const urlFromInput = result.dataURL;
-
-            if (listName && wordsArray.length > 0) {
-                if (!listId) {
-                    const newList = {
-                        id: Date.now().toString(),
-                        name: listName,
-                        color: highlightingColor || '#FC0365',
-                        words: wordsArray,
-                        dataURL: urlFromInput,
-                    };
-
-                    saveWordList(newList);
-                }
-                window.location.href = 'popup.html';
-            } else {
-                alert('Enter list name or words');
-            }
-        });
-    });
-    chrome.windows.onFocusChanged.addListener(function (window) {
-        const listName = listNameInput.value.trim() || 'unnamed';
-
-        chrome.storage.local.get('dataURL', function (result) {
-            const urlFromInput = result.dataURL;
-
+        if (listName && wordsArray.length > 0) {
             if (!listId) {
                 const newList = {
                     id: Date.now().toString(),
                     name: listName,
                     color: highlightingColor || '#FC0365',
                     words: wordsArray,
-                    dataURL: urlFromInput,
+                    dataURL: dataURL,
                 };
-                if (listName && wordsArray.length > 0) {
-                    saveWordList(newList);
-                }
+
+                saveWordList(newList);
             }
-        });
+            window.location.href = 'popup.html';
+        } else {
+            alert('Enter list name or words');
+        }
+    });
+    chrome.windows.onFocusChanged.addListener(function (window) {
+        const listName = listNameInput.value.trim() || 'unnamed';
+
+        if (!listId) {
+            const newList = {
+                id: Date.now().toString(),
+                name: listName,
+                color: highlightingColor || '#FC0365',
+                words: wordsArray,
+                dataURL: dataURL,
+            };
+            if (listName && wordsArray.length > 0) {
+                saveWordList(newList);
+            }
+        }
     });
 
     newWordInput.addEventListener('paste', function (event) {
@@ -271,7 +263,9 @@ document.addEventListener('DOMContentLoaded', function () {
         const pastedText = (
             event.clipboardData || window.clipboardData
         ).getData('text');
-        const wordsArrayPasted = pastedText.split('\n').map((word) => word.trim());
+        const wordsArrayPasted = pastedText
+            .split('\n')
+            .map((word) => word.trim());
 
         wordsArrayPasted.forEach((word) => {
             if (word !== '') {
@@ -325,7 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
         csvInput.placeholder = 'Paste the link';
         csvButton.addEventListener('click', async function () {
             if (csvInput.value.trim() !== '') {
-                chrome.storage.local.set({ dataURL: csvInput.value.trim() });
+                dataURL = csvInput.value.trim();
                 // Извлекаем идентификатор таблицы из введенной ссылки
                 var spreadsheetId = extractSpreadsheetId(csvInput.value);
 
@@ -347,36 +341,34 @@ document.addEventListener('DOMContentLoaded', function () {
                         body: JSON.stringify(data),
                     }
                 )
-                .then((response) => {
-                    if (!response.ok) {
-                        throw new Error(
-                            `HTTP error! Status: ${response.status}`
-                        );
-                    }
-                    return response.json();
-                })
-                .then((result) => {
-                    // Здесь result содержит данные, которые возвращены из AppScript
-                    console.log('Received data:', result);
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error(
+                                `HTTP error! Status: ${response.status}`
+                            );
+                        }
+                        return response.json();
+                    })
+                    .then((result) => {
+                        // Здесь result содержит данные, которые возвращены из AppScript
+                        console.log('Received data:', result);
 
-                    // Проходимся по результатам и заполняем массив wordsArray
-                    result.forEach((row) => {
-                        addWord(row['Core Strings']);
-                        wordsArray.push({
-                            lecID: row['Lec ID'],
-                            stringID: row['String ID'],
-                            word: row['Core Strings'],
-                            status: row['Status'],
-                            enabled: true,
+                        // Проходимся по результатам и заполняем массив wordsArray
+                        result.forEach((row) => {
+                            addWord(row['Core Strings']);
+                            wordsArray.push({
+                                lecID: row['Lec ID'],
+                                stringID: row['String ID'],
+                                word: row['Core Strings'],
+                                status: row['Status'],
+                                enabled: true,
+                            });
                         });
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
                     });
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
-            } 
-            else 
-            {
+            } else {
                 alert('Please enter link');
             }
         });
@@ -414,16 +406,16 @@ document.addEventListener('DOMContentLoaded', function () {
         var fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = '.txt';
-    
+
         fileInput.addEventListener('change', function (event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (event) {
                     const content = event.target.result;
-                    const lines = content.split(/\r?\n/); 
+                    const lines = content.split(/\r?\n/);
                     lines.forEach((line) => {
-                        addWord(line.trim()); 
+                        addWord(line.trim());
                         wordsArray.push({
                             word: line.trim(),
                             status: '',
@@ -434,10 +426,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 reader.readAsText(file);
             }
         });
-    
+
         divWithListImportSettigs.appendChild(fileInput);
     });
-    
 
     cancelBtn.addEventListener('click', function () {
         window.location.href = 'popup.html';
