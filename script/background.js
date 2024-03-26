@@ -39,23 +39,22 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         return true;
     } else if (request.action === 'downloadScreenshot') {
         const dataUrl = request.dataUrl;
+        var screenshotName;
         chrome.storage.local.get('saveAs', function (data) {
             const saveAs = data.saveAs || false;
-            var screenshotName;
-            if(request.lecID){
+            if(request.lecID)
+            {
+                console.log("dsa")
                 screenshotName = request.lecID
+                downloadScreenshot(dataUrl, saveAs, screenshotName);
             }
-            else{
+            else
+            {
                 chrome.storage.local.get('screenshotName', function (data) {
                     screenshotName = data.screenshotName || 'screenshot';
-                    
+                    downloadScreenshot(dataUrl, saveAs, screenshotName);
                 });
             }
-            chrome.downloads.download({
-                url: dataUrl,
-                filename: `screenshots/${screenshotName}.png`,
-                saveAs: !saveAs,
-            });
         });
         return true;
     } else if (request.action === 'updateBadge') {
@@ -72,6 +71,14 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         updateWordListsFromGoogleSheets();
     }
 });
+
+function downloadScreenshot(dataUrl, saveAs, screenshotName){
+    chrome.downloads.download({
+        url: dataUrl,
+        filename: `screenshots/${screenshotName}.png`,
+        saveAs: !saveAs,
+    });
+}
 
 chrome.storage.local.get('submenuIsActive', function (data) {
     chrome.storage.local.set({ submenuIsActive: data.submenuIsActive });
