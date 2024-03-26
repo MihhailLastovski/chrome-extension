@@ -355,8 +355,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         // Проходимся по результатам и заполняем массив wordsArray
                         result.forEach((row) => {
-                            addWord(row['Core Strings']);
                             if(row['Core Strings'] !== ''){
+                                addWord(row['Core Strings']);
                                 wordsArray.push({
                                     lecID: row['Lec ID'],
                                     stringID: row['String ID'],
