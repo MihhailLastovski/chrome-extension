@@ -356,13 +356,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         // Проходимся по результатам и заполняем массив wordsArray
                         result.forEach((row) => {
                             addWord(row['Core Strings']);
-                            wordsArray.push({
-                                lecID: row['Lec ID'],
-                                stringID: row['String ID'],
-                                word: row['Core Strings'],
-                                status: row['Status'],
-                                enabled: true,
-                            });
+                            if(row['Core Strings'] !== ''){
+                                wordsArray.push({
+                                    lecID: row['Lec ID'],
+                                    stringID: row['String ID'],
+                                    word: row['Core Strings'],
+                                    status: row['Status'],
+                                    enabled: true,
+                                });
+                            }                           
                         });
                     })
                     .catch((error) => {
