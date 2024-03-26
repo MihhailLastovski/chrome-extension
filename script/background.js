@@ -219,6 +219,6 @@ function extractSpreadsheetId(link) {
 // Запускаем обновление списков слов из Google таблицы каждые 15 минут
 chrome.alarms.onAlarm.addListener(function (alarm) {
     if (alarm.name === 'updateDataAlarm') {
-        updateWordListsFromGoogleSheets();
+        // updateWordListsFromGoogleSheets();
     }
 });

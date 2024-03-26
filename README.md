@@ -8,12 +8,10 @@
 
 ## Versions
 
-v 1.4.13
+v 1.4.14
 
--   Fixed function to paste text into the list 
-
-v 1.4.12
-
+-   Status selection adapted for word search by attributes
+-   Fixed function to paste text into the list
 -   Counter's counting process improved
 
 v 1.4.11
