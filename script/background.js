@@ -69,7 +69,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         const listId = request.listId || 0;
         highlightWordsFromList(listId);
     } else if (request.action === 'syncData') {
-        // updateWordListsFromGoogleSheets();
+        updateWordListsFromGoogleSheets();
     }
 });
 
