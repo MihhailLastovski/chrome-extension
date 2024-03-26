@@ -60,24 +60,23 @@ async function getFromLocalStorage(key) {
     });
 }
 
+function findWordInWordLists(word, listId, element) {
+    for (const wordList of wordLists) {
+        if (wordList.words && wordList.id === listId) {
+            const foundWord = wordList.words.find(
+                (wordObj) => wordObj.word.trim().toLowerCase() === word
+            );
+            if (foundWord) {
+                return foundWord;
+            }
+        }
+    }
+    return null;
+}
+
 async function highlightText(searchText, highlightColor, listId = null) {
     highlightColorRestore = highlightColor;
     const searchRegex = new RegExp(searchText, 'gi');
-
-    function findWordInWordLists(word) {
-        for (const wordList of wordLists) {
-            if (wordList.words && wordList.id === listId) {
-                const foundWord = wordList.words.find(
-                    (wordObj) =>
-                        wordObj.word.trim().toLowerCase() === word.toLowerCase()
-                );
-                if (foundWord) {
-                    return foundWord;
-                }
-            }
-        }
-        return null;
-    }
 
     function highlightTextInNode(node) {
         if (
@@ -90,7 +89,11 @@ async function highlightText(searchText, highlightColor, listId = null) {
         ) {
             const text = node.nodeValue;
             if (searchRegex.test(text)) {
-                const foundWord = findWordInWordLists(searchText);
+                const foundWord = findWordInWordLists(
+                    searchText.toLowerCase(),
+                    listId,
+                    node
+                );
                 const isValid =
                     foundWord && statusesList.includes(foundWord.status);
                 const colorStyle = isValid
@@ -200,11 +203,19 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
             matchedElement.parentNode.className !== 'exa-radience-highlighted'
         ) {
             element.classList.add('exa-radience-highlighted');
-            // const foundWord = findWordInWordLists(searchText);
-            // const isValid =
-            //     foundWord && statusesList.includes(foundWord.status);
 
+            const foundWord = findWordInWordLists(
+                searchText.toLowerCase(),
+                listId,
+                element
+            );
+            const isValid =
+                foundWord && statusesList.includes(foundWord.status);
             element.style.borderColor = highlightColor;
+
+            if (isValid) {
+                element.style.backgroundColor = highlightColor;
+            }
 
             if (listId) {
                 element.setAttribute('data-list-id', listId);
@@ -261,6 +272,8 @@ chrome.runtime.onMessage.addListener(async function (
             elements.forEach((element) => {
                 element.classList.remove('exa-radience-highlighted');
                 element.removeAttribute('data-list-id');
+                element.style.borderColor = 'transparent';
+                element.style.backgroundColor = 'transparent';
             });
         } else {
             const selector = listId

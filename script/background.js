@@ -12,7 +12,7 @@ chrome.runtime.onInstalled.addListener(function () {
             });
         }
     });
-    chrome.alarms.create('updateDataAlarm', { periodInMinutes: 15 });
+    // chrome.alarms.create('updateDataAlarm', { periodInMinutes: 15 });
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
@@ -69,7 +69,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         const listId = request.listId || 0;
         highlightWordsFromList(listId);
     } else if (request.action === 'syncData') {
-        updateWordListsFromGoogleSheets();
+        // updateWordListsFromGoogleSheets();
     }
 });
 
@@ -226,6 +226,6 @@ function extractSpreadsheetId(link) {
 // Запускаем обновление списков слов из Google таблицы каждые 15 минут
 chrome.alarms.onAlarm.addListener(function (alarm) {
     if (alarm.name === 'updateDataAlarm') {
-        updateWordListsFromGoogleSheets();
+        // updateWordListsFromGoogleSheets();
     }
 });

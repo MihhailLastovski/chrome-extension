@@ -8,16 +8,18 @@
 
 ## Versions
 
-v 1.4.14
+v 1.4.16
 
 -   When a screenshot is taken, it is saved in a google table under Lec ID + .png and downloaded with the same name
 
-v 1.4.13
+v 1.4.15
 
 -   Fixed function to paste text into the list 
 
-v 1.4.12
+v 1.4.14
 
+-   Status selection adapted for word search by attributes
+-   Fixed function to paste text into the list
 -   Counter's counting process improved
 
 v 1.4.11

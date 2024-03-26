@@ -53,5 +53,6 @@
 }
 
 .exa-radience-highlighted {
-    border: 4px solid #FC0365;
+    border: 4px solid transparent;
+    background-color: transparent;
 }
