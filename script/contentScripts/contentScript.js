@@ -96,14 +96,15 @@ async function highlightText(searchText, highlightColor, listId = null) {
                 );
                 const isValid =
                     foundWord && statusesList.includes(foundWord.status);
-                const colorStyle = isValid
-                    ? `background-color: ${highlightColor}; border: 4px solid ${highlightColor};`
-                    : `border: 4px solid ${highlightColor};`;
 
                 if (node.parentNode.className !== 'exa-radience-highlighted') {
                     node.parentNode.className = 'exa-radience-highlighted';
                     node.parentNode.setAttribute('data-list-id', listId);
-                    node.parentNode.style.cssText = colorStyle;
+                    node.parentNode.setAttribute('exa-radience-word', searchText);
+                    node.parentNode.style.borderColor = highlightColor;
+                    if (isValid) {
+                        node.parentNode.style.backgroundColor = highlightColor;
+                    }
                 }
             }
         } else if (

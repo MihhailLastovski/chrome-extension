@@ -71,7 +71,7 @@ function createSubmenu(element) {
                     const word = wordObj.word.trim().toLowerCase();
                     return (
                         wordObj.status === status &&
-                        (word === element.innerHTML.trim().toLowerCase() ||
+                        (word === element.getAttribute('exa-radience-word').trim().toLowerCase() ||
                             Array.from(element.attributes).some((attr) =>
                                 attr.value.includes(word)
                             ))
