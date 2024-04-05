@@ -1,11 +1,10 @@
-function addValueToStepsStatus(spreadsheetId, note, textContent, choice) {
+function addValueToStepsStatus(spreadsheetId, note, textContent, columnName) {
     try {
-
         // Open the spreadsheet
         var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
         var sheets = spreadsheet.getSheets();
         var targetTextContent = textContent;
-
+        var found = false;
         // Iterate through all sheets
         for (var s = 0; s < sheets.length; s++) {
             var sheet = sheets[s];
@@ -13,39 +12,49 @@ function addValueToStepsStatus(spreadsheetId, note, textContent, choice) {
             // Get all data as a 2D array
             var data = sheet.getDataRange().getValues();
 
-            // Search for the cell with an exact match
-            for (var i = 0; i < data.length; i++) {
-                for (var j = 0; j < data[i].length; j++) {
-                    var cellValue = String(data[i][j]).toLowerCase().trim();
-
+            // Find the index of the column "String ID"
+            var stringIdIndex = data[0].indexOf("String ID");
+            
+            // If the column is found
+            if (stringIdIndex !== -1) {
+                // Search for the cell with an exact match in the specified column
+                for (var i = 1; i < data.length; i++) {
+                    var cellValue = String(data[i][stringIdIndex]).toLowerCase().trim();
                     if (cellValue === targetTextContent.toLowerCase().trim()) {
-                        // Found the value, add it to the next column 
-                        var cell;
-                        if(choice === 'steps'){
-                          cell = sheet.getRange(i + 1, j + 3);
+                        // Found the value, get the index of the "Steps" column
+                        var columnIndex = data[0].indexOf(columnName);
+                        if (columnIndex !== -1) { 
+                            var cell = sheet.getRange(i + 1, columnIndex + 1); // i + 1 is the row index, columnIndex + 1 because column index starts from 0
+                            if(columnName === 'Screenshot'){
+                              var lecData = data[i][data[0].indexOf("Lec ID")];
+                              cell.setValue(lecData + '.png');
+                            }
+                            else{
+                              cell.setValue(note);
+                            }
+                            found = true; 
+                        } else {
+                            Logger.log('Column "Steps" not found.');
                         }
-                        else if (choice === 'status'){
-                          cell = sheet.getRange(i + 1, j + 5);
-                        }
-                        else if (choice === 'screenshot'){
-                          cell = sheet.getRange(i + 1, j + 4);
-                          cell.setValue(String(data[i][j-2]) + '.png');
-                          return;
-                        }
-                        cell.setValue(note);
-                        return;
                     }
                 }
+            } else {
+                Logger.log('Column "String ID" not found.');
             }
         }
 
-        // If the value is not found
-        Logger.log('Value not found in any sheet:', targetTextContent);
+        if (!found) {
+            Logger.log('Value not found in any sheet:', targetTextContent);
+        }
 
     } catch (error) {
         Logger.log('Error adding value:', error);
     }
 }
+
+
+
+
 
 function getDataBySheetName(spreadsheetId) {
     try {
@@ -126,7 +135,7 @@ function doPost(e) {
         // Проверяем, какое действие нужно выполнить
         if (requestData.action === 'addNoteToElement') {
             // Вызываем функцию добавления заметки
-            addValueToStepsStatus(requestData.sheetId, requestData.note, requestData.textContent, requestData.isSteps);
+            addValueToStepsStatus(requestData.sheetId, requestData.note, requestData.textContent, requestData.columnName);
 
             Logger.log('Note added via doPost:', requestData.note);
 

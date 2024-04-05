@@ -12,20 +12,21 @@ function addNoteToElement(element) {
         const sheetId = extractSheetIdFromURL(targetList.dataURL);
         var data;
         targetList.words.forEach((wordObj) => {
-            data = {
-                action: 'addNoteToElement',
-                note: note,
-                textContent: wordObj.stringID,
-                sheetId: sheetId,
-                choice: 'steps',
-            };
-            
+            if (element.innerHTML.toLowerCase() === wordObj.word.toLowerCase()) {
+                data = {
+                    action: 'addNoteToElement',
+                    note: note,
+                    textContent: wordObj.stringID,
+                    sheetId: sheetId,
+                    columnName: 'Steps',
+                };
+            }
         });
 
         console.log('Sending data:', data);
 
         fetch(
-            'https://script.google.com/macros/s/AKfycbwYb2OHQIdKXMIrd8OjyI4YqOjmQPKTinAHNgaFav_ZyLWIEpMGv35tywv6afYrpC49/exec',
+            'https://script.google.com/macros/s/AKfycbyVFm5x4PBSpXqqaNTezVoRRibcdKGvotBJeVXu_DGpe-o4wpgLd2Ox4pTa4lfPnD4/exec',
             {
                 method: 'POST',
                 mode: 'no-cors',

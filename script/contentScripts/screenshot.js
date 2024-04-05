@@ -21,19 +21,19 @@ async function captureScreenshot(element) {
                 if (dataUrl) {
                     chrome.storage.local.get('wordLists', (result) => {
                         const wordLists = result.wordLists || [];
-                        var wordLecID;
                         wordLists.map((wordList) => {
                             if(wordList.dataURL){
                                 if (wordList.words && wordList.id === listId) {
                                     wordList.words = wordList.words.filter((wordObj) => {
-                                        wordLecID = wordObj.lecID
+                                        if (element.innerHTML.toLowerCase() === wordObj.word.toLowerCase()){
+                                            saveScreenshot(dataUrl, wordObj.lecID);
+                                        }
                                         return (
                                             wordObj.word.trim().toLowerCase() !==
                                             element.textContent.trim()
                                         );
                                     });
                                 }
-                                saveScreenshot(dataUrl, wordLecID);
                             }
                             else{
                                 saveScreenshot(dataUrl, false);
@@ -91,17 +91,17 @@ function removeFromList(element) {
         const wordLists = result.wordLists || [];
 
         const textContentToRemove = element.textContent.trim();
-        var wordStringID;
         const updatedWordLists = wordLists.map((wordList) => {
             if (wordList.words && wordList.id === listId) {
                 wordList.words = wordList.words.filter((wordObj) => {
-                    wordStringID = wordObj.stringID
+                    if(wordObj.word.toLowerCase() === element.innerHTML.toLowerCase()){
+                        sendScreenshotToGoogleSheet(wordList.dataURL, wordObj.stringID)
+                    }
                     return (
                         wordObj.word.trim().toLowerCase() !==
                         textContentToRemove.toLowerCase()
                     );
                 });
-                sendScreenshotToGoogleSheet(wordList.dataURL, wordStringID)
             }
             return wordList;
         });
@@ -117,13 +117,13 @@ function sendScreenshotToGoogleSheet(dataURL, stringID) {
             note: '',
             textContent: stringID,
             sheetId: sheetId,
-            choice: 'screenshot',
+            columnName: 'Screenshot',
         };
 
     console.log('Sending data:', data);
 
     fetch(
-        'https://script.google.com/macros/s/AKfycbwYb2OHQIdKXMIrd8OjyI4YqOjmQPKTinAHNgaFav_ZyLWIEpMGv35tywv6afYrpC49/exec',
+        'https://script.google.com/macros/s/AKfycbyVFm5x4PBSpXqqaNTezVoRRibcdKGvotBJeVXu_DGpe-o4wpgLd2Ox4pTa4lfPnD4/exec',
         {
             method: 'POST',
             mode: 'no-cors',

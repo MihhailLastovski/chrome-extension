@@ -96,21 +96,21 @@ async function removeWordsStatus(element) {
     }
 }
 
-function updateStatus(listId, selectedValue, word) {
+function updateStatus(listId, selectedValue, stringID) {
     const sheetId = extractSheetIdFromURL(listId);
 
     const data = {
         action: 'addNoteToElement',
         note: selectedValue,
-        textContent: word,
+        textContent: stringID,
         sheetId: sheetId,
-        choice: 'status',
+        columnName: 'Status',
     };
 
     console.log('Sending data:', data);
 
     fetch(
-        'https://script.google.com/macros/s/AKfycbwYb2OHQIdKXMIrd8OjyI4YqOjmQPKTinAHNgaFav_ZyLWIEpMGv35tywv6afYrpC49/exec',
+        'https://script.google.com/macros/s/AKfycbyVFm5x4PBSpXqqaNTezVoRRibcdKGvotBJeVXu_DGpe-o4wpgLd2Ox4pTa4lfPnD4/exec',
         {
             method: 'POST',
             mode: 'no-cors',
