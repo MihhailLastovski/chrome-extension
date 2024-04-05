@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.4.18
+
+-   Updated the logic for making changes to the hum table using AppsScript
+
 v 1.4.17
 
 -   When changing the list, the values of word lecID and stringID are saved
