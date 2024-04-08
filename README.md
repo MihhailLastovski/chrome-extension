@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.4.19
+
+-   Optimised highlighting function
+
 v 1.4.18
 
 -   Updated the logic for making changes to the hum table using AppsScript
@@ -22,7 +26,7 @@ v 1.4.16
 
 v 1.4.15
 
--   Fixed function to paste text into the list 
+-   Fixed function to paste text into the list
 
 v 1.4.14
 
