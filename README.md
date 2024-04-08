@@ -8,6 +8,10 @@
 
 ## Versions
 
+v 1.4.20
+
+-   Added a check, if the list is not from google table, then the button for adding comments will not be displayed in the submenu, if the search was through word and not through the list, then only the screenshot button will be displayed in the submenu
+
 v 1.4.19
 
 -   Optimised highlighting function
