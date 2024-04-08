@@ -263,6 +263,7 @@ chrome.runtime.onMessage.addListener(async function (
         elements.forEach((element) => {
             element.classList.remove('exa-radience-highlighted');
             element.removeAttribute('data-list-id');
+            element.removeAttribute('exa-radience-word');
             element.style.borderColor = 'transparent';
             element.style.backgroundColor = 'transparent';
         });
