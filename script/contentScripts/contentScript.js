@@ -88,7 +88,7 @@ async function highlightText(searchText, highlightColor, listId = null) {
             )
         ) {
             const text = node.nodeValue;
-            if (searchRegex.test(text)) {
+            if (text === searchText) {
                 const foundWord = findWordInWordLists(
                     searchText.toLowerCase(),
                     listId,
@@ -96,45 +96,15 @@ async function highlightText(searchText, highlightColor, listId = null) {
                 );
                 const isValid =
                     foundWord && statusesList.includes(foundWord.status);
-                const colorStyle = isValid
-                    ? `background-color: ${highlightColor}; border: 4px solid ${highlightColor};`
-                    : `border: 4px solid ${highlightColor};`;
 
                 if (node.parentNode.className !== 'exa-radience-highlighted') {
-                    const wrapper = document.createElement('span');
-                    wrapper.className = 'exa-radience-highlightedP';
-                    wrapper.setAttribute('data-list-id', listId);
-
-                    let lastIndex = 0;
-                    let match;
-
-                    searchRegex.lastIndex = 0;
-                    while ((match = searchRegex.exec(text)) !== null) {
-                        const beforeMatch = text.substring(
-                            lastIndex,
-                            match.index
-                        );
-
-                        wrapper.appendChild(
-                            document.createTextNode(beforeMatch)
-                        );
-
-                        const matchedText = document.createElement('span');
-                        matchedText.className = 'exa-radience-highlighted';
-                        matchedText.style.cssText = colorStyle;
-                        matchedText.textContent = match[0];
-                        if (listId) {
-                            matchedText.dataset.listId = listId;
-                        }
-                        wrapper.appendChild(matchedText);
-                        lastIndex = match.index + match[0].length;
+                    node.parentNode.className = 'exa-radience-highlighted';
+                    node.parentNode.setAttribute('data-list-id', listId);
+                    node.parentNode.setAttribute('exa-radience-word', searchText);
+                    node.parentNode.style.borderColor = highlightColor;
+                    if (isValid) {
+                        node.parentNode.style.backgroundColor = highlightColor;
                     }
-
-                    wrapper.appendChild(
-                        document.createTextNode(text.substring(lastIndex))
-                    );
-
-                    node.parentNode.replaceChild(wrapper, node);
                 }
             }
         } else if (
@@ -147,30 +117,20 @@ async function highlightText(searchText, highlightColor, listId = null) {
         }
     }
     function findElementsByText() {
-        // Array to store matching elements
         var matchingElements = [];
-        // Function to traverse through each element
         function traverseElement(element) {
-            // Check if the element has children
             if (element.childNodes.length > 0) {
-                // Iterate through child nodes
                 for (var i = 0; i < element.childNodes.length; i++) {
-                    // Recursively call traverseElement for each child node
                     traverseElement(element.childNodes[i]);
                 }
             }
-
-            // Check if the element is a text node and its content matches the target text
             if (
                 element.nodeType === Node.TEXT_NODE &&
                 searchRegex.test(element.nodeValue.trim())
             ) {
-                // Add the parent element to the matching elements array
                 matchingElements.push(element.parentNode);
             }
         }
-
-        // Start traversing from document.body
         traverseElement(document.body);
 
         return matchingElements;
@@ -264,8 +224,7 @@ chrome.runtime.onMessage.addListener(async function (
     } else if (request.action === 'removeHighlight') {
         const listId = request.listId;
 
-        if (attributesIsActive) {
-            const elements = listId
+        const elements = listId
                 ? document.querySelectorAll(`body [data-list-id="${listId}"]`)
                 : document.querySelectorAll('body *');
 
@@ -275,16 +234,6 @@ chrome.runtime.onMessage.addListener(async function (
                 element.style.borderColor = 'transparent';
                 element.style.backgroundColor = 'transparent';
             });
-        } else {
-            const selector = listId
-                ? `span[data-list-id="${listId}"].exa-radience-highlighted, span[data-list-id="${listId}"].exa-radience-highlightedP`
-                : 'span.exa-radience-highlighted, span.exa-radience-highlightedP';
-
-            document.querySelectorAll(selector).forEach((element) => {
-                const { textContent } = element;
-                element.outerHTML = textContent;
-            });
-        }
         chrome.runtime.sendMessage({
             action: 'updateBadge',
             count: document.querySelectorAll('.exa-radience-highlighted')

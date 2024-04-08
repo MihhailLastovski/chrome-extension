@@ -3,8 +3,9 @@ async function changeWordStatus(element) {
         const listId = element.getAttribute('data-list-id');
 
         document.querySelectorAll('.exa-radience-highlighted').forEach((el) => {
+            console.log("1",el.innerHTML.toLowerCase()," === ",element.innerHTML.toLowerCase());
             if (
-                el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+                el.getAttribute('exa-radience-word') === element.getAttribute('exa-radience-word')
             ) {
                 el.style.backgroundColor = el.style.borderColor;
                 el.setAttribute('status', selectedValue);
@@ -53,7 +54,7 @@ async function removeWordsStatus(element) {
 
         document.querySelectorAll('.exa-radience-highlighted').forEach((el) => {
             if (
-                el.innerHTML.toLowerCase() === element.innerHTML.toLowerCase()
+                el.getAttribute('exa-radience-word') === element.getAttribute('exa-radience-word')
             ) {
                 el.style.backgroundColor = 'transparent';
                 el.removeAttribute('status');
