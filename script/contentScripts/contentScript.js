@@ -60,140 +60,81 @@ async function getFromLocalStorage(key) {
     });
 }
 
-function findWordInWordLists(word, listId, element) {
-    for (const wordList of wordLists) {
-        if (wordList.words && wordList.id === listId) {
-            const foundWord = wordList.words.find(
-                (wordObj) => wordObj.word.trim().toLowerCase() === word
-            );
-            if (foundWord) {
-                return foundWord;
-            }
-        }
-    }
-    return null;
-}
-
 async function highlightText(searchText, highlightColor, listId = null) {
-    highlightColorRestore = highlightColor;
-    const searchRegex = new RegExp(searchText, 'gi');
+    try {
+        const { wordLists } = await getFromLocalStorage('wordLists');
+        const wordsList = wordLists.flatMap(list => list.words.map(wordObj => wordObj.word.trim().toLowerCase()));
 
-    function highlightTextInNode(node) {
-        if (
-            node.nodeType === Node.TEXT_NODE &&
-            !(
-                node.parentNode &&
-                (node.parentNode.tagName.toLowerCase() === 'style' ||
-                    node.parentNode.tagName.toLowerCase() === 'script')
-            )
-        ) {
-            const text = node.nodeValue;
-            if (text.toLowerCase() === searchText.toLowerCase()) {
-                const foundWord = findWordInWordLists(
-                    searchText.toLowerCase(),
-                    listId,
-                    node
-                );
-                const isValid =
-                    foundWord && statusesList.includes(foundWord.status);
+        const searchRegex = new RegExp(searchText, 'gi');
 
-                if (
-                    !node.parentNode.classList.contains(
-                        'exa-radience-highlighted'
-                    )
-                ) {
-                    node.parentNode.classList.add('exa-radience-highlighted');
-                    node.parentNode.style.borderColor = highlightColor;
-
-                    if (isValid) {
-                        node.parentNode.style.backgroundColor = highlightColor;
-                    }
+        function highlightTextInElement(element) {
+            if (element.nodeType === Node.TEXT_NODE) {
+                const textContent = element.textContent.trim().toLowerCase();
+                if (searchRegex.test(textContent) && wordsList.includes(textContent)) {
+                    const parentElement = element.parentElement;
+                    parentElement.classList.add('exa-radience-highlighted');
+                    parentElement.style.borderColor = highlightColor;
                     if (listId) {
-                        node.parentNode.setAttribute('data-list-id', listId);
+                        parentElement.dataset.listId = listId;
                     }
                 }
             }
-        } else if (
-            node.nodeType === Node.ELEMENT_NODE &&
-            !['style', 'script'].includes(node.tagName.toLowerCase())
-        ) {
-            for (const childNode of node.childNodes) {
-                highlightTextInNode(childNode);
-            }
         }
-    }
-    function findElementsByText() {
-        var matchingElements = [];
-        function traverseElement(element) {
-            if (element.childNodes.length > 0) {
-                for (var i = 0; i < element.childNodes.length; i++) {
-                    traverseElement(element.childNodes[i]);
-                }
-            }
-            if (
-                element.nodeType === Node.TEXT_NODE &&
-                searchRegex.test(element.nodeValue.trim())
-            ) {
-                matchingElements.push(element.parentNode);
-            }
-        }
-        traverseElement(document.body);
 
-        return matchingElements;
-    }
+        document.querySelectorAll('*').forEach((element) => {
+            for (const childNode of element.childNodes) {
+                highlightTextInElement(childNode);
+            }
+        });
 
-    const allElements = findElementsByText();
-    for (let i = 0; i < allElements.length; i++) {
-        highlightTextInNode(allElements[i]);
+        // Отображение счётчика
+        chrome.runtime.sendMessage({
+            action: 'updateBadge',
+            count: document.querySelectorAll('.exa-radience-highlighted').length,
+            color: '#FC0365', // Цвет для режима текста
+        });
+    } catch (error) {
+        console.error('Ошибка при подсветке текста:', error);
     }
 }
 
 async function highlightAttributes(searchText, highlightColor, listId = null) {
-    highlightColorRestore = highlightColor;
+    try {
+        const { wordLists } = await getFromLocalStorage('wordLists');
+        const wordsList = wordLists.flatMap(list => list.words.map(wordObj => wordObj.word.trim().toLowerCase()));
 
-    function highlightElement(element) {
-        var matchedElement = null;
+        const searchRegex = new RegExp(searchText, 'gi');
 
-        const attributes = element.attributes;
-        for (const attribute of attributes) {
-            if (
-                attributesList.includes(attribute.name) &&
-                attribute.value.toLowerCase() === searchText.toLowerCase()
-            ) {
-                matchedElement = element;
+        function highlightAttributesInElement(element) {
+            const attributes = element.attributes;
+            for (const attribute of attributes) {
+                const attributeValue = attribute.value.trim().toLowerCase();
+                if (attributeValue === searchText.toLowerCase() && wordsList.includes(attributeValue)) {
+                    element.classList.add('exa-radience-highlighted');
+                    element.style.borderColor = highlightColor;
+                    if (listId) {
+                        element.dataset.listId = listId;
+                    }
+                    return;
+                }
             }
         }
 
-        if (
-            matchedElement &&
-            !matchedElement.parentNode.classList.contains(
-                'exa-radience-highlighted'
-            )
-        ) {
-            element.classList.add('exa-radience-highlighted');
+        document.querySelectorAll('*').forEach((element) => {
+            highlightAttributesInElement(element);
+        });
 
-            const foundWord = findWordInWordLists(
-                searchText.toLowerCase(),
-                listId,
-                element
-            );
-            const isValid =
-                foundWord && statusesList.includes(foundWord.status);
-            element.style.borderColor = highlightColor;
-
-            if (isValid) {
-                element.style.backgroundColor = highlightColor;
-            }
-
-            if (listId) {
-                element.setAttribute('data-list-id', listId);
-            }
-        }
+        // Отображение счётчика
+        chrome.runtime.sendMessage({
+            action: 'updateBadge',
+            count: document.querySelectorAll('.exa-radience-highlighted').length,
+            color: '#3B1269', // Цвет для режима атрибутов
+        });
+    } catch (error) {
+        console.error('Ошибка при подсветке атрибутов:', error);
     }
-
-    const elements = document.querySelectorAll('body *');
-    elements.forEach((element) => highlightElement(element));
 }
+
 
 chrome.runtime.onMessage.addListener(async function (
     request,
