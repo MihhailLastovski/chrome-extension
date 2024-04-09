@@ -44,10 +44,11 @@ document.addEventListener('DOMContentLoaded', function () {
         // Подсвечивание включенных списков
         enabledLists.forEach((listId) => {
             removeHighlight(listId);
-            chrome.runtime.sendMessage({
-                action: 'updateLists',
-                listId: listId,
-            });
+            // chrome.runtime.sendMessage({
+            //     action: 'updateLists',
+            //     listId: listId,
+            // });
+            highlightWordsFromList(listId);
         });
     });
 
@@ -140,10 +141,12 @@ document.addEventListener('DOMContentLoaded', function () {
         if (enable) {
             if (!enabledLists.includes(listId)) {
                 enabledLists.push(listId);
-                chrome.runtime.sendMessage({
-                    action: 'updateLists',
-                    listId: listId,
-                });
+                // chrome.runtime.sendMessage({
+                //     action: 'updateLists',
+                //     listId: listId,
+                // });
+
+                highlightWordsFromList(listId);
             }
         } else {
             enabledLists = enabledLists.filter((id) => id !== listId);
@@ -162,6 +165,41 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             }
         );
+    }
+
+    function highlightWordsFromList(listId) {
+        const listToHighlight = wordLists.find((list) => list.id === listId);
+
+        if (listToHighlight) {
+            const sortedWords = listToHighlight.words.sort((a, b) => {
+                return b.word.length - a.word.length;
+            });
+
+            sortedWords.forEach((wordObj) => {
+                if (wordObj.enabled) {
+                    const searchText = wordObj.word;
+                    chrome.tabs.query(
+                        { active: true, currentWindow: true },
+                        function (tabs) {
+                            if (tabs && tabs[0]) {
+                                chrome.scripting.executeScript({
+                                    target: { tabId: tabs[0].id },
+                                    files: [
+                                        './script/contentScripts/contentScript.js',
+                                    ],
+                                });
+                                chrome.tabs.sendMessage(tabs[0].id, {
+                                    action: 'highlight',
+                                    searchText: searchText,
+                                    highlightColor: listToHighlight.color,
+                                    listId: listId,
+                                });
+                            }
+                        }
+                    );
+                }
+            });
+        }
     }
 
     newListBtn.addEventListener('click', function () {
@@ -187,4 +225,51 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     getProjectVersion();
+});
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.action === 'updateLists') {
+        const listId = request.listId || 0;
+        highlightWordsFromList(listId);
+        function highlightWordsFromList(listId) {
+            chrome.storage.local.get('wordLists', function (data) {
+                const lists = data.wordLists || [];
+                const listToHighlight = lists.find(
+                    (list) => list.id === listId
+                );
+
+                if (listToHighlight) {
+                    const sortedWords = listToHighlight.words.sort((a, b) => {
+                        return b.word.length - a.word.length;
+                    });
+
+                    sortedWords.forEach((wordObj) => {
+                        if (wordObj.enabled) {
+                            const searchText = wordObj.word;
+                            chrome.tabs.query(
+                                { active: true, currentWindow: true },
+                                function (tabs) {
+                                    if (tabs && tabs[0]) {
+                                        chrome.scripting.executeScript({
+                                            target: { tabId: tabs[0].id },
+                                            files: [
+                                                './script/contentScripts/contentScript.js',
+                                            ],
+                                        });
+                                        chrome.tabs.sendMessage(tabs[0].id, {
+                                            action: 'highlight',
+                                            searchText: searchText,
+                                            highlightColor:
+                                                listToHighlight.color,
+                                            listId: listId,
+                                        });
+                                    }
+                                }
+                            );
+                        }
+                    });
+                }
+            });
+        }
+    }
 });

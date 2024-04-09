@@ -217,10 +217,58 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 );
 
-                chrome.runtime.sendMessage({
-                    action: 'updateLists',
-                    listId: listId,
-                });
+                // chrome.runtime.sendMessage({
+                //     action: 'updateLists',
+                //     listId: listId,
+                // });
+                highlightWordsFromList(listId);
+                function highlightWordsFromList(listId) {
+                    chrome.storage.local.get('wordLists', function (data) {
+                        const lists = data.wordLists || [];
+                        const listToHighlight = lists.find(
+                            (list) => list.id === listId
+                        );
+
+                        if (listToHighlight) {
+                            const sortedWords = listToHighlight.words.sort(
+                                (a, b) => {
+                                    return b.word.length - a.word.length;
+                                }
+                            );
+
+                            sortedWords.forEach((wordObj) => {
+                                if (wordObj.enabled) {
+                                    const searchText = wordObj.word;
+                                    chrome.tabs.query(
+                                        { active: true, currentWindow: true },
+                                        function (tabs) {
+                                            if (tabs && tabs[0]) {
+                                                chrome.scripting.executeScript({
+                                                    target: {
+                                                        tabId: tabs[0].id,
+                                                    },
+                                                    files: [
+                                                        './script/contentScripts/contentScript.js',
+                                                    ],
+                                                });
+                                                chrome.tabs.sendMessage(
+                                                    tabs[0].id,
+                                                    {
+                                                        action: 'highlight',
+                                                        searchText: searchText,
+                                                        highlightColor:
+                                                            listToHighlight.color,
+                                                        listId: listId,
+                                                    }
+                                                );
+                                            }
+                                        }
+                                    );
+                                }
+                            });
+                        }
+                    });
+                }
             }
         });
 
@@ -355,7 +403,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         // Проходимся по результатам и заполняем массив wordsArray
                         result.forEach((row) => {
-                            if(row['Core Strings'] !== ''){
+                            if (row['Core Strings'] !== '') {
                                 addWord(row['Core Strings']);
                                 wordsArray.push({
                                     lecID: row['Lec ID'],
@@ -364,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                     status: row['Status'],
                                     enabled: true,
                                 });
-                            }                           
+                            }
                         });
                     })
                     .catch((error) => {

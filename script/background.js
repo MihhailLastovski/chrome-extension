@@ -22,6 +22,10 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
             let enabledLists = data.enabledLists || [];
             enabledLists.forEach((listId) => {
                 highlightWordsFromList(listId);
+                // chrome.runtime.sendMessage({
+                //     action: 'updateLists',
+                //     listId: listId,
+                // });
             });
         });
     }
@@ -42,14 +46,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         var screenshotName;
         chrome.storage.local.get('saveAs', function (data) {
             const saveAs = data.saveAs || false;
-            if(request.lecID)
-            {
-                console.log("dsa")
-                screenshotName = request.lecID
+            if (request.lecID) {
+                console.log('dsa');
+                screenshotName = request.lecID;
                 downloadScreenshot(dataUrl, saveAs, screenshotName);
-            }
-            else
-            {
+            } else {
                 chrome.storage.local.get('screenshotName', function (data) {
                     screenshotName = data.screenshotName || 'screenshot';
                     downloadScreenshot(dataUrl, saveAs, screenshotName);
@@ -64,15 +65,17 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             text: count > 0 ? count.toString() : '',
         });
         chrome.action.setBadgeBackgroundColor({ color: searchModeColor });
-    } else if (request.action === 'updateLists') {
-        const listId = request.listId || 0;
-        highlightWordsFromList(listId);
     } else if (request.action === 'syncData') {
         updateWordListsFromGoogleSheets();
     }
+    // else if (request.action === 'updateLists') {
+    //     const listId = request.listId || 0;
+    //     console.log('highlight');
+    //     highlightWordsFromList(listId);
+    // }
 });
 
-function downloadScreenshot(dataUrl, saveAs, screenshotName){
+function downloadScreenshot(dataUrl, saveAs, screenshotName) {
     chrome.downloads.download({
         url: dataUrl,
         filename: `screenshots/${screenshotName}.png`,
@@ -138,7 +141,7 @@ function updateWordListsFromGoogleSheets() {
         }
         // Обходим каждый список
         data.wordLists.forEach(function (list) {
-            if(!list.dataURL){
+            if (!list.dataURL) {
                 return;
             }
             var spreadsheetId = extractSpreadsheetId(list.dataURL);

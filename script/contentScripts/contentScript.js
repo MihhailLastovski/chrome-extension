@@ -98,8 +98,12 @@ async function highlightText(searchText, highlightColor, listId = null) {
                 const isValid =
                     foundWord && statusesList.includes(foundWord.status);
 
-                if (node.parentNode.className !== 'exa-radience-highlighted') {
-                    node.parentNode.className = 'exa-radience-highlighted';
+                if (
+                    !node.parentNode.classList.contains(
+                        'exa-radience-highlighted'
+                    )
+                ) {
+                    node.parentNode.classList.add('exa-radience-highlighted');
                     node.parentNode.setAttribute('data-list-id', listId);
                     node.parentNode.setAttribute(
                         'exa-radience-word',
@@ -192,7 +196,9 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
 
         if (
             matchedElement &&
-            matchedElement.parentNode.className !== 'exa-radience-highlighted'
+            !matchedElement.parentNode.classList.contains(
+                'exa-radience-highlighted'
+            )
         ) {
             element.classList.add('exa-radience-highlighted');
 
