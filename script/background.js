@@ -1,9 +1,25 @@
 chrome.runtime.onInstalled.addListener(function () {
     chrome.storage.local.get('firstOpen', function (data) {
         if (!data.firstOpen) {
+            const existingAttributes = ['id', 'class', 'type'];
+            const statusesList = [
+                'Found',
+                'Captured',
+                'In GLaaS',
+                'Deleted',
+                'Skip LQA',
+                'Core Team Support Required',
+                'OnHold/Blocked',
+                'Task Raised',
+                'Task resolved',
+                'Archive',
+                'Check later',
+            ];
             chrome.storage.local.set({ theme: 'light' });
             chrome.storage.local.set({ firstOpen: true });
-            const existingAttributes = ['id', 'class', 'type'];
+            chrome.storage.local.set({
+                customStatuses: statusesList,
+            });
             chrome.storage.local.set({
                 customAttributes: existingAttributes,
             });

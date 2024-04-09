@@ -88,8 +88,7 @@ async function highlightText(searchText, highlightColor, listId = null) {
             )
         ) {
             const text = node.nodeValue;
-            // if (searchRegex.test(text))
-            if (text === searchText) {
+            if (text.toLowerCase() === searchText.toLowerCase()) {
                 const foundWord = findWordInWordLists(
                     searchText.toLowerCase(),
                     listId,
@@ -104,43 +103,14 @@ async function highlightText(searchText, highlightColor, listId = null) {
                     )
                 ) {
                     node.parentNode.classList.add('exa-radience-highlighted');
-                    node.parentNode.setAttribute('data-list-id', listId);
-                    node.parentNode.setAttribute(
-                        'exa-radience-word',
-                        searchText
-                    );
                     node.parentNode.style.borderColor = highlightColor;
+
                     if (isValid) {
                         node.parentNode.style.backgroundColor = highlightColor;
                     }
-                    // const wrapper = document.createElement('span');
-                    // wrapper.className = 'exa-radience-highlightedP';
-                    // wrapper.setAttribute('data-list-id', listId);
-                    // let lastIndex = 0;
-                    // let match;
-                    // searchRegex.lastIndex = 0;
-                    // while ((match = searchRegex.exec(text)) !== null) {
-                    //     const beforeMatch = text.substring(
-                    //         lastIndex,
-                    //         match.index
-                    //     );
-                    //     wrapper.appendChild(
-                    //         document.createTextNode(beforeMatch)
-                    //     );
-                    //     const matchedText = document.createElement('span');
-                    //     matchedText.className = 'exa-radience-highlighted';
-                    //     matchedText.style.cssText = colorStyle;
-                    //     matchedText.textContent = match[0];
-                    //     if (listId) {
-                    //         matchedText.dataset.listId = listId;
-                    //     }
-                    //     wrapper.appendChild(matchedText);
-                    //     lastIndex = match.index + match[0].length;
-                    // }
-                    // wrapper.appendChild(
-                    //     document.createTextNode(text.substring(lastIndex))
-                    // );
-                    // node.parentNode.replaceChild(wrapper, node);
+                    if (listId) {
+                        node.parentNode.setAttribute('data-list-id', listId);
+                    }
                 }
             }
         } else if (
@@ -269,7 +239,6 @@ chrome.runtime.onMessage.addListener(async function (
         elements.forEach((element) => {
             element.classList.remove('exa-radience-highlighted');
             element.removeAttribute('data-list-id');
-            element.removeAttribute('exa-radience-word');
             element.style.borderColor = 'transparent';
             element.style.backgroundColor = 'transparent';
         });

@@ -79,10 +79,7 @@ function createSubmenu(element) {
                         return (
                             wordObj.status === status &&
                             (word ===
-                                element
-                                    .getAttribute('exa-radience-word')
-                                    .trim()
-                                    .toLowerCase() ||
+                                element.textContent.trim().toLowerCase() ||
                                 Array.from(element.attributes).some((attr) =>
                                     attr.value.includes(word)
                                 ))
@@ -114,7 +111,6 @@ function createSubmenu(element) {
         lineDiv.appendChild(statusesContainer);
         lineDiv.appendChild(removeStatusBtn);
     }
-
 
     submenuContainer.style.left = `${element.getBoundingClientRect().left}px`;
     submenuContainer.style.top = `${
