@@ -60,17 +60,36 @@ async function getFromLocalStorage(key) {
     });
 }
 
+
+async function getWordListsFromStorage() {
+    const wordListsCache = new Set(); // Local declaration
+
+    try {
+        if (wordListsCache.size === 0) {
+            const { wordLists } = await getFromLocalStorage('wordLists');
+            wordLists.forEach(list => {
+                list.words.forEach(wordObj => {
+                    wordListsCache.add(wordObj.word.trim().toLowerCase());
+                });
+            });
+        }
+    } catch (error) {
+        console.error('Error getting word lists from storage:', error);
+    }
+
+    return wordListsCache; // Return the set
+}
+
+
 async function highlightText(searchText, highlightColor, listId = null) {
     try {
-        const { wordLists } = await getFromLocalStorage('wordLists');
-        const wordsList = wordLists.flatMap(list => list.words.map(wordObj => wordObj.word.trim().toLowerCase()));
-
+        const wordListsCache = await getWordListsFromStorage(); // Call the function here
         const searchRegex = new RegExp(searchText, 'gi');
 
         function highlightTextInElement(element) {
             if (element.nodeType === Node.TEXT_NODE) {
                 const textContent = element.textContent.trim().toLowerCase();
-                if (searchRegex.test(textContent) && wordsList.includes(textContent)) {
+                if (searchRegex.test(textContent) && wordListsCache.has(textContent)) {
                     const parentElement = element.parentElement;
                     parentElement.classList.add('exa-radience-highlighted');
                     parentElement.style.borderColor = highlightColor;
@@ -80,36 +99,33 @@ async function highlightText(searchText, highlightColor, listId = null) {
                 }
             }
         }
-
+        //document.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6')
         document.querySelectorAll('*').forEach((element) => {
             for (const childNode of element.childNodes) {
                 highlightTextInElement(childNode);
             }
         });
 
-        // Отображение счётчика
+        // Update badge
         chrome.runtime.sendMessage({
             action: 'updateBadge',
             count: document.querySelectorAll('.exa-radience-highlighted').length,
-            color: '#FC0365', // Цвет для режима текста
+            color: '#FC0365' // Color for text mode
         });
     } catch (error) {
-        console.error('Ошибка при подсветке текста:', error);
+        console.error('Error highlighting text:', error);
     }
 }
 
 async function highlightAttributes(searchText, highlightColor, listId = null) {
     try {
-        const { wordLists } = await getFromLocalStorage('wordLists');
-        const wordsList = wordLists.flatMap(list => list.words.map(wordObj => wordObj.word.trim().toLowerCase()));
-
-        const searchRegex = new RegExp(searchText, 'gi');
+        const wordListsCache = await getWordListsFromStorage(); // Call the function here
 
         function highlightAttributesInElement(element) {
             const attributes = element.attributes;
             for (const attribute of attributes) {
                 const attributeValue = attribute.value.trim().toLowerCase();
-                if (attributeValue === searchText.toLowerCase() && wordsList.includes(attributeValue)) {
+                if (attributeValue === searchText.toLowerCase() && wordListsCache.has(attributeValue)) {
                     element.classList.add('exa-radience-highlighted');
                     element.style.borderColor = highlightColor;
                     if (listId) {
@@ -119,19 +135,19 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
                 }
             }
         }
-
+        //document.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6')
         document.querySelectorAll('*').forEach((element) => {
             highlightAttributesInElement(element);
         });
 
-        // Отображение счётчика
+        // Update badge
         chrome.runtime.sendMessage({
             action: 'updateBadge',
             count: document.querySelectorAll('.exa-radience-highlighted').length,
-            color: '#3B1269', // Цвет для режима атрибутов
+            color: '#3B1269' // Color for attribute mode
         });
     } catch (error) {
-        console.error('Ошибка при подсветке атрибутов:', error);
+        console.error('Error highlighting attributes:', error);
     }
 }
 
