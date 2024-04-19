@@ -99,8 +99,8 @@ async function highlightText(searchText, highlightColor, listId = null) {
                 }
             }
         }
-        //document.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6')
-        document.querySelectorAll('*').forEach((element) => {
+        //document.querySelectorAll('p, a, li, tr, th, td, input, label, b, i, span, div, h1, h2, h3, h4, h5, h6')
+        document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
             for (const childNode of element.childNodes) {
                 highlightTextInElement(childNode);
             }
@@ -135,8 +135,8 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
                 }
             }
         }
-        //document.querySelectorAll('p, span, div, h1, h2, h3, h4, h5, h6')
-        document.querySelectorAll('*').forEach((element) => {
+        //document.querySelectorAll('p, a, li, tr, th, td, input, label, b, i, span, div, h1, h2, h3, h4, h5, h6')
+        document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
             highlightAttributesInElement(element);
         });
 
