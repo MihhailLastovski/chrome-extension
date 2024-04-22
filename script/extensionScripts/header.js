@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <!--h1 class="heading">Highlight Off</h1-->
         <label class="switch">
             <input id="highlightCheckbox" class="toggleSwitch" type="checkbox">
-            <span class="slider"></span>
+            <span class="slider" tooltipText="Off/On"></span>
         </label>`;
 
     var body = document.querySelector('body');
@@ -90,67 +90,4 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
     /*****************************************Tooltips**********************************************/
-
-    const slider = document.querySelector('.slider');
-    const csvListBtn = document.getElementById('csvListBtn');
-
-    let tooltipButtons = [slider];
-    let tooltipsText = ['Off/On'];
-    let tooltipTimer;
-
-    if (highlightBtn) {
-        // popup.html
-        const newListBtn = document.getElementById('newListBtn');
-        const listIcon = document.querySelector('.fa.fa-list');
-        const searchSlider = document.getElementById('searchSlider');
-        const cubesIcon = document.querySelector('.fa.fa-cubes');
-
-        tooltipButtons.push(highlightBtn);
-        tooltipButtons.push(newListBtn);
-        tooltipButtons.push(listIcon);
-        tooltipButtons.push(searchSlider);
-        tooltipButtons.push(cubesIcon);
-
-        tooltipsText.push('Search');
-        tooltipsText.push('Add new list');
-        tooltipsText.push('Default search');
-        tooltipsText.push('Change search mode');
-        tooltipsText.push('Attribute search');
-    } else if (csvListBtn) {
-        // list.html
-        const fileListBtn = document.getElementById('fileListBtn');
-
-        tooltipButtons.push(csvListBtn);
-        tooltipButtons.push(fileListBtn);
-
-        tooltipsText.push('Import Google Sheets');
-        tooltipsText.push('Import file');
-    }
-
-    tooltipButtons.forEach((button, index) => {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'tooltip';
-        tooltip.innerText = tooltipsText[index];
-        document.body.appendChild(tooltip);
-
-        button.addEventListener('mouseover', function () {
-            tooltipTimer = setTimeout(function () {
-                const rect = button.getBoundingClientRect();
-                const tooltipX = rect.left + window.pageXOffset;
-                const tooltipY = rect.bottom + window.pageYOffset + 5;
-
-                tooltip.style.left = `${tooltipX}px`;
-                tooltip.style.top = `${tooltipY}px`;
-
-                tooltip.style.display = 'inline-block';
-                tooltip.style.opacity = 1;
-            }, 500);
-        });
-
-        button.addEventListener('mouseout', function () {
-            clearTimeout(tooltipTimer);
-            tooltip.style.display = 'none';
-            tooltip.style.opacity = 0;
-        });
-    });
 });
