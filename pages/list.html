@@ -9,6 +9,7 @@
     <script src="../script/extensionScripts/header.js"></script>
     <script src="../script/extensionScripts/styleScript.js"></script>
 	<script src="../script/pageScripts/list.js"></script>
+	<!-- <script src="../script/extensionScripts/tooltips.js"></script> -->
 </head>
 
 <body>
@@ -17,12 +18,12 @@
 			<input type="text" id="listNameInput" placeholder="List name" style="margin-top: 8%;" required>
 			<hr>
 			<div id="buttonsInLists">
-				<input type="color" value="#FC0365" id="colorPicker">
-				<button type="button" id="csvListBtn"><i class="fa-2x fa fa-cloud-download" aria-hidden="true"></i></button>
-				<button type="button" id="fileListBtn"><i class="fa-2x fa fa-download" aria-hidden="true"></i></button>		
+				<input type="color" value="#FC0365" id="colorPicker" tooltipText="Choose Highlight Color">
+				<button type="button" id="csvListBtn" tooltipText="Import Google Sheets"><i class="fa-2x fa fa-cloud-download" aria-hidden="true"></i></button>
+				<button type="button" id="fileListBtn" tooltipText="Import file"><i class="fa-2x fa fa-download" aria-hidden="true"></i></button>		
 			</div>
-			<button type="button" id="cancelBtn" class="listFormBtn">Cancel</button>
-			<button type="submit" id="saveListBtn" class="listFormBtn">Add</button>
+			<button type="button" id="cancelBtn" class="listFormBtn" tooltipText="Go Back">Cancel</button>
+			<button type="submit" id="saveListBtn" class="listFormBtn" tooltipText="Save List">Add</button>
 			<div id="wordsContainer" class="list-words">
 				<div id="lastListItem" class="list-wordsItem">
 					<input id="cbox" type="checkbox" class="word-checkbox">
@@ -30,8 +31,8 @@
 					<textarea class="word-input" id="newWordInput"></textarea>
 				</div>
 			</div>
-			<button type="button" id="cancelDownBtn" class="listFormBtn">Cancel</button>
-			<button type="submit" id="saveListDownBtn" class="listFormBtn">Add</button>
+			<button type="button" id="cancelDownBtn" class="listFormBtn" tooltipText="Go Back">Cancel</button>
+			<button type="submit" id="saveListDownBtn" class="listFormBtn" tooltipText="Save List">Add</button>
 		</div>
 	</form>
 </body>

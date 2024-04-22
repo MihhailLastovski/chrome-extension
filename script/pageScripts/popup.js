@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 toggleWordList(list.id, enable);
                 renderWordLists(lists);
             });
+            enableButton.setAttribute("tooltipText","On/Off")
             buttons.appendChild(enableButton);
 
             const deleteButton = document.createElement('button');
