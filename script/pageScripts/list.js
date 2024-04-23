@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
             saveChangesBtn.type = 'submit';
             saveChangesBtn.className = 'listFormBtn';
             saveChangesBtn.textContent = 'Save Changes';
-            saveChangesBtn.setAttribute('tooltipText','Save List')
+            saveChangesBtn.setAttribute('tooltipText', 'Save List');
             saveChangesBtn.addEventListener('click', function () {
                 saveEditedList(listIndex, lists);
             });
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
             saveChangesDownBtn.type = 'submit';
             saveChangesDownBtn.className = 'listFormBtn';
             saveChangesDownBtn.textContent = 'Save Changes';
-            saveChangesDownBtn.setAttribute('tooltipText','Save List')
+            saveChangesDownBtn.setAttribute('tooltipText', 'Save List');
             saveChangesDownBtn.addEventListener('click', function () {
                 saveEditedList(listIndex, lists);
             });
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             });
             /////////////////////send message from here////////////////////
-            createTooltips()
+            createTooltips();
         }
     });
 
@@ -144,7 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const wordLabel = document.createElement('label');
         wordLabel.textContent = word;
         wordLabel.className = 'word-label';
-        wordLabel.setAttribute("tooltipText", word)
+        wordLabel.setAttribute('tooltipText', word);
 
         tooltipButtonsRightVersion.push(wordLabel);
         tooltipsTextRightVersion.push(wordLabel.textContent);
@@ -179,8 +179,10 @@ document.addEventListener('DOMContentLoaded', function () {
         updateBtn.addEventListener('click', function () {
             if (wordDiv.contains(wordInput)) {
                 const tooltips = document.querySelectorAll('.tooltip');
-                const desiredDiv = Array.from(tooltips).find(div => div.textContent.includes(wordLabel.textContent));
-                wordLabel.setAttribute("tooltipsText", wordInput.value.trim())
+                const desiredDiv = Array.from(tooltips).find((div) =>
+                    div.textContent.includes(wordLabel.textContent)
+                );
+                wordLabel.setAttribute('tooltipsText', wordInput.value.trim());
                 desiredDiv.textContent = wordInput.value.trim();
                 wordLabel.textContent = wordInput.value.trim();
                 wordDiv.replaceChild(wordLabel, wordInput);
@@ -358,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const attributeListBtn = document.getElementById('attributeListBtn');
 
     const csvButton = document.createElement('button');
-    csvButton.setAttribute("tooltipText","Import")
+    csvButton.setAttribute('tooltipText', 'Import');
     csvButton.innerHTML = '<i class="fa fa-search" aria-hidden="true"></i>';
     csvButton.type = 'button';
 
@@ -442,10 +444,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var csvp = document.createElement('p');
         csvp.innerHTML = `<p>          
-            1. File > Share > Publish to web.<br>
-            2. Click Publish.<br>
-            3. Choose format csv.<br>
-            4. Copy the URL.          
+            1. File > Share > Share with others.<br>
+            2. In "General access" choose "Anyone with the link".<br>
+            3. Change role on "Editor".<br>
+            4. Copy link.          
         </p>`;
         csvp.style.textAlign = 'left';
         csvp.style.marginLeft = '9%';
@@ -503,50 +505,51 @@ document.addEventListener('DOMContentLoaded', function () {
     /*****************************************Tooltips**********************************************/
     function createTooltips() {
         function addTooltip(element) {
-          const attributeValue = element.getAttribute('tooltipText');
-          const tooltipId = `tooltip-${attributeValue.replace(/\s/g, '-')}`; // Create a unique ID based on the text
-          
-          // Check if the tooltip already exists
-          let tooltip = document.getElementById(tooltipId);
-          
-          if (!tooltip) {
-            tooltip = document.createElement('div');
-            tooltip.id = tooltipId; // Set the unique ID
-            tooltip.className = 'tooltip';
-            tooltip.innerText = attributeValue;
-            document.body.appendChild(tooltip);
-          }
-      
-          // Set event listeners for hover effects
-          element.addEventListener('mouseover', function () {
-            const rect = element.getBoundingClientRect();
-            const tooltipX = rect.left + window.pageXOffset;
-            const tooltipY = rect.bottom + window.pageYOffset + 5;
-      
-            tooltip.style.left = `${tooltipX}px`;
-            tooltip.style.top = `${tooltipY}px`;
-      
-            tooltip.style.display = 'inline-block';
-            tooltip.style.opacity = 1;
-          });
-      
-          element.addEventListener('mouseout', function () {
-            tooltip.style.display = 'none';
-            tooltip.style.opacity = 0;
-          });
+            const attributeValue = element.getAttribute('tooltipText');
+            const tooltipId = `tooltip-${attributeValue.replace(/\s/g, '-')}`; // Create a unique ID based on the text
+
+            // Check if the tooltip already exists
+            let tooltip = document.getElementById(tooltipId);
+
+            if (!tooltip) {
+                tooltip = document.createElement('div');
+                tooltip.id = tooltipId; // Set the unique ID
+                tooltip.className = 'tooltip';
+                tooltip.innerText = attributeValue;
+                document.body.appendChild(tooltip);
+            }
+
+            // Set event listeners for hover effects
+            element.addEventListener('mouseover', function () {
+                const rect = element.getBoundingClientRect();
+                const tooltipX = rect.left + window.pageXOffset;
+                const tooltipY = rect.bottom + window.pageYOffset + 5;
+
+                tooltip.style.left = `${tooltipX}px`;
+                tooltip.style.top = `${tooltipY}px`;
+
+                tooltip.style.display = 'inline-block';
+                tooltip.style.opacity = 1;
+            });
+
+            element.addEventListener('mouseout', function () {
+                tooltip.style.display = 'none';
+                tooltip.style.opacity = 0;
+            });
         }
-      
+
         // Select all elements that have the 'tooltipText' attribute
         const elementsWithTooltip = document.querySelectorAll('[tooltipText]');
         elementsWithTooltip.forEach(addTooltip);
 
         // Create a MutationObserver to watch for new buttons
         const mutationCallback = (mutationsList, observer) => {
-            mutationsList.forEach(mutation => {
+            mutationsList.forEach((mutation) => {
                 if (mutation.type === 'childList') {
-                    mutation.addedNodes.forEach(node => {
+                    mutation.addedNodes.forEach((node) => {
                         if (node.nodeType === Node.ELEMENT_NODE) {
-                            const tooltipText = node.getAttribute('tooltipText');
+                            const tooltipText =
+                                node.getAttribute('tooltipText');
                             if (tooltipText) {
                                 addTooltip(node); // Apply tooltip logic to the new element
                             }
@@ -564,5 +567,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Start observing the document body for changes
         observer.observe(document.body, observerOptions);
-      }
+    }
 });
