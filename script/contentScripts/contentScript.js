@@ -89,7 +89,7 @@ async function highlightText(searchText, highlightColor, listId = null) {
         function highlightTextInElement(element) {
             if (element.nodeType === Node.TEXT_NODE) {
                 const textContent = element.textContent.trim().toLowerCase();
-                if (searchRegex.test(textContent) && wordListsCache.has(textContent)) {
+                if (searchRegex.test(textContent)) {
                     const parentElement = element.parentElement;
                     parentElement.classList.add('exa-radience-highlighted');
                     parentElement.style.borderColor = highlightColor;
