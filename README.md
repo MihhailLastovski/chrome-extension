@@ -8,6 +8,10 @@
 
 ## Versions
 
+v.1.4.22
+
+-   Updated the apps script user guide
+
 v 1.4.21
 
 -   Tooltips added for better user experience

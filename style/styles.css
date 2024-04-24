@@ -483,11 +483,12 @@ input[type=file]::file-selector-button {
   border-radius: 5px;
   margin-left: 5%;
   margin-right: 5%;
+  overflow-y: auto;
 }
 
 .language-javascript {
   color: var(--main-white);
-  font-size: 11px;
+  font-size: 13px;
 } 
 
 .guideImage {
