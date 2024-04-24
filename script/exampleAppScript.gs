@@ -12,8 +12,8 @@ function addValueToStepsStatus(spreadsheetId, note, textContent, columnName) {
             // Get all data as a 2D array
             var data = sheet.getDataRange().getValues();
 
-            // Find the index of the column "String ID"
-            var stringIdIndex = data[0].indexOf("String ID");
+            // Find the index of the column "Lec ID"
+            var stringIdIndex = data[0].indexOf("Lec ID");
             
             // If the column is found
             if (stringIdIndex !== -1) {

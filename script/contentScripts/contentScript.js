@@ -60,140 +60,97 @@ async function getFromLocalStorage(key) {
     });
 }
 
-function findWordInWordLists(word, listId, element) {
-    for (const wordList of wordLists) {
-        if (wordList.words && wordList.id === listId) {
-            const foundWord = wordList.words.find(
-                (wordObj) => wordObj.word.trim().toLowerCase() === word
-            );
-            if (foundWord) {
-                return foundWord;
-            }
+
+async function getWordListsFromStorage() {
+    const wordListsCache = new Set(); // Local declaration
+
+    try {
+        if (wordListsCache.size === 0) {
+            const { wordLists } = await getFromLocalStorage('wordLists');
+            wordLists.forEach(list => {
+                list.words.forEach(wordObj => {
+                    wordListsCache.add(wordObj.word.trim().toLowerCase());
+                });
+            });
         }
+    } catch (error) {
+        console.error('Error getting word lists from storage:', error);
     }
-    return null;
+
+    return wordListsCache; // Return the set
 }
 
+
 async function highlightText(searchText, highlightColor, listId = null) {
-    highlightColorRestore = highlightColor;
-    const searchRegex = new RegExp(searchText, 'gi');
+    try {
+        const wordListsCache = await getWordListsFromStorage(); // Call the function here
+        const searchRegex = new RegExp(searchText, 'gi');
 
-    function highlightTextInNode(node) {
-        if (
-            node.nodeType === Node.TEXT_NODE &&
-            !(
-                node.parentNode &&
-                (node.parentNode.tagName.toLowerCase() === 'style' ||
-                    node.parentNode.tagName.toLowerCase() === 'script')
-            )
-        ) {
-            const text = node.nodeValue;
-            if (text.toLowerCase() === searchText.toLowerCase()) {
-                const foundWord = findWordInWordLists(
-                    searchText.toLowerCase(),
-                    listId,
-                    node
-                );
-                const isValid =
-                    foundWord && statusesList.includes(foundWord.status);
-
-                if (
-                    !node.parentNode.classList.contains(
-                        'exa-radience-highlighted'
-                    )
-                ) {
-                    node.parentNode.classList.add('exa-radience-highlighted');
-                    node.parentNode.style.borderColor = highlightColor;
-
-                    if (isValid) {
-                        node.parentNode.style.backgroundColor = highlightColor;
-                    }
+        function highlightTextInElement(element) {
+            if (element.nodeType === Node.TEXT_NODE) {
+                const textContent = element.textContent.trim().toLowerCase();
+                if (searchRegex.test(textContent)) {
+                    const parentElement = element.parentElement;
+                    parentElement.classList.add('exa-radience-highlighted');
+                    parentElement.style.borderColor = highlightColor;
                     if (listId) {
-                        node.parentNode.setAttribute('data-list-id', listId);
+                        parentElement.dataset.listId = listId;
                     }
                 }
             }
-        } else if (
-            node.nodeType === Node.ELEMENT_NODE &&
-            !['style', 'script'].includes(node.tagName.toLowerCase())
-        ) {
-            for (const childNode of node.childNodes) {
-                highlightTextInNode(childNode);
-            }
         }
-    }
-    function findElementsByText() {
-        var matchingElements = [];
-        function traverseElement(element) {
-            if (element.childNodes.length > 0) {
-                for (var i = 0; i < element.childNodes.length; i++) {
-                    traverseElement(element.childNodes[i]);
-                }
+        //document.querySelectorAll('p, a, li, tr, th, td, input, label, b, i, span, div, h1, h2, h3, h4, h5, h6')
+        document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
+            for (const childNode of element.childNodes) {
+                highlightTextInElement(childNode);
             }
-            if (
-                element.nodeType === Node.TEXT_NODE &&
-                searchRegex.test(element.nodeValue.trim())
-            ) {
-                matchingElements.push(element.parentNode);
-            }
-        }
-        traverseElement(document.body);
+        });
 
-        return matchingElements;
-    }
-
-    const allElements = findElementsByText();
-    for (let i = 0; i < allElements.length; i++) {
-        highlightTextInNode(allElements[i]);
+        // Update badge
+        chrome.runtime.sendMessage({
+            action: 'updateBadge',
+            count: document.querySelectorAll('.exa-radience-highlighted').length,
+            color: '#FC0365' // Color for text mode
+        });
+    } catch (error) {
+        console.error('Error highlighting text:', error);
     }
 }
 
 async function highlightAttributes(searchText, highlightColor, listId = null) {
-    highlightColorRestore = highlightColor;
+    try {
+        const wordListsCache = await getWordListsFromStorage(); // Call the function here
 
-    function highlightElement(element) {
-        var matchedElement = null;
-
-        const attributes = element.attributes;
-        for (const attribute of attributes) {
-            if (
-                attributesList.includes(attribute.name) &&
-                attribute.value.toLowerCase() === searchText.toLowerCase()
-            ) {
-                matchedElement = element;
+        function highlightAttributesInElement(element) {
+            const attributes = element.attributes;
+            for (const attribute of attributes) {
+                const attributeValue = attribute.value.trim().toLowerCase();
+                if (attributeValue === searchText.toLowerCase() && wordListsCache.has(attributeValue)) {
+                    element.classList.add('exa-radience-highlighted');
+                    element.style.borderColor = highlightColor;
+                    if (listId) {
+                        element.dataset.listId = listId;
+                    }
+                    return;
+                }
             }
         }
+        //document.querySelectorAll('p, a, li, tr, th, td, input, label, b, i, span, div, h1, h2, h3, h4, h5, h6')
+        document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
+            highlightAttributesInElement(element);
+        });
 
-        if (
-            matchedElement &&
-            !matchedElement.parentNode.classList.contains(
-                'exa-radience-highlighted'
-            )
-        ) {
-            element.classList.add('exa-radience-highlighted');
-
-            const foundWord = findWordInWordLists(
-                searchText.toLowerCase(),
-                listId,
-                element
-            );
-            const isValid =
-                foundWord && statusesList.includes(foundWord.status);
-            element.style.borderColor = highlightColor;
-
-            if (isValid) {
-                element.style.backgroundColor = highlightColor;
-            }
-
-            if (listId) {
-                element.setAttribute('data-list-id', listId);
-            }
-        }
+        // Update badge
+        chrome.runtime.sendMessage({
+            action: 'updateBadge',
+            count: document.querySelectorAll('.exa-radience-highlighted').length,
+            color: '#3B1269' // Color for attribute mode
+        });
+    } catch (error) {
+        console.error('Error highlighting attributes:', error);
     }
-
-    const elements = document.querySelectorAll('body *');
-    elements.forEach((element) => highlightElement(element));
 }
+
 
 chrome.runtime.onMessage.addListener(async function (
     request,

@@ -26,7 +26,7 @@ async function changeWordStatus(element) {
                                     updateStatus(
                                         wordList.dataURL,
                                         selectedValue,
-                                        wordObj.stringID
+                                        wordObj.lecID
                                     );
                                 }
                                 wordObj['status'] = selectedValue;
@@ -74,7 +74,7 @@ async function removeWordsStatus(element) {
                                     updateStatus(
                                         wordList.dataURL,
                                         '',
-                                        wordObj.stringID
+                                        wordObj.lecID
                                     );
                                 }
                                 delete wordObj['status'];
@@ -98,13 +98,13 @@ async function removeWordsStatus(element) {
     }
 }
 
-function updateStatus(listId, selectedValue, stringID) {
+function updateStatus(listId, selectedValue, lecID) {
     const sheetId = extractSheetIdFromURL(listId);
 
     const data = {
         action: 'addNoteToElement',
         note: selectedValue,
-        textContent: stringID,
+        textContent: lecID,
         sheetId: sheetId,
         columnName: 'Status',
     };
@@ -112,7 +112,7 @@ function updateStatus(listId, selectedValue, stringID) {
     console.log('Sending data:', data);
 
     fetch(
-        'https://script.google.com/macros/s/AKfycbyVFm5x4PBSpXqqaNTezVoRRibcdKGvotBJeVXu_DGpe-o4wpgLd2Ox4pTa4lfPnD4/exec',
+        'https://script.google.com/macros/s/AKfycbw1d1kLfI7VzmSStpaK7ESPLdSOKRzEjKh2U0EXwL0iznCsssWSWtsvPkYa9dAzqWPB/exec',
         {
             method: 'POST',
             mode: 'no-cors',

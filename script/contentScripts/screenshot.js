@@ -14,45 +14,47 @@ async function captureScreenshot(element) {
     submenuContainer.style.display = 'none';
     await sleep(1000);
 
-    new Promise((resolve) => {
-        chrome.runtime.sendMessage(
-            { action: 'captureScreenshot' },
-            (dataUrl) => {
+    try {
+        const dataUrl = await new Promise((resolve, reject) => {
+            chrome.runtime.sendMessage({ action: 'captureScreenshot' }, (dataUrl) => {
                 if (dataUrl) {
-                    chrome.storage.local.get('wordLists', (result) => {
-                        const wordLists = result.wordLists || [];
-                        wordLists.map((wordList) => {
-                            if(wordList.dataURL){
-                                if (wordList.words && wordList.id === listId) {
-                                    wordList.words = wordList.words.filter((wordObj) => {
-                                        if (element.innerHTML.toLowerCase() === wordObj.word.toLowerCase()){
-                                            saveScreenshot(dataUrl, wordObj.lecID);
-                                        }
-                                        return (
-                                            wordObj.word.trim().toLowerCase() !==
-                                            element.textContent.trim()
-                                        );
-                                    });
-                                }
-                            }
-                            else{
-                                saveScreenshot(dataUrl, false);
-                            }
-                        });
-                    });
-                    copyToClipboard(dataUrl);
-                    resolve();
+                    resolve(dataUrl);
+                } else {
+                    reject(new Error('Failed to capture screenshot'));
+                }
+            });
+        });
+
+        const result = await getFromLocalStorage('wordLists');
+        const wordLists = result.wordLists || [];
+
+        let savedScreenshot = false;
+
+        for (const wordList of wordLists) {
+            if (wordList.dataURL && wordList.id === listId) {
+                for (const wordObj of wordList.words) {
+                    if (element.innerHTML.toLowerCase() === wordObj.word.toLowerCase()) {
+                        saveScreenshot(dataUrl, wordObj.lecID);
+                        savedScreenshot = true;
+                    }
                 }
             }
-        );
-    }).then(() => {
-        if (listId) {
-            removeFromList(element);
         }
+
+        if (!savedScreenshot) {
+            saveScreenshot(dataUrl, false);
+        }
+
+        copyToClipboard(dataUrl);
+    } catch (error) {
+        console.error('Error capturing screenshot:', error);
+    } finally {
         restoreHighlight(element);
         document.addEventListener('mouseover', showSubmenus);
-    });
+    }
 }
+
+
 
 function saveScreenshot(dataUrl, lecID) {
     return new Promise((resolve) => {
@@ -95,7 +97,7 @@ function removeFromList(element) {
             if (wordList.words && wordList.id === listId) {
                 wordList.words = wordList.words.filter((wordObj) => {
                     if(wordObj.word.toLowerCase() === element.innerHTML.toLowerCase()){
-                        sendScreenshotToGoogleSheet(wordList.dataURL, wordObj.stringID)
+                        sendScreenshotToGoogleSheet(wordList.dataURL, wordObj.lecID)
                     }
                     return (
                         wordObj.word.trim().toLowerCase() !==
@@ -110,12 +112,12 @@ function removeFromList(element) {
     });
 }
 
-function sendScreenshotToGoogleSheet(dataURL, stringID) {
+function sendScreenshotToGoogleSheet(dataURL, lecID) {
     const sheetId = extractSheetIdFromURL(dataURL);
     var data = {
             action: 'addNoteToElement',
             note: '',
-            textContent: stringID,
+            textContent: lecID,
             sheetId: sheetId,
             columnName: 'Screenshot',
         };
@@ -123,7 +125,7 @@ function sendScreenshotToGoogleSheet(dataURL, stringID) {
     console.log('Sending data:', data);
 
     fetch(
-        'https://script.google.com/macros/s/AKfycbyVFm5x4PBSpXqqaNTezVoRRibcdKGvotBJeVXu_DGpe-o4wpgLd2Ox4pTa4lfPnD4/exec',
+        'https://script.google.com/macros/s/AKfycbw1d1kLfI7VzmSStpaK7ESPLdSOKRzEjKh2U0EXwL0iznCsssWSWtsvPkYa9dAzqWPB/exec',
         {
             method: 'POST',
             mode: 'no-cors',
@@ -140,10 +142,15 @@ function sendScreenshotToGoogleSheet(dataURL, stringID) {
         .catch((error) => console.error('Error sending note:', error));
 }
 
-function restoreHighlight(element) {
+async function restoreHighlight(element) {
+    const storageData = await getFromLocalStorage('wordLists');
     document.querySelectorAll('.exa-radience-highlighted').forEach((el) => {
+        const listId = el.getAttribute('data-list-id');
+        const wordLists = storageData.wordLists || [];
+
+        const targetList = wordLists.find(list => list.id === listId);
         if (el.style.borderColor === 'transparent') {
-            el.style.borderColor = `${highlightColorRestore}`;
+            el.style.borderColor = targetList.color;
         }
 
         if (el === element) {
