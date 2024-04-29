@@ -88,7 +88,6 @@ async function highlightText(searchText, highlightColor, listId = null) {
             searchText.forEach((wordObj) => {
                 if (wordObj.enabled) {
                     const searchText = wordObj.word;
-                    const searchRegex = new RegExp(searchText, 'gi');
                     
                     document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
                         // Пропускаем элементы, которые уже выделены
@@ -101,14 +100,12 @@ async function highlightText(searchText, highlightColor, listId = null) {
             
                         Array.from(element.childNodes).forEach((node) => {
                             if (node.nodeType === Node.TEXT_NODE) {
-                                const textContent = node.textContent.trim().toLowerCase();
-                                if (searchRegex.test(textContent)) {
+                                const textContent = node.textContent.trim();
+                                if (searchText === textContent) {
                                     const parentElement = node.parentElement;
                                     parentElement.classList.add('exa-radience-highlighted');
                                     parentElement.style.borderColor = highlightColor;
-                                    if (listId) {
-                                        parentElement.dataset.listId = listId;
-                                    }
+                                    parentElement.dataset.listId = listId;
                                 }
                             }
                         });
@@ -155,26 +152,30 @@ async function highlightText(searchText, highlightColor, listId = null) {
 async function highlightAttributes(searchText, highlightColor, listId = null) {
     try {
         const wordListsCache = await getWordListsFromStorage(); // Call the function here
-
-        function highlightAttributesInElement(element) {
-            const attributes = element.attributes;
-            for (const attribute of attributes) {
-                const attributeValue = attribute.value.trim().toLowerCase();
-                if (attributeValue === searchText.toLowerCase() && wordListsCache.has(attributeValue)) {
-                    element.classList.add('exa-radience-highlighted');
-                    element.style.borderColor = highlightColor;
-                    if (listId) {
-                        element.dataset.listId = listId;
+        searchText.forEach((wordObj) => {
+            if (wordObj.enabled) {
+                const searchText = wordObj.word
+                function highlightAttributesInElement(element) {
+                    const attributes = element.attributes;
+                    for (const attribute of attributes) {
+                        const attributeValue = attribute.value.trim().toLowerCase();
+                        if (attributeValue === searchText.toLowerCase() && wordListsCache.has(attributeValue)) {
+                            element.classList.add('exa-radience-highlighted');
+                            element.style.borderColor = highlightColor;
+                            if (listId) {
+                                element.dataset.listId = listId;
+                            }
+                            return;
+                        }
                     }
-                    return;
                 }
-            }
-        }
-        //document.querySelectorAll('p, a, li, tr, th, td, input, label, b, i, span, div, h1, h2, h3, h4, h5, h6')
-        document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
-            highlightAttributesInElement(element);
-        });
-
+                //document.querySelectorAll('p, a, li, tr, th, td, input, label, b, i, span, div, h1, h2, h3, h4, h5, h6')
+                document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
+                    highlightAttributesInElement(element);
+                });
+        
+            }});
+        
         // Update badge
         chrome.runtime.sendMessage({
             action: 'updateBadge',
