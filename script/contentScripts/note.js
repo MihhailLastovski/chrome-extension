@@ -16,7 +16,7 @@ function addNoteToElement(element) {
                 data = {
                     action: 'addNoteToElement',
                     note: note,
-                    textContent: wordObj.lecID,
+                    textContent: `${wordObj.lecID}`,
                     sheetId: sheetId,
                     columnName: 'Steps',
                 };
@@ -26,7 +26,7 @@ function addNoteToElement(element) {
         console.log('Sending data:', data);
 
         fetch(
-            'https://script.google.com/macros/s/AKfycbw1d1kLfI7VzmSStpaK7ESPLdSOKRzEjKh2U0EXwL0iznCsssWSWtsvPkYa9dAzqWPB/exec',
+            'https://script.google.com/macros/s/AKfycbyC9pSdWFHNpugKW6ckVpBa0VGdyC4Y_wXw3t94guk04ICPBNRJyN4ADHxgWh6Qw9In/exec',
             {
                 method: 'POST',
                 mode: 'no-cors',

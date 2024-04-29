@@ -49,6 +49,7 @@ async function captureScreenshot(element) {
     } catch (error) {
         console.error('Error capturing screenshot:', error);
     } finally {
+        removeFromList(element)
         restoreHighlight(element);
         document.addEventListener('mouseover', showSubmenus);
     }
@@ -117,7 +118,7 @@ function sendScreenshotToGoogleSheet(dataURL, lecID) {
     var data = {
             action: 'addNoteToElement',
             note: '',
-            textContent: lecID,
+            textContent: `${lecID}`,
             sheetId: sheetId,
             columnName: 'Screenshot',
         };
@@ -125,7 +126,7 @@ function sendScreenshotToGoogleSheet(dataURL, lecID) {
     console.log('Sending data:', data);
 
     fetch(
-        'https://script.google.com/macros/s/AKfycbw1d1kLfI7VzmSStpaK7ESPLdSOKRzEjKh2U0EXwL0iznCsssWSWtsvPkYa9dAzqWPB/exec',
+        'https://script.google.com/macros/s/AKfycbyC9pSdWFHNpugKW6ckVpBa0VGdyC4Y_wXw3t94guk04ICPBNRJyN4ADHxgWh6Qw9In/exec',
         {
             method: 'POST',
             mode: 'no-cors',

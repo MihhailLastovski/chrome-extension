@@ -82,30 +82,64 @@ async function getWordListsFromStorage() {
 
 
 async function highlightText(searchText, highlightColor, listId = null) {
-    try {
-        const wordListsCache = await getWordListsFromStorage(); // Call the function here
-        const searchRegex = new RegExp(searchText, 'gi');
+    try {        
+        // Iterate over each searchText element
+        if (listId) {
+            searchText.forEach((wordObj) => {
+                if (wordObj.enabled) {
+                    const searchText = wordObj.word;
+                    const searchRegex = new RegExp(searchText, 'gi');
+                    
+                    document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
+                        // Пропускаем элементы, которые уже выделены
+                        if (element.classList.contains('exa-radience-highlighted')) {
+                            return;
+                        }
+                        if (element.id === 'submenu') {
+                            return;
+                        }
+            
+                        Array.from(element.childNodes).forEach((node) => {
+                            if (node.nodeType === Node.TEXT_NODE) {
+                                const textContent = node.textContent.trim().toLowerCase();
+                                if (searchRegex.test(textContent)) {
+                                    const parentElement = node.parentElement;
+                                    parentElement.classList.add('exa-radience-highlighted');
+                                    parentElement.style.borderColor = highlightColor;
+                                    if (listId) {
+                                        parentElement.dataset.listId = listId;
+                                    }
+                                }
+                            }
+                        });
+                    });
+                }
+            });
+        }
+        else{
+            const searchRegex = new RegExp(searchText, 'gi');
 
-        function highlightTextInElement(element) {
-            if (element.nodeType === Node.TEXT_NODE) {
-                const textContent = element.textContent.trim().toLowerCase();
-                if (searchRegex.test(textContent)) {
-                    const parentElement = element.parentElement;
-                    parentElement.classList.add('exa-radience-highlighted');
-                    parentElement.style.borderColor = highlightColor;
-                    if (listId) {
-                        parentElement.dataset.listId = listId;
+            function highlightTextInElement(element) {
+                if (element.nodeType === Node.TEXT_NODE) {
+                    const textContent = element.textContent.trim().toLowerCase();
+                    if (searchRegex.test(textContent)) {
+                        const parentElement = element.parentElement;
+                        parentElement.classList.add('exa-radience-highlighted');
+                        parentElement.style.borderColor = highlightColor;
+                        if (listId) {
+                            parentElement.dataset.listId = listId;
+                        }
                     }
                 }
             }
+            //document.querySelectorAll('p, a, li, tr, th, td, input, label, b, i, span, div, h1, h2, h3, h4, h5, h6')
+            document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
+                for (const childNode of element.childNodes) {
+                    highlightTextInElement(childNode);
+                }
+            });
         }
-        //document.querySelectorAll('p, a, li, tr, th, td, input, label, b, i, span, div, h1, h2, h3, h4, h5, h6')
-        document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
-            for (const childNode of element.childNodes) {
-                highlightTextInElement(childNode);
-            }
-        });
-
+        
         // Update badge
         chrome.runtime.sendMessage({
             action: 'updateBadge',
@@ -116,6 +150,7 @@ async function highlightText(searchText, highlightColor, listId = null) {
         console.error('Error highlighting text:', error);
     }
 }
+
 
 async function highlightAttributes(searchText, highlightColor, listId = null) {
     try {

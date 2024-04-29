@@ -166,31 +166,32 @@ document.addEventListener('DOMContentLoaded', function () {
             const sortedWords = listToHighlight.words.sort((a, b) => {
                 return b.word.length - a.word.length;
             });
-
-            sortedWords.forEach((wordObj) => {
-                if (wordObj.enabled) {
-                    const searchText = wordObj.word;
-                    chrome.tabs.query(
-                        { active: true, currentWindow: true },
-                        function (tabs) {
-                            if (tabs && tabs[0]) {
-                                chrome.scripting.executeScript({
-                                    target: { tabId: tabs[0].id },
-                                    files: [
-                                        './script/contentScripts/contentScript.js',
-                                    ],
-                                });
-                                chrome.tabs.sendMessage(tabs[0].id, {
-                                    action: 'highlight',
-                                    searchText: searchText,
-                                    highlightColor: listToHighlight.color,
-                                    listId: listId,
-                                });
-                            }
-                        }
-                    );
+            console.log(sortedWords)
+            chrome.tabs.query(
+                { active: true, currentWindow: true },
+                function (tabs) {
+                    if (tabs && tabs[0]) {
+                        chrome.scripting.executeScript({
+                            target: { tabId: tabs[0].id },
+                            files: [
+                                './script/contentScripts/contentScript.js',
+                            ],
+                        });
+                        chrome.tabs.sendMessage(tabs[0].id, {
+                            action: 'highlight',
+                            searchText: sortedWords,
+                            highlightColor: listToHighlight.color,
+                            listId: listId,
+                        });
+                    }
                 }
-            });
+            );
+            // sortedWords.forEach((wordObj) => {
+            //     if (wordObj.enabled) {
+            //         const searchText = wordObj.word;
+                    
+            //     }
+            // });
         }
     }
 

@@ -104,7 +104,7 @@ function updateStatus(listId, selectedValue, lecID) {
     const data = {
         action: 'addNoteToElement',
         note: selectedValue,
-        textContent: lecID,
+        textContent: `${lecID}`,
         sheetId: sheetId,
         columnName: 'Status',
     };
@@ -112,7 +112,7 @@ function updateStatus(listId, selectedValue, lecID) {
     console.log('Sending data:', data);
 
     fetch(
-        'https://script.google.com/macros/s/AKfycbw1d1kLfI7VzmSStpaK7ESPLdSOKRzEjKh2U0EXwL0iznCsssWSWtsvPkYa9dAzqWPB/exec',
+        'https://script.google.com/macros/s/AKfycbyC9pSdWFHNpugKW6ckVpBa0VGdyC4Y_wXw3t94guk04ICPBNRJyN4ADHxgWh6Qw9In/exec',
         {
             method: 'POST',
             mode: 'no-cors',
