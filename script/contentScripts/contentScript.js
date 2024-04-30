@@ -84,7 +84,7 @@ async function getWordListsFromStorage() {
 async function highlightText(searchText, highlightColor, listId = null) {
     try {        
         // Iterate over each searchText element
-        if (listId) {
+        if (Array.isArray(searchText)) {
             searchText.forEach((wordObj) => {
                 if (wordObj.enabled) {
                     const searchText = wordObj.word;

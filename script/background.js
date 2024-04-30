@@ -114,25 +114,28 @@ function highlightWordsFromList(listId) {
             });
 
             sortedWords.forEach((wordObj) => {
-                chrome.tabs.query(
-                    { active: true, currentWindow: true },
-                    function (tabs) {
-                        if (tabs && tabs[0]) {
-                            chrome.scripting.executeScript({
-                                target: { tabId: tabs[0].id },
-                                files: [
-                                    './script/contentScripts/contentScript.js',
-                                ],
-                            });
-                            chrome.tabs.sendMessage(tabs[0].id, {
-                                action: 'highlight',
-                                searchText: sortedWords,
-                                highlightColor: listToHighlight.color,
-                                listId: listId,
-                            });
+                if (wordObj.enabled) {
+                    const searchText = wordObj.word;
+                    chrome.tabs.query(
+                        { active: true, currentWindow: true },
+                        function (tabs) {
+                            if (tabs && tabs[0]) {
+                                chrome.scripting.executeScript({
+                                    target: { tabId: tabs[0].id },
+                                    files: [
+                                        './script/contentScripts/contentScript.js',
+                                    ],
+                                });
+                                chrome.tabs.sendMessage(tabs[0].id, {
+                                    action: 'highlight',
+                                    searchText: searchText,
+                                    highlightColor: listToHighlight.color,
+                                    listId: listId,
+                                });
+                            }
                         }
-                    }
-                );
+                    );
+                }
             });
         }
     });
