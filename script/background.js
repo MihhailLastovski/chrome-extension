@@ -28,7 +28,7 @@ chrome.runtime.onInstalled.addListener(function () {
             });
         }
     });
-    // chrome.alarms.create('updateDataAlarm', { periodInMinutes: 15 });
+    chrome.alarms.create('updateDataAlarm', { periodInMinutes: 15 });
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
@@ -84,11 +84,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     } else if (request.action === 'syncData') {
         updateWordListsFromGoogleSheets();
     }
-    // else if (request.action === 'updateLists') {
-    //     const listId = request.listId || 0;
-    //     console.log('highlight');
-    //     highlightWordsFromList(listId);
-    // }
 });
 
 function downloadScreenshot(dataUrl, saveAs, screenshotName) {

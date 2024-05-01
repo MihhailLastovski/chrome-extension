@@ -89,68 +89,44 @@ async function highlightText(searchText, highlightColor, listId = null) {
             searchText.forEach((wordObj) => {
                 if (wordObj.enabled) {
                     const searchText = wordObj.word;
-                    
-                    document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
-                        // Пропускаем элементы, которые уже выделены
-                        if (element.classList.contains('exa-radience-highlighted')) {
-                            return;
-                        }
-                        if (element.id === 'submenu') {
-                            return;
-                        }
-            
-                        Array.from(element.childNodes).forEach((node) => {
-                            if (node.nodeType === Node.TEXT_NODE) {
-                                const textContent = node.textContent.trim();
-                                if (searchText === textContent) {
-                                    const parentElement = node.parentElement;
-                                    parentElement.classList.add('exa-radience-highlighted');
-                                    parentElement.style.borderColor = highlightColor;
-                                    parentElement.dataset.listId = listId;
-                                }
-                            }
-                        });
-                    });
+
+                    iterateArray(searchText, highlightColor, listId); 
                 }
             });
         }
-        else{                    
-            document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
-                // Пропускаем элементы, которые уже выделены
-                if (element.classList.contains('exa-radience-highlighted')) {
-                    return;
-                }
-                if (element.id === 'submenu') {
-                    return;
-                }
-    
-                Array.from(element.childNodes).forEach((node) => {
-                    if (node.nodeType === Node.TEXT_NODE) {
-                        const textContent = node.textContent.trim();
-                        if (searchText === textContent) {
-                            const parentElement = node.parentElement;
-                            parentElement.classList.add('exa-radience-highlighted');
-                            parentElement.style.borderColor = highlightColor;
-                            if(listId){
-                                parentElement.dataset.listId = listId;
-                            }
-                        }
-                    }
-                });
-            });
+        else {                    
+            iterateArray(searchText, highlightColor, listId);
         }
-        
-        // Update badge
-        chrome.runtime.sendMessage({
-            action: 'updateBadge',
-            count: document.querySelectorAll('.exa-radience-highlighted').length,
-            color: '#FC0365' // Color for text mode
-        });
     } catch (error) {
         console.error('Error highlighting text:', error);
     }
 }
 
+function iterateArray(searchText, highlightColor, listId){
+    document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
+        // Пропускаем элементы, которые уже выделены
+        if (element.classList.contains('exa-radience-highlighted')) {
+            return;
+        }
+        if (element.id === 'submenu') {
+            return;
+        }
+
+        Array.from(element.childNodes).forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const textContent = node.textContent.trim();
+                if (searchText === textContent) {
+                    const parentElement = node.parentElement;
+                    parentElement.classList.add('exa-radience-highlighted');
+                    parentElement.style.borderColor = highlightColor;
+                    if(listId){
+                        parentElement.dataset.listId = listId;                   
+                    }
+                }
+            }
+        });
+    });
+}
 
 async function highlightAttributes(searchText, highlightColor, listId = null) {
     try {
@@ -200,13 +176,6 @@ async function highlightAttributes(searchText, highlightColor, listId = null) {
                 highlightAttributesInElement(element);
             });
         }
-        
-        // Update badge
-        chrome.runtime.sendMessage({
-            action: 'updateBadge',
-            count: document.querySelectorAll('.exa-radience-highlighted').length,
-            color: '#3B1269' // Color for attribute mode
-        });
     } catch (error) {
         console.error('Error highlighting attributes:', error);
     }
