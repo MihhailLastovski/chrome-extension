@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
         // Подсвечивание включенных списков
         enabledLists.forEach((listId) => {
             removeHighlight(listId);
-            // highlightWordsFromList(listId);
         });
     });
 
@@ -105,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 toggleWordList(list.id, enable);
                 renderWordLists(lists);
             });
-            enableButton.setAttribute("tooltipText","On/Off")
+            enableButton.setAttribute('tooltipText', 'On/Off');
             buttons.appendChild(enableButton);
 
             const deleteButton = document.createElement('button');
@@ -166,16 +165,14 @@ document.addEventListener('DOMContentLoaded', function () {
             const sortedWords = listToHighlight.words.sort((a, b) => {
                 return b.word.length - a.word.length;
             });
-            console.log(sortedWords)
+            console.log(sortedWords);
             chrome.tabs.query(
                 { active: true, currentWindow: true },
                 function (tabs) {
                     if (tabs && tabs[0]) {
                         chrome.scripting.executeScript({
                             target: { tabId: tabs[0].id },
-                            files: [
-                                './script/contentScripts/contentScript.js',
-                            ],
+                            files: ['./script/contentScripts/contentScript.js'],
                         });
                         chrome.tabs.sendMessage(tabs[0].id, {
                             action: 'highlight',
@@ -186,12 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             );
-            // sortedWords.forEach((wordObj) => {
-            //     if (wordObj.enabled) {
-            //         const searchText = wordObj.word;
-                    
-            //     }
-            // });
         }
     }
 

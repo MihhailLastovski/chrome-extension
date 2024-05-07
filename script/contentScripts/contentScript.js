@@ -60,15 +60,14 @@ async function getFromLocalStorage(key) {
     });
 }
 
-
 async function getWordListsFromStorage() {
     const wordListsCache = new Set(); // Local declaration
 
     try {
         if (wordListsCache.size === 0) {
             const { wordLists } = await getFromLocalStorage('wordLists');
-            wordLists.forEach(list => {
-                list.words.forEach(wordObj => {
+            wordLists.forEach((list) => {
+                list.words.forEach((wordObj) => {
                     wordListsCache.add(wordObj.word.trim().toLowerCase());
                 });
             });
@@ -80,21 +79,21 @@ async function getWordListsFromStorage() {
     return wordListsCache; // Return the set
 }
 
-
 async function highlightText(searchText, highlightColor, listId = null) {
-    try { 
-        if(searchText === '') { return; }       
+    try {
+        if (searchText === '') {
+            return;
+        }
         // Iterate over each searchText element
         if (Array.isArray(searchText)) {
             searchText.forEach((wordObj) => {
                 if (wordObj.enabled) {
                     const searchText = wordObj.word;
 
-                    iterateArray(searchText, highlightColor, listId); 
+                    iterateArray(searchText, highlightColor, listId);
                 }
             });
-        }
-        else {                    
+        } else {
             iterateArray(searchText, highlightColor, listId);
         }
     } catch (error) {
@@ -102,85 +101,90 @@ async function highlightText(searchText, highlightColor, listId = null) {
     }
 }
 
-function iterateArray(searchText, highlightColor, listId){
-    document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
-        // Пропускаем элементы, которые уже выделены
-        if (element.classList.contains('exa-radience-highlighted')) {
-            return;
-        }
-        if (element.id === 'submenu') {
-            return;
-        }
+function iterateArray(searchText, highlightColor, listId) {
+    document
+        .querySelectorAll(
+            'p, a, ul, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6, button, label, strong'
+        )
+        .forEach((element) => {
+            // Пропускаем элементы, которые уже выделены
+            if (element.classList.contains('exa-radience-highlighted')) {
+                return;
+            }
+            if (element.id === 'submenu') {
+                return;
+            }
 
-        Array.from(element.childNodes).forEach((node) => {
-            if (node.nodeType === Node.TEXT_NODE) {
-                const textContent = node.textContent.trim();
-                if (searchText === textContent) {
-                    const parentElement = node.parentElement;
-                    parentElement.classList.add('exa-radience-highlighted');
-                    parentElement.style.borderColor = highlightColor;
-                    if(listId){
-                        parentElement.dataset.listId = listId;                   
+            Array.from(element.childNodes).forEach((node) => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                    const textContent = node.textContent.trim().toLowerCase();
+                    if (searchText.toLowerCase() === textContent) {
+                        const parentElement = node.parentElement;
+                        parentElement.classList.add('exa-radience-highlighted');
+                        parentElement.style.borderColor = highlightColor;
+                        if (listId) {
+                            parentElement.dataset.listId = listId;
+                        }
                     }
                 }
-            }
+            });
         });
-    });
 }
 
 async function highlightAttributes(searchText, highlightColor, listId = null) {
     try {
         const wordListsCache = await getWordListsFromStorage(); // Call the function here
-        if(Array.isArray(searchText)){
+        if (Array.isArray(searchText)) {
             searchText.forEach((wordObj) => {
                 if (wordObj.enabled) {
-                    const searchText = wordObj.word
-                    function highlightAttributesInElement(element) {
-                        const attributes = element.attributes;
-                        for (const attribute of attributes) {
-                            const attributeValue = attribute.value.trim().toLowerCase();
-                            if (attributeValue === searchText.toLowerCase() && wordListsCache.has(attributeValue)) {
-                                element.classList.add('exa-radience-highlighted');
-                                element.style.borderColor = highlightColor;
-                                if (listId) {
-                                    element.dataset.listId = listId;
-                                }
-                                return;
-                            }
-                        }
-                    }
-                    //document.querySelectorAll('p, a, li, tr, th, td, input, label, b, i, span, div, h1, h2, h3, h4, h5, h6')
-                    document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
-                        highlightAttributesInElement(element);
-                    });
-            
-                }});
-        }
-        else{
-            function highlightAttributesInElement(element) {
-                const attributes = element.attributes;
-                for (const attribute of attributes) {
-                    const attributeValue = attribute.value.trim().toLowerCase();
-                    if (attributeValue === searchText.toLowerCase() && wordListsCache.has(attributeValue)) {
-                        element.classList.add('exa-radience-highlighted');
-                        element.style.borderColor = highlightColor;
-                        if (listId) {
-                            element.dataset.listId = listId;
-                        }
-                        return;
-                    }
+                    const searchText = wordObj.word;
+                    iterateAttributes(
+                        searchText,
+                        wordListsCache,
+                        highlightColor,
+                        listId
+                    );
                 }
-            }
-            //document.querySelectorAll('p, a, li, tr, th, td, input, label, b, i, span, div, h1, h2, h3, h4, h5, h6')
-            document.querySelectorAll('p, a, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6').forEach((element) => {
-                highlightAttributesInElement(element);
             });
+        } else {
+            iterateAttributes(
+                searchText,
+                wordListsCache,
+                highlightColor,
+                listId
+            );
         }
     } catch (error) {
         console.error('Error highlighting attributes:', error);
     }
 }
 
+function iterateAttributes(searchText, wordListsCache, highlightColor, listId) {
+    function highlightAttributesInElement(element) {
+        const attributes = element.attributes;
+        for (const attribute of attributes) {
+            const attributeValue = attribute.value.trim().toLowerCase();
+            if (
+                attributeValue.toLowerCase() === searchText.toLowerCase() &&
+                wordListsCache.has(attributeValue)
+            ) {
+                element.classList.add('exa-radience-highlighted');
+                element.style.borderColor = highlightColor;
+                if (listId) {
+                    element.dataset.listId = listId;
+                }
+                return;
+            }
+        }
+    }
+    document
+        .querySelectorAll(
+            'p, a, ul, li, tr, th, td, b, i, span, div, h1, h2, h3, h4, h5, h6, button, label, strong'
+        )
+        .forEach((element) => {
+            highlightAttributesInElement(element);
+        });
+}
 
 chrome.runtime.onMessage.addListener(async function (
     request,

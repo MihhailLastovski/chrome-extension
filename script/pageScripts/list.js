@@ -79,7 +79,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 }
             });
-            /////////////////////send message from here////////////////////
             createTooltips();
         }
     });
@@ -227,10 +226,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 );
 
-                // chrome.runtime.sendMessage({
-                //     action: 'updateLists',
-                //     listId: listId,
-                // });
                 highlightWordsFromList(listId);
                 function highlightWordsFromList(listId) {
                     chrome.storage.local.get('wordLists', function (data) {
@@ -246,36 +241,26 @@ document.addEventListener('DOMContentLoaded', function () {
                                 }
                             );
 
-                            sortedWords.forEach((wordObj) => {
-                                if (wordObj.enabled) {
-                                    const searchText = wordObj.word;
-                                    chrome.tabs.query(
-                                        { active: true, currentWindow: true },
-                                        function (tabs) {
-                                            if (tabs && tabs[0]) {
-                                                chrome.scripting.executeScript({
-                                                    target: {
-                                                        tabId: tabs[0].id,
-                                                    },
-                                                    files: [
-                                                        './script/contentScripts/contentScript.js',
-                                                    ],
-                                                });
-                                                chrome.tabs.sendMessage(
-                                                    tabs[0].id,
-                                                    {
-                                                        action: 'highlight',
-                                                        searchText: searchText,
-                                                        highlightColor:
-                                                            listToHighlight.color,
-                                                        listId: listId,
-                                                    }
-                                                );
-                                            }
-                                        }
-                                    );
+                            chrome.tabs.query(
+                                { active: true, currentWindow: true },
+                                function (tabs) {
+                                    if (tabs && tabs[0]) {
+                                        chrome.scripting.executeScript({
+                                            target: { tabId: tabs[0].id },
+                                            files: [
+                                                './script/contentScripts/contentScript.js',
+                                            ],
+                                        });
+                                        chrome.tabs.sendMessage(tabs[0].id, {
+                                            action: 'highlight',
+                                            searchText: sortedWords,
+                                            highlightColor:
+                                                listToHighlight.color,
+                                            listId: listId,
+                                        });
+                                    }
                                 }
-                            });
+                            );
                         }
                     });
                 }

@@ -38,10 +38,6 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
             let enabledLists = data.enabledLists || [];
             enabledLists.forEach((listId) => {
                 highlightWordsFromList(listId);
-                // chrome.runtime.sendMessage({
-                //     action: 'updateLists',
-                //     listId: listId,
-                // });
             });
         });
     }
@@ -107,31 +103,23 @@ function highlightWordsFromList(listId) {
             const sortedWords = listToHighlight.words.sort((a, b) => {
                 return b.word.length - a.word.length;
             });
-
-            sortedWords.forEach((wordObj) => {
-                if (wordObj.enabled) {
-                    const searchText = wordObj.word;
-                    chrome.tabs.query(
-                        { active: true, currentWindow: true },
-                        function (tabs) {
-                            if (tabs && tabs[0]) {
-                                chrome.scripting.executeScript({
-                                    target: { tabId: tabs[0].id },
-                                    files: [
-                                        './script/contentScripts/contentScript.js',
-                                    ],
-                                });
-                                chrome.tabs.sendMessage(tabs[0].id, {
-                                    action: 'highlight',
-                                    searchText: searchText,
-                                    highlightColor: listToHighlight.color,
-                                    listId: listId,
-                                });
-                            }
-                        }
-                    );
+            chrome.tabs.query(
+                { active: true, currentWindow: true },
+                function (tabs) {
+                    if (tabs && tabs[0]) {
+                        chrome.scripting.executeScript({
+                            target: { tabId: tabs[0].id },
+                            files: ['./script/contentScripts/contentScript.js'],
+                        });
+                        chrome.tabs.sendMessage(tabs[0].id, {
+                            action: 'highlight',
+                            searchText: sortedWords,
+                            highlightColor: listToHighlight.color,
+                            listId: listId,
+                        });
+                    }
                 }
-            });
+            );
         }
     });
 }
@@ -194,7 +182,7 @@ function updateWordListsFromGoogleSheets() {
                     list.words = [];
                     // Обходим полученные данные и добавляем слова в список
                     result.forEach((row) => {
-                        if (row['Core Strings'] !== ''){
+                        if (row['Core Strings'] !== '') {
                             list.words.push({
                                 lecID: row['Lec ID'],
                                 stringID: row['String ID'],
@@ -202,7 +190,7 @@ function updateWordListsFromGoogleSheets() {
                                 status: row['Status'],
                                 enabled: true,
                             });
-                        }                       
+                        }
                     });
                     // Сохраняем список
                     chrome.storage.local.get('wordLists', function (data) {
