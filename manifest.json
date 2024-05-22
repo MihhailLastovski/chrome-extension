@@ -30,8 +30,7 @@
       "match_about_blank": true,
       "matches": ["<all_urls>"],
       "css": ["style/submenuStyle.css"],
-      "js": [ "script/contentScripts/contentScript.js", "script/contentScripts/submenu.js", "script/contentScripts/status.js", "script/contentScripts/screenshot.js", "script/contentScripts/note.js"],
-      "run_at": "document_end"
+      "js": [ "script/contentScripts/contentScript.js", "script/contentScripts/submenu.js", "script/contentScripts/status.js", "script/contentScripts/screenshot.js", "script/contentScripts/note.js"]
     }
   ],
   "background": {
