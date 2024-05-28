@@ -355,7 +355,8 @@ document.addEventListener('DOMContentLoaded', function () {
         wordsContainer
     );
 
-    // Чтение слов из CSV файла
+    const { getDataFromSheet } = require('./google-sheets-api');
+
     csvListBtn.addEventListener('click', function () {
         divWithListImportSettigs.innerHTML = '';
 
@@ -365,58 +366,32 @@ document.addEventListener('DOMContentLoaded', function () {
         csvInput.placeholder = 'Paste the link';
         csvButton.addEventListener('click', async function () {
             if (csvInput.value.trim() !== '') {
-                dataURL = csvInput.value.trim();
-                // Извлекаем идентификатор таблицы из введенной ссылки
                 var spreadsheetId = extractSpreadsheetId(csvInput.value);
 
-                // Строим URL для выполнения запроса к функции getDataBySheetName
-                const data = {
-                    action: 'getDataBySheetName',
-                    sheetId: spreadsheetId,
-                };
+                try {
+                    const data = await getDataFromSheet(
+                        spreadsheetId,
+                        'Sheet1'
+                    );
+                    console.log('Received data:', data);
 
-                console.log('Sending data:', data);
-
-                fetch(
-                    'https://script.google.com/macros/s/AKfycbyC9pSdWFHNpugKW6ckVpBa0VGdyC4Y_wXw3t94guk04ICPBNRJyN4ADHxgWh6Qw9In/exec',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(data),
-                    }
-                )
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(
-                                `HTTP error! Status: ${response.status}`
-                            );
+                    data.forEach((row) => {
+                        if (row[5] !== '') {
+                            // Предполагаем, что 'Core Strings' находится в шестом столбце
+                            addWord(row[5]);
+                            wordsArray.push({
+                                lecID: row[2], // Предполагаем, что 'Lec ID' находится в третьем столбце
+                                stringID: row[4], // Предполагаем, что 'String ID' находится в пятом столбце
+                                word: row[5],
+                                status: row[8], // Предполагаем, что 'Status' находится в девятом столбце
+                                enabled: true,
+                            });
                         }
-                        return response.json();
-                    })
-                    .then((result) => {
-                        // Здесь result содержит данные, которые возвращены из AppScript
-                        console.log('Received data:', result);
-
-                        // Проходимся по результатам и заполняем массив wordsArray
-                        result.forEach((row) => {
-                            if (row['Core Strings'] !== '') {
-                                addWord(row['Core Strings']);
-                                wordsArray.push({
-                                    lecID: row['Lec ID'],
-                                    stringID: row['String ID'],
-                                    word: row['Core Strings'],
-                                    status: row['Status'],
-                                    enabled: true,
-                                });
-                            }
-                        });
-                        createTooltips();
-                    })
-                    .catch((error) => {
-                        console.error('Error:', error);
                     });
+                    createTooltips();
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             } else {
                 alert('Please enter link');
             }
