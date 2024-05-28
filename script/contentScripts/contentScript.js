@@ -10,12 +10,15 @@ if (!window.hasRun) {
         selectedValue;
     window.hasRun = true;
 
-    // Внедрение CSS файла
-    const iconsLink = document.createElement('link');
-    iconsLink.rel = 'stylesheet';
-    iconsLink.href =
-        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
-    document.head.appendChild(iconsLink);
+    const head = document.head || document.getElementsByTagName('head')[0];
+    if (head) {
+        // Внедрение CSS файла
+        const iconsLink = document.createElement('link');
+        iconsLink.rel = 'stylesheet';
+        iconsLink.href =
+            'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css';
+        document.head.appendChild(iconsLink);
+    }
 
     getValuesFromLocalStorage();
 }
@@ -84,12 +87,12 @@ async function highlightText(searchText, highlightColor, listId = null) {
         if (searchText === '') {
             return;
         }
+        //const wordListsCache = await getWordListsFromStorage();
         // Iterate over each searchText element
         if (Array.isArray(searchText)) {
             searchText.forEach((wordObj) => {
                 if (wordObj.enabled) {
                     const searchText = wordObj.word;
-
                     iterateArray(searchText, highlightColor, listId);
                 }
             });
@@ -124,6 +127,9 @@ function iterateArray(searchText, highlightColor, listId) {
                     if (listId) {
                         parentElement.dataset.listId = listId;
                     }
+                    // if (wordListsCache.has(textContent)) {
+                    //     parentElement.style.backgroundColor = highlightColor;
+                    // }
                 }
             }
         });
@@ -132,7 +138,7 @@ function iterateArray(searchText, highlightColor, listId) {
 
 async function highlightAttributes(searchText, highlightColor, listId = null) {
     try {
-        const wordListsCache = await getWordListsFromStorage(); // Call the function here
+        const wordListsCache = await getWordListsFromStorage();
         if (Array.isArray(searchText)) {
             searchText.forEach((wordObj) => {
                 if (wordObj.enabled) {
@@ -173,14 +179,14 @@ function iterateAttributes(searchText, wordListsCache, highlightColor, listId) {
         const attributes = element.attributes;
         for (const attribute of attributes) {
             const attributeValue = attribute.value.trim().toLowerCase();
-            if (
-                attributeValue.toLowerCase() === searchText.toLowerCase() &&
-                wordListsCache.has(attributeValue)
-            ) {
+            if (attributeValue === searchText.toLowerCase()) {
                 element.classList.add('exa-radience-highlighted');
                 element.style.borderColor = highlightColor;
                 if (listId) {
                     element.dataset.listId = listId;
+                }
+                if (wordListsCache.has(attributeValue)) {
+                    element.style.backgroundColor = highlightColor;
                 }
                 return;
             }
