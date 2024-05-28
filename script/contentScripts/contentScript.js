@@ -185,9 +185,9 @@ function iterateAttributes(searchText, wordListsCache, highlightColor, listId) {
                 if (listId) {
                     element.dataset.listId = listId;
                 }
-                if (wordListsCache.has(attributeValue)) {
-                    element.style.backgroundColor = highlightColor;
-                }
+                // if (wordListsCache.has(attributeValue)) {
+                //     element.style.backgroundColor = highlightColor;
+                // }
                 return;
             }
         }
