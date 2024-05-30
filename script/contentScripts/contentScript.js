@@ -117,18 +117,26 @@ async function highlightText(searchText, highlightColor, listId = null) {
 }
 
 function iterateArray(searchText, highlightColor, listId) {
-    document.querySelectorAll('body *').forEach((element) => {
-        // Пропускаем элементы, которые уже выделены
-        if (
-            element.classList.contains('exa-radience-highlighted') ||
-            element.id === 'submenu' ||
-            ['style', 'script', 'link', 'br', 'img', 'meta'].includes(
-                element.tagName.toLowerCase()
-            )
-        ) {
-            return;
+    // Функция для обработки shadow DOM
+    function processShadowDom(element) {
+        // Обрабатываем элементы shadow root
+        if (element.shadowRoot) {
+            element.shadowRoot.querySelectorAll('*').forEach((shadowElement) => {
+                processElement(shadowElement);
+            });
+
+            // Добавляем стиль для выделения в shadow root
+            const style = document.createElement('style');
+            style.textContent = `
+                .exa-radience-highlighted {
+                    border-color: ${highlightColor} !important;
+                    background-color: ${highlightColor} !important;
+                }
+            `;
+            element.shadowRoot.appendChild(style);
         }
 
+        // Обрабатываем обычные childNodes
         Array.from(element.childNodes).forEach((node) => {
             if (node.nodeType === Node.TEXT_NODE) {
                 const textContent = node.textContent.trim().toLowerCase();
@@ -139,7 +147,6 @@ function iterateArray(searchText, highlightColor, listId) {
 
                     const parentElement = node.parentElement;
                     parentElement.classList.add('exa-radience-highlighted');
-                    parentElement.style.borderColor = highlightColor;
                     if (listId) {
                         parentElement.dataset.listId = listId;
                     }
@@ -149,6 +156,47 @@ function iterateArray(searchText, highlightColor, listId) {
                 }
             }
         });
+    }
+
+    // Основная функция для обработки элементов
+    function processElement(element) {
+        if (
+            element.classList.contains('exa-radience-highlighted') ||
+            element.id === 'submenu' ||
+            ['style', 'script', 'link', 'br', 'img', 'meta'].includes(
+                element.tagName.toLowerCase()
+            )
+        ) {
+            return;
+        }
+
+        processShadowDom(element); // Обрабатываем shadow DOM
+
+        // Обрабатываем обычные childNodes
+        Array.from(element.childNodes).forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const textContent = node.textContent.trim().toLowerCase();
+                if (searchText.toLowerCase() === textContent) {
+                    const foundWord = findWordInWordLists(textContent, listId);
+                    const isValid =
+                        foundWord && statusesList.includes(foundWord.status);
+
+                    const parentElement = node.parentElement;
+                    parentElement.classList.add('exa-radience-highlighted');
+                    if (listId) {
+                        parentElement.dataset.listId = listId;
+                    }
+                    if (isValid) {
+                        parentElement.style.backgroundColor = highlightColor;
+                    }
+                }
+            }
+        });
+    }
+
+    // Запуск обработки для всех элементов body
+    document.querySelectorAll('body *').forEach((element) => {
+        processElement(element);
     });
 }
 
