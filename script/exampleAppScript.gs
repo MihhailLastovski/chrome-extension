@@ -2,52 +2,54 @@ function addValueToStepsStatus(spreadsheetId, note, textContent, columnName) {
     try {
         // Open the spreadsheet
         var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
-        var sheets = spreadsheet.getSheets();
-        var targetTextContent = textContent;
+        var sheet = spreadsheet.getSheetByName('Strings') || spreadsheet.getSheetByName('strings');
+        
+        if (!sheet) {
+            Logger.log('Sheet "Strings" or "strings" not found.');
+            return;
+        }
+
+        var data = sheet.getDataRange().getValues();
+        var targetTextContent = textContent.toLowerCase().trim();
         var found = false;
-        // Iterate through all sheets
-        for (var s = 0; s < sheets.length; s++) {
-            var sheet = sheets[s];
 
-            // Get all data as a 2D array
-            var data = sheet.getDataRange().getValues();
+        // Convert column headers to lowercase for case-insensitive comparison
+        var headers = data[0].map(function(header) {
+            return header.toLowerCase();
+        });
+        
+        // Find the index of the column "lec id"
+        var stringIdIndex = headers.indexOf('lec id');
 
-            // Find the index of the column "Lec ID"
-            var stringIdIndex = data[0].indexOf('Lec ID');
-
-            // If the column is found
-            if (stringIdIndex !== -1) {
-                // Search for the cell with an exact match in the specified column
-                for (var i = 1; i < data.length; i++) {
-                    var cellValue = String(data[i][stringIdIndex])
-                        .toLowerCase()
-                        .trim();
-                    if (cellValue === targetTextContent.toLowerCase().trim()) {
-                        // Found the value, get the index of the "Steps" column
-                        var columnIndex = data[0].indexOf(columnName);
-                        if (columnIndex !== -1) {
-                            // i + 1 is the row index, columnIndex + 1 because column index starts from 0
-                            var cell = sheet.getRange(i + 1, columnIndex + 1);
-                            if (columnName === 'Screenshot') {
-                                var lecData =
-                                    data[i][data[0].indexOf('Lec ID')];
-                                cell.setValue(lecData + '.png');
-                            } else {
-                                cell.setValue(note);
-                            }
-                            found = true;
+        // If the column is found
+        if (stringIdIndex !== -1) {
+            // Search for the cell with an exact match in the specified column
+            for (var i = 1; i < data.length; i++) {
+                var cellValue = String(data[i][stringIdIndex]).toLowerCase().trim();
+                if (cellValue === targetTextContent) {
+                    // Found the value, get the index of the specified column (case-insensitive)
+                    var columnIndex = headers.indexOf(columnName.toLowerCase());
+                    if (columnIndex !== -1) {
+                        // i + 1 is the row index, columnIndex + 1 because column index starts from 0
+                        var cell = sheet.getRange(i + 1, columnIndex + 1);
+                        if (columnName.toLowerCase() === 'screenshot') {
+                            var lecData = data[i][stringIdIndex];
+                            cell.setValue(lecData + '.png');
                         } else {
-                            Logger.log('Column "Steps" not found.');
+                            cell.setValue(note);
                         }
+                        found = true;
+                    } else {
+                        Logger.log('Column "' + columnName + '" not found.');
                     }
                 }
-            } else {
-                Logger.log('Column "String ID" not found.');
             }
+        } else {
+            Logger.log('Column "Lec ID" not found.');
         }
 
         if (!found) {
-            Logger.log('Value not found in any sheet:', targetTextContent);
+            Logger.log('Value not found in the sheet:', targetTextContent);
         }
     } catch (error) {
         Logger.log('Error adding value:', error);
@@ -56,34 +58,44 @@ function addValueToStepsStatus(spreadsheetId, note, textContent, columnName) {
 
 function getDataBySheetName(spreadsheetId) {
     try {
-        // Открываем таблицу по идентификатору
+        // Open the spreadsheet by ID
         var spreadsheet = SpreadsheetApp.openById(spreadsheetId);
-        var sheet = spreadsheet.getSheetByName('Strings');
+        var sheet = spreadsheet.getSheetByName('Strings') || spreadsheet.getSheetByName('strings');
 
         if (!sheet) {
             Logger.log('Sheet not found');
             return null;
         }
 
-        // Получаем все данные в виде 2D массива
+        // Get all data as a 2D array
         var data = sheet.getDataRange().getValues();
 
-        // Формируем объект с нужными данными, начиная со второй строки
+        // Create an object to map column names to their indices
+        var headers = data[0].map(function(header) {
+            return header.toLowerCase();
+        });
+
+        var columnIndexMap = {};
+        headers.forEach(function(header, index) {
+            columnIndexMap[header] = index;
+        });
+
+        // Form an object with the required data, starting from the second row
         var result = data
             .slice(1)
             .map(function (row) {
-                // Добавляем проверку на пустые строки перед добавлением данных
-                if (row[4] !== '') {
+                // Add a check for empty rows before adding data
+                if (row[columnIndexMap['string id']] !== '') {
                     return {
-                        'Lec ID': row[2], // Предположим, что Lec ID находится в третьем столбце
-                        'String ID': row[4], // Предположим, что String ID находится в пятом столбце
-                        'Core Strings': row[5], // Предположим, что Core Strings находится в шестом столбце
-                        Status: row[8], // Предположим, что Status находится в девятом столбце
+                        'Lec ID': row[columnIndexMap['lec id']],
+                        'String ID': row[columnIndexMap['string id']],
+                        'Core Strings': row[columnIndexMap['core strings']],
+                        Status: row[columnIndexMap['status']],
                     };
                 }
-                return null; // Пропускаем пустые строки
+                return null; // Skip empty rows
             })
-            .filter(Boolean); // Фильтруем и удаляем null значения
+            .filter(Boolean); // Filter out null values
 
         Logger.log('Data retrieved successfully:', result);
         return result;
@@ -95,14 +107,13 @@ function getDataBySheetName(spreadsheetId) {
 
 function doGet(req) {
     try {
-        // Получаем активную таблицу
-        var activeSheet =
-            SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+        // Get the active sheet
+        var activeSheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
 
-        // Получаем все данные в виде 2D массива
+        // Get all data as a 2D array
         var data = activeSheet.getDataRange().getValues();
 
-        // Преобразуем данные в JSON
+        // Convert data to JSON
         var jsonData = [];
 
         for (var i = 0; i < data.length; i++) {
@@ -115,27 +126,25 @@ function doGet(req) {
 
         Logger.log('JSON data retrieved successfully:', jsonData);
 
-        // Возвращаем JSON
+        // Return JSON
         return ContentService.createTextOutput(
             JSON.stringify(jsonData)
         ).setMimeType(ContentService.MimeType.JSON);
     } catch (error) {
         Logger.log('Error in doGet:', error);
-        return ContentService.createTextOutput('Error in doGet.').setStatusCode(
-            500
-        );
+        return ContentService.createTextOutput('Error in doGet.').setStatusCode(500);
     }
 }
 
 function doPost(e) {
     try {
-        // Получаем данные из запроса
+        // Get data from the request
         var requestData = JSON.parse(e.postData.contents);
         console.log('Received request data:', e.postData.contents);
 
-        // Проверяем, какое действие нужно выполнить
+        // Check what action needs to be performed
         if (requestData.action === 'addNoteToElement') {
-            // Вызываем функцию добавления заметки
+            // Call the function to add a note
             addValueToStepsStatus(
                 requestData.sheetId,
                 requestData.note,
@@ -145,27 +154,27 @@ function doPost(e) {
 
             Logger.log('Note added via doPost:', requestData.note);
 
-            // Возвращаем успешный ответ
+            // Return a successful response
             return ContentService.createTextOutput(
-                'Заметка успешно добавлена в таблицу.'
+                'Note successfully added to the spreadsheet.'
             ).setMimeType(ContentService.MimeType.TEXT);
         } else if (requestData.action === 'getDataBySheetName') {
-            // Вызываем функцию получения данных по имени листа
+            // Call the function to get data by sheet name
             var spreadsheetId = requestData.sheetId;
             var result = getDataBySheetName(spreadsheetId);
 
-            // Возвращаем полученные данные
+            // Return the retrieved data
             return ContentService.createTextOutput(
                 JSON.stringify(result)
             ).setMimeType(ContentService.MimeType.JSON);
         } else {
             var spreadsheet = SpreadsheetApp.openById(requestData.sheetId);
-            var sheet = spreadsheet.getSheetByName(sheetName);
+            var sheet = spreadsheet.getSheetByName(requestData.sheetName);
 
-            // Define from which line to start data insertion
+            // Define from which row to start data insertion
             var startRow = sheet.getLastRow() + 1;
 
-            // Inserting data into the table
+            // Insert data into the sheet
             for (var i = 0; i < requestData.length; i++) {
                 var rowData = Object.values(requestData[i]);
                 sheet

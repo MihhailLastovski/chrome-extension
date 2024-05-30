@@ -116,7 +116,7 @@ function updateStatus(listId, selectedValue, lecID) {
     console.log('Sending data:', data);
 
     fetch(
-        'https://script.google.com/macros/s/AKfycbyC9pSdWFHNpugKW6ckVpBa0VGdyC4Y_wXw3t94guk04ICPBNRJyN4ADHxgWh6Qw9In/exec',
+        'https://script.google.com/macros/s/AKfycbz21ktmeytfBRMn1i5cedGRwjWiq-e_xH6ssntP5XYY4VzvLbuUBeV0R5Aytt0-Z3aD/exec',
         {
             method: 'POST',
             mode: 'no-cors',
