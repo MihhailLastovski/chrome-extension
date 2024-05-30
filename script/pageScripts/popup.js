@@ -67,20 +67,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     highlightBtn.addEventListener('click', function () {
         let searchText = searchTextInput.value.trim();
-        chrome.tabs.query(
-            { active: true, currentWindow: true },
-            function (tabs) {
-                chrome.scripting.executeScript({
-                    target: { tabId: tabs[0].id },
-                    files: ['./script/contentScripts/contentScript.js'],
-                });
-                chrome.tabs.sendMessage(tabs[0].id, {
-                    action: 'highlight',
-                    searchText: searchText,
-                    highlightColor: selectedColor,
-                });
-            }
-        );
+        if (searchText !== '') {
+            chrome.tabs.query(
+                { active: true, currentWindow: true },
+                function (tabs) {
+                    chrome.scripting.executeScript({
+                        target: { tabId: tabs[0].id },
+                        files: ['./script/contentScripts/contentScript.js'],
+                    });
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        action: 'highlight',
+                        searchText: searchText,
+                        highlightColor: selectedColor,
+                    });
+                }
+            );
+        }
     });
 
     function renderWordLists(lists) {
