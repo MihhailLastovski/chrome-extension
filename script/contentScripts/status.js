@@ -14,12 +14,14 @@ async function changeWordStatus(element) {
                     if (wordList.words && wordList.id === listId) {
                         wordList.words.forEach((wordObj) => {
                             const word = wordObj.word.trim().toLowerCase();
-
                             if (
                                 word === el.innerHTML.toLowerCase() ||
                                 (attributesIsActive &&
                                     Array.from(element.attributes).some(
-                                        (attr) => attr.value.includes(word)
+                                        (attr) =>
+                                            attr.value
+                                                .toLowerCase()
+                                                .includes(word)
                                     ))
                             ) {
                                 if (wordList.dataURL) {
@@ -67,7 +69,10 @@ async function removeWordsStatus(element) {
                                 word === el.innerHTML.toLowerCase() ||
                                 (attributesIsActive &&
                                     Array.from(element.attributes).some(
-                                        (attr) => attr.value.includes(word)
+                                        (attr) =>
+                                            attr.value
+                                                .toLowerCase()
+                                                .includes(word)
                                     ))
                             ) {
                                 if (wordList.dataURL) {
@@ -92,7 +97,6 @@ async function removeWordsStatus(element) {
                 statusItems.forEach((item) => {
                     item.style.backgroundColor = '#FD68A4';
                 });
-                console.log('Word status added');
             }
         });
     }

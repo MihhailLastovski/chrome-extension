@@ -63,31 +63,43 @@ async function getFromLocalStorage(key) {
     });
 }
 
-async function getWordListsFromStorage() {
-    const wordListsCache = new Set(); // Local declaration
+// async function getWordListsFromStorage() {
+//     const wordListsCache = new Set(); // Local declaration
 
-    try {
-        if (wordListsCache.size === 0) {
-            const { wordLists } = await getFromLocalStorage('wordLists');
-            wordLists.forEach((list) => {
-                list.words.forEach((wordObj) => {
-                    wordListsCache.add(wordObj.word.trim().toLowerCase());
-                });
-            });
+//     try {
+//         if (wordListsCache.size === 0) {
+//             const { wordLists } = await getFromLocalStorage('wordLists');
+//             wordLists.forEach((list) => {
+//                 list.words.forEach((wordObj) => {
+//                     wordListsCache.add(wordObj.word.trim().toLowerCase());
+//                 });
+//             });
+//         }
+//     } catch (error) {
+//         console.error('Error getting word lists from storage:', error);
+//     }
+
+//     return wordListsCache; // Return the set
+// }
+
+function findWordInWordLists(word, listId) {
+    for (const wordList of wordLists) {
+        if (wordList.words && wordList.id === listId) {
+            const foundWord = wordList.words.find(
+                (wordObj) =>
+                    wordObj.word.trim().toLowerCase() === word.toLowerCase()
+            );
+            if (foundWord) {
+                return foundWord;
+            }
         }
-    } catch (error) {
-        console.error('Error getting word lists from storage:', error);
     }
 
-    return wordListsCache; // Return the set
+    return null;
 }
 
 async function highlightText(searchText, highlightColor, listId = null) {
     try {
-        if (searchText === '') {
-            return;
-        }
-        //const wordListsCache = await getWordListsFromStorage();
         // Iterate over each searchText element
         if (Array.isArray(searchText)) {
             searchText.forEach((wordObj) => {
@@ -121,15 +133,19 @@ function iterateArray(searchText, highlightColor, listId) {
             if (node.nodeType === Node.TEXT_NODE) {
                 const textContent = node.textContent.trim().toLowerCase();
                 if (searchText.toLowerCase() === textContent) {
+                    const foundWord = findWordInWordLists(textContent, listId);
+                    const isValid =
+                        foundWord && statusesList.includes(foundWord.status);
+
                     const parentElement = node.parentElement;
                     parentElement.classList.add('exa-radience-highlighted');
                     parentElement.style.borderColor = highlightColor;
                     if (listId) {
                         parentElement.dataset.listId = listId;
                     }
-                    // if (wordListsCache.has(textContent)) {
-                    //     parentElement.style.backgroundColor = highlightColor;
-                    // }
+                    if (isValid) {
+                        parentElement.style.backgroundColor = highlightColor;
+                    }
                 }
             }
         });
@@ -138,33 +154,29 @@ function iterateArray(searchText, highlightColor, listId) {
 
 async function highlightAttributes(searchText, highlightColor, listId = null) {
     try {
-        const wordListsCache = await getWordListsFromStorage();
+        //const wordListsCache = await getWordListsFromStorage();
         if (Array.isArray(searchText)) {
             searchText.forEach((wordObj) => {
                 if (wordObj.enabled) {
                     const searchText = wordObj.word;
-                    iterateAttributes(
-                        searchText,
-                        wordListsCache,
-                        highlightColor,
-                        listId
-                    );
+                    iterateAttributes(searchText, highlightColor, listId);
                 }
             });
         } else {
-            iterateAttributes(
-                searchText,
-                wordListsCache,
-                highlightColor,
-                listId
-            );
+            iterateAttributes(searchText, highlightColor, listId);
+            // iterateAttributes(
+            //     searchText,
+            //     wordListsCache,
+            //     highlightColor,
+            //     listId
+            // );
         }
     } catch (error) {
         console.error('Error highlighting attributes:', error);
     }
 }
 
-function iterateAttributes(searchText, wordListsCache, highlightColor, listId) {
+function iterateAttributes(searchText, highlightColor, listId) {
     document.querySelectorAll('body *').forEach((element) => {
         // Пропускаем элементы, которые уже выделены
         if (
@@ -180,10 +192,17 @@ function iterateAttributes(searchText, wordListsCache, highlightColor, listId) {
         for (const attribute of attributes) {
             const attributeValue = attribute.value.trim().toLowerCase();
             if (attributeValue === searchText.toLowerCase()) {
+                const foundWord = findWordInWordLists(attributeValue, listId);
+                const isValid =
+                    foundWord && statusesList.includes(foundWord.status);
+
                 element.classList.add('exa-radience-highlighted');
                 element.style.borderColor = highlightColor;
                 if (listId) {
                     element.dataset.listId = listId;
+                }
+                if (isValid) {
+                    element.style.backgroundColor = highlightColor;
                 }
                 // if (wordListsCache.has(attributeValue)) {
                 //     element.style.backgroundColor = highlightColor;
@@ -236,10 +255,12 @@ chrome.runtime.onMessage.addListener(async function (
             : document.querySelectorAll('body *');
 
         elements.forEach((element) => {
-            element.classList.remove('exa-radience-highlighted');
-            element.removeAttribute('data-list-id');
-            element.style.borderColor = 'transparent';
-            element.style.backgroundColor = 'transparent';
+            if (element.classList.contains('exa-radience-highlighted')) {
+                element.classList.remove('exa-radience-highlighted');
+                element.removeAttribute('data-list-id');
+                element.style.borderColor = 'transparent';
+                element.style.backgroundColor = 'transparent';
+            }
         });
         chrome.runtime.sendMessage({
             action: 'updateBadge',

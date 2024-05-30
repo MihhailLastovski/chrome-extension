@@ -81,7 +81,7 @@ function createSubmenu(element) {
                             (word ===
                                 element.textContent.trim().toLowerCase() ||
                                 Array.from(element.attributes).some((attr) =>
-                                    attr.value.includes(word)
+                                    attr.value.toLowerCase().includes(word)
                                 ))
                         );
                     })
