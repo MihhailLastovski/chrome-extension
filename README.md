@@ -8,6 +8,10 @@
 
 ## Versions
 
+v.1.4.23
+
+-   Fixed bugs with statuses
+
 v.1.4.22
 
 -   Updated the apps script user guide
